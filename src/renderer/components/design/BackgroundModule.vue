@@ -1,6 +1,9 @@
 <template>
   <div class="root">
-    <div class="type-picker">
+    <div
+      class="type-picker"
+      :class="{ 'type-picker_underlined': isListScrolled }"
+    >
       <h4
         class="type-picker__item"
         v-for="type in availableBackgrounds.default.keys()"
@@ -11,7 +14,7 @@
         {{ localize(type) }}
       </h4>
     </div>
-    <div class="tiles">
+    <div class="tiles bg-module-tiles">
       <div class="tiles-wrap">
         <div class="tiles__grid">
           <color-tile
@@ -77,6 +80,8 @@ export default class BackgroundModule extends Vue {
   pickedTileVal = '#FFFFFF'
   pickedTileType = 'color'
   isColorPaletteOpened = false
+  isListScrolled = false
+  trackedFrames = 20
 
   localize(str) {
     return str
@@ -93,6 +98,33 @@ export default class BackgroundModule extends Vue {
   beforeMount() {
     this.getState()
     service.addOnChangeListener(() => this.getState())
+  }
+
+  mounted() {
+    let element = document.querySelector('.bg-module-tiles')
+    if (!element) return
+    element.addEventListener('scroll', this.startScrollTracking)
+  }
+
+  beforeDestroy() {
+    let element = document.querySelector('.bg-module-tiles')
+    if (!element) return
+    element.removeEventListener('scroll', this.startScrollTracking)
+  }
+
+  startScrollTracking() {
+    this.trackScroll(20)
+  }
+
+  trackScroll(iteration: number) {
+    let element = document.querySelector('.bg-module-tiles')
+    if (!element) return
+
+    if (element.scrollTop > 0) this.isListScrolled = true
+    else this.isListScrolled = false
+
+    if (iteration != 0)
+      requestAnimationFrame(() => this.trackScroll(iteration - 1))
   }
 
   async selectBackground(val) {
@@ -162,6 +194,7 @@ export default class BackgroundModule extends Vue {
   align-items: center;
   justify-content: space-around;
   width: 100%;
+  border-bottom: 1px solid white !important;
 
   &__item {
     cursor: pointer;
@@ -171,6 +204,10 @@ export default class BackgroundModule extends Vue {
     &_selected {
       text-decoration: underline;
     }
+  }
+  &_underlined {
+    border-bottom: 1px solid gray !important;
+    transition: 0.2s;
   }
 }
 
