@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false
+  },
+  "target": "es2017",
+  "module": "es2017",
+  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
+  "experimentalDecorators": true,
+  "typeRoots": ["./typings"]
+}
