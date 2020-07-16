@@ -50,9 +50,8 @@ export default class Preview extends Vue {
   }
 
   getState() {
-    if (service.previewModuleSize) this.previewSize = service.previewModuleSize
-    if (service.selectedSlideIndex)
-      this.selectedSlideIndex = service.selectedSlideIndex
+    this.previewSize = service.previewModuleSize ?? 0
+    this.selectedSlideIndex = service.selectedSlideIndex ?? 0
     if (service.presentation) this.slides = { ...service.presentation?.slides }
   }
 
