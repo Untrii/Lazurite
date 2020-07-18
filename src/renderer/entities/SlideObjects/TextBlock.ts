@@ -1,5 +1,5 @@
-import SlideObject from '../slideObject'
-import Color from '../color'
+import SlideObject from '@/entities/slideObject'
+import Color from '@/entities/color'
 
 export default interface TextBlock extends SlideObject {
   fontFamily: string

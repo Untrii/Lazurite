@@ -8,8 +8,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '../../../services/ConstructorService'
-import elements from '../../elements/index'
+import ConstructorService from '@/services/ConstructorService'
+import elements from '@/elements/index'
 
 let service = new ConstructorService()
 @Component

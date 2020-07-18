@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import assets from '../../assets/index'
+import assets from '@/assets/index'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { remote } from 'electron'
@@ -98,7 +98,7 @@ export default class Titlebar extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '../../css/variables.scss';
+@import '@/css/variables.scss';
 .titlebar {
   grid-template-columns: min-content max-content auto max-content;
   background-color: $blue-normal;

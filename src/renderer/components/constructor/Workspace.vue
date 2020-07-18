@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '../../services/ConstructorService'
+import ConstructorService from '@/services/ConstructorService'
 import Slide from './Slide.vue'
 
 let service = new ConstructorService()

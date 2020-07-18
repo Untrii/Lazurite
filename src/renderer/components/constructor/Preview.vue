@@ -26,10 +26,10 @@
 </template>
 
 <script lang="ts">
-import assets from '../../assets/index'
+import assets from '@/assets/index'
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '../../services/ConstructorService'
-import SlideObject from '../../entities/SlideObject'
+import ConstructorService from '@/services/ConstructorService'
+import SlideObject from '@/entities/SlideObject'
 import Slide from './Slide.vue'
 
 let service = new ConstructorService()
@@ -95,7 +95,7 @@ export default class Preview extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '../../css/variables.scss';
+@import '@/css/variables.scss';
 .preview {
   height: 100%;
   width: 300px;

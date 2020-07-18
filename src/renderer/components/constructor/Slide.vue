@@ -7,8 +7,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import BaseElement from './BaseElement.vue'
-import VisualisationService from '../../services/VisualisationService'
-import Theme, { getBlankTheme, BackgroundType } from '../../entities/Theme'
+import VisualisationService from '@/services/VisualisationService'
+import Theme, { getBlankTheme, BackgroundType } from '@/entities/Theme'
 
 let service = new VisualisationService()
 

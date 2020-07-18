@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import VisualisationService from '../../services/VisualisationService'
-import Color from '../../entities/Color'
+import VisualisationService from '@/services/VisualisationService'
+import Color from '@/entities/Color'
 
 let service = new VisualisationService()
 

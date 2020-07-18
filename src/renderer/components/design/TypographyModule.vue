@@ -46,8 +46,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import DesignService from '../../services/DesignService'
-import localize from '../../utils/locales'
+import DesignService from '@/services/DesignService'
+import localize from '@/utils/locales'
 import FontPreview from './FontPreview.vue'
 
 const service = new DesignService()
@@ -72,6 +72,7 @@ export default class TypographyModule extends Vue {
   }
 
   beforeMount() {
+    console.log('Typography module')
     this.getState()
     service.addOnChangeListener(() => this.getState())
   }

@@ -1,6 +1,6 @@
-import { Instance } from '../repository/CommonRepository'
-import { getBlankPresentation } from '../entities/Presentation'
-import ReactiveService from './ReactiveService'
+import { Instance } from '@/repositories/CommonRepository'
+import { getBlankPresentation } from '@/entities/Presentation'
+import ReactiveService from '@/services/ReactiveService'
 
 export default class MainMenuService extends ReactiveService {
   async createPresentation(fileName: string) {

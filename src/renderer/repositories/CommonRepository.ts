@@ -1,18 +1,23 @@
 import FileObject from './FileObject'
-import Presentation from '../entities/Presentation'
+import Presentation from '@/entities/Presentation'
 import LocalFileSystem from './LocalFileSystem'
-import AppSettings, { defaultSettings } from '../entities/AppSettings'
+import AppSettings, { defaultSettings } from '@/entities/AppSettings'
 import { promises as fs } from 'fs'
 
 import BackgroundCollection, {
   getBlankCollection,
-} from '../entities/BackgroundCollection'
-import track from '../utils/ReactiveTrack'
+} from '@/entities/BackgroundCollection'
+import track from '@/utils/ReactiveTrack'
 import ReactiveRepository from './ReactiveRepository'
 
 const settingsFileName = 'data/settings.json'
 const backgroundCollectionFileName = 'data/bg.json'
 const paletteCollectionFileName = 'data/palettes.json'
+
+interface FontRecord {
+  name: string
+  variants: string[]
+}
 
 //Singleton that contains app state
 export default class CommonRepository extends ReactiveRepository {
@@ -21,7 +26,7 @@ export default class CommonRepository extends ReactiveRepository {
   private _openedPresentationHandle: FileObject | undefined
   private _openedPresentation: Presentation | undefined
 
-  private _fontsList: any[]
+  private _fontsList: any[] = []
 
   private _settingsFileHandle: FileObject | undefined
   private _settingsFile: AppSettings | undefined
@@ -169,10 +174,10 @@ export default class CommonRepository extends ReactiveRepository {
   }
 
   async getFontList() {
-    if (this._fontsList) return this._fontsList
+    if (this._fontsList.length != 0) return this._fontsList
 
-    let styles = []
-    let fontList = []
+    let styles: string[] = []
+    let fontList: FontRecord[] = []
     let dataDir =
       process
         .cwd()
@@ -225,7 +230,7 @@ export default class CommonRepository extends ReactiveRepository {
       },
     }
 
-    let stylePack = []
+    let stylePack: string[] = []
     for (let i = 0; i < styles.length; i++) {
       stylePack.push(styles[i])
     }

@@ -20,8 +20,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '../../services/ConstructorService'
-import assets from '../../assets/index'
+import ConstructorService from '@/services/ConstructorService'
+import assets from '@/assets/index'
 import AddTab from './instrumentsTab/AddTab.vue'
 
 let service = new ConstructorService()

@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
-import { Instance } from './repository/CommonRepository'
-import MainMenuService from './services/MainMenuService'
+import { Instance } from '@/repositories/CommonRepository'
+import MainMenuService from '@/services/MainMenuService'
 
 let presentationPath =
   'D:\\Программирование 2020\\present.js\\testproj_v3\\project.json'

@@ -56,12 +56,12 @@
 import { Vue, Component } from 'vue-property-decorator'
 import BackgroundCollection, {
   getBlankCollection,
-} from '../../entities/BackgroundCollection'
-import DesignService from '../../services/DesignService'
-import VisualisationService from '../../services/VisualisationService'
+} from '@/entities/BackgroundCollection'
+import DesignService from '@/services/DesignService'
+import VisualisationService from '@/services/VisualisationService'
 import ColorTile from './ColorTile.vue'
 import ColorPalette from './ColorPalette.vue'
-import { stringFromType } from '../../entities/Theme'
+import { stringFromType } from '@/entities/Theme'
 
 let service = new DesignService()
 let visService = new VisualisationService()

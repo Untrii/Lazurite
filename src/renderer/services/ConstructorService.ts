@@ -1,7 +1,7 @@
-import { Instance } from '../repository/CommonRepository'
+import { Instance } from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
-import SlideObject from '../entities/SlideObject'
-import Presentation from '../entities/Presentation'
+import SlideObject from '@/entities/SlideObject'
+import Presentation from '@/entities/Presentation'
 
 export default class ConstructorService extends ReactiveService {
   private _selectedSlideIndex: number
@@ -13,10 +13,6 @@ export default class ConstructorService extends ReactiveService {
     this._selectedSlideIndex = 0
     this._selectedObjectIds = new Set()
     this.clipboard = new Set()
-
-    Instance.addOnChangeListener(() => {
-      this.onChange()
-    })
   }
 
   selectSlide(index: number) {

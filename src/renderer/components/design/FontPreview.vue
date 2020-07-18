@@ -28,9 +28,9 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import DesignService from '../../services/DesignService'
-import Theme, { getBlankTheme } from '../../entities/Theme'
-//import localize from '../../utils/locales'
+import DesignService from '@/services/DesignService'
+import Theme, { getBlankTheme } from '@/entities/Theme'
+//import localize from '@/utils/locales'
 
 const service = new DesignService()
 

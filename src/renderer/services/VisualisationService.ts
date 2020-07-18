@@ -1,15 +1,11 @@
-import { Instance } from '../repository/CommonRepository'
+import { Instance } from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
-import SlideObject, { getBlankObject } from '../entities/SlideObject'
-import Theme, { getBlankTheme } from '../entities/Theme'
+import SlideObject, { getBlankObject } from '@/entities/SlideObject'
+import Theme, { getBlankTheme } from '@/entities/Theme'
 
 export default class VisualisationService extends ReactiveService {
   constructor() {
     super()
-
-    Instance.addOnChangeListener(() => {
-      this.onChange()
-    })
   }
 
   slideByIndex(index: number): Map<string, SlideObject> {

@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import assets from '../../assets/index'
+import assets from '@/assets/index'
 
 @Component
 export default class ColorTile extends Vue {

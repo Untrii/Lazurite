@@ -27,8 +27,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import DesignService from '../../services/DesignService'
-import Color from '../../entities/Color'
+import DesignService from '@/services/DesignService'
+import Color from '@/entities/Color'
 
 let service = new DesignService()
 

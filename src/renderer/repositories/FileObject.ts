@@ -1,4 +1,4 @@
-import FileSystem from '../entities/FileSystem'
+import FileSystem from '@/entities/FileSystem'
 import serialize from 'serialize-javascript'
 
 function deserialize(serializedJavascript) {

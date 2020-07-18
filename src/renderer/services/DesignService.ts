@@ -1,18 +1,16 @@
-import { Instance } from '../repository/CommonRepository'
+import { Instance } from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
 import BackgroundCollection, {
   getBlankCollection,
-} from '../entities/BackgroundCollection'
-import SlideObject from '../entities/SlideObject'
-import Presentation from '../entities/Presentation'
+} from '@/entities/BackgroundCollection'
 import Theme, {
   BackgroundType,
   typeFromString,
   stringFromType,
   getBlankTheme,
-} from '../entities/Theme'
+} from '@/entities/Theme'
 import { remote } from 'electron'
-import Color from '../entities/Color'
+import Color from '@/entities/Color'
 const { ImageProcessing } = remote.require('./main')
 
 let colorPalettes: Color[][] = []
@@ -22,10 +20,6 @@ export default class DesignService extends ReactiveService {
 
   constructor() {
     super()
-
-    Instance.addOnChangeListener(() => {
-      this.onChange()
-    })
   }
 
   getBackgroundCollection(): BackgroundCollection {
@@ -51,12 +45,11 @@ export default class DesignService extends ReactiveService {
     if (typeof type != 'string') type = stringFromType(type)
 
     if (!Instance.backgroundCollection) return
-    if (Instance.backgroundCollection.custom.has(type)) {
+    let customCollection = Instance.backgroundCollection.custom.get(type)
+    if (customCollection) {
       Instance.backgroundCollection.custom.set(
         type,
-        Instance.backgroundCollection.custom
-          .get(type)
-          .filter((entry) => entry != value)
+        customCollection.filter((entry) => entry != value)
       )
       Instance.backgroundCollection = Instance.backgroundCollection
     }
@@ -92,7 +85,7 @@ export default class DesignService extends ReactiveService {
   getRecommendedPalettes(col: Color): Color[][] {
     let start = new Date()
     if (colorPalettes.length == 0) {
-      let pals = Instance.paletteCollection
+      let pals = Instance.paletteCollection ?? [[]]
       for (let palette of pals) {
         let colors: Color[] = []
         for (let color of palette) {
