@@ -8,7 +8,7 @@ export default interface FontPreset {
 export function getBlankPreset(): FontPreset {
   return {
     name: 'New preset',
-    family: 'Arial',
+    family: 'Alegreya',
     size: 48,
     weight: 400,
   }

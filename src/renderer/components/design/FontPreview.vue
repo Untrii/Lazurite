@@ -13,23 +13,39 @@
             {{ preset.name }}
           </div>
           <div>
-            {{ preset.family }}
+            {{ preset.family }} - {{ preset.size }}px,
+            {{ weightFromNumber(preset.weight) }}
           </div>
         </div>
 
-        <div class="preset-card__close" @click.stop="removePreset(preset.name)">
+        <div
+          class="preset-card__close"
+          :class="getCrossClasses(preset.name)"
+          @click.stop="removePreset(preset.name)"
+        >
           ×
         </div>
       </div>
+    </div>
+    <div v-if="presets.length == 0">
+      <div class="card preset-card">
+        <div class="card-body">
+          There is no presets
+        </div>
+      </div>
+    </div>
+    <div class="presets__add-button-wrap">
+      <b-button block @click="addPreset">Add preset</b-button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import ElementService from '@/services/ElementService'
 import Theme, { getBlankTheme } from '@/entities/Theme'
+import { getBlankPreset } from '@/entities/FontPreset'
 //import localize from '@/utils/locales'
 
 const service = new DesignService()
@@ -43,9 +59,12 @@ export default class FontPreview extends Vue {
 
   getState() {
     this.theme = service.theme
+    if (this.selectedPreset == '' && service.theme.fontPresets.length > 0)
+      this.selectedPreset = service.theme.fontPresets[0].name
   }
 
   beforeMount() {
+    console.log('here')
     this.getState()
     service.addOnChangeListener(() => this.getState())
     elementService.addOnChangeListener(() => this.getState())
@@ -71,6 +90,8 @@ export default class FontPreview extends Vue {
 
     for (const font of fonts) {
       result.push({
+        size: font.size,
+        weight: font.weight,
         name: font.name,
         family: font.family,
         style: {
@@ -102,18 +123,71 @@ export default class FontPreview extends Vue {
   }
 
   getCardClasses(name) {
-    if (name == this.selectedPreset) return ['text-white', 'bg-info']
+    if (name == this.selectedPreset) return ['text-white', 'bg-blue']
+    else return []
+  }
+
+  getCrossClasses(name) {
+    if (name == this.selectedPreset) return ['preset-card__close_white']
     else return []
   }
 
   removePreset(name) {
     console.log('Removing preset...')
     service.removeFontPreset(name)
+    if (this.selectedPreset == name) {
+      if (service.theme.fontPresets.length > 0)
+        this.selectedPreset = service.theme.fontPresets[0].name
+    }
+  }
+
+  addPreset() {
+    let preset = getBlankPreset()
+    let existingPresets = service.theme.fontPresets
+    let i = 1
+
+    let isPresetExists = function(num) {
+      for (const entry of existingPresets) {
+        if (entry.name == 'New preset ' + num) return true
+      }
+      return false
+    }
+    while (isPresetExists(i)) i++
+    preset.name = 'New preset ' + i
+
+    this.selectedPreset = preset.name
+    service.addFontPreset(preset)
+  }
+
+  weightFromNumber(num) {
+    switch (num) {
+      case 100:
+        return 'thin'
+      case 300:
+        return 'light'
+      case 400:
+        return 'regular'
+      case 500:
+        return 'medium'
+      case 700:
+        return 'bold'
+      case 800:
+        return 'extra-bold'
+      case 900:
+        return 'black'
+    }
+    return 'regular'
+  }
+
+  @Watch('selectedPreset')
+  onPresetChanged() {
+    this.$emit('presetChanged', this.selectedPreset)
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '@/css/variables.scss';
 .preset-card {
   margin-bottom: 15px;
   user-select: none;
@@ -128,6 +202,14 @@ export default class FontPreview extends Vue {
     float: right;
     cursor: pointer;
     margin-top: -14px;
+
+    &_white {
+      color: White !important;
+    }
   }
+}
+
+.bg-blue {
+  background-color: $blue-light !important;
 }
 </style>

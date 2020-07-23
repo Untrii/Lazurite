@@ -80,6 +80,10 @@ export default class CommonRepository extends ReactiveRepository {
     return this._openedPresentationFile
   }
 
+  commitPresentationChanges() {
+    this.openedPresentation = this.openedPresentation
+  }
+
   async openPresentation(fileName: string) {
     this._openedPresentationFile = fileName.replace('\\', '/')
 
@@ -218,7 +222,11 @@ export default class CommonRepository extends ReactiveRepository {
       }
     }
 
-    var fontsLoader = {
+    for (let i = 0; i < fontList.length; i++) {
+      fontList[i].variants.sort((a, b) => parseInt(a) - parseInt(b))
+    }
+
+    let fontsLoader = {
       push(item) {
         let win: any = window
         if (win.__setupedFontsLoaded) return

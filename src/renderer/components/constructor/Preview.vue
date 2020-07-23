@@ -135,7 +135,7 @@ export default class Preview extends Vue {
     position: relative;
     height: 24px;
     top: 0;
-    right: 12px;
+    right: 23px;
 
     img {
       width: 20px;

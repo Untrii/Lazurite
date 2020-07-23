@@ -44,7 +44,7 @@ export default class DesignService extends ReactiveService {
 
   addFontPreset(preset: Font) {
     Instance.openedPresentation?.theme.fontPresets.push(preset)
-    Instance.openedPresentation = Instance.openedPresentation
+    Instance.commitPresentationChanges()
   }
 
   removeFontPreset(presetName: string) {
@@ -54,7 +54,7 @@ export default class DesignService extends ReactiveService {
       (entry) => entry.name != presetName
     )
     Instance.openedPresentation.theme.fontPresets = filteredPresets
-    Instance.openedPresentation = Instance.openedPresentation
+    Instance.commitPresentationChanges()
   }
 
   deleteBackground(type: BackgroundType | string, value: string) {
@@ -90,12 +90,12 @@ export default class DesignService extends ReactiveService {
     console.log(
       `Got median color ${v} in ${new Date().getTime() - start.getTime()}ms`
     )
-    Instance.openedPresentation = Instance.openedPresentation
+    Instance.commitPresentationChanges()
   }
   selectPalette(palette: Color[]) {
     if (!Instance.openedPresentation) return
     Instance.openedPresentation.theme.palette = palette
-    Instance.openedPresentation = Instance.openedPresentation
+    Instance.commitPresentationChanges()
   }
 
   getRecommendedPalettes(col: Color): Color[][] {
@@ -157,10 +157,37 @@ export default class DesignService extends ReactiveService {
 
   get theme(): Theme {
     if (!Instance.openedPresentation) return getBlankTheme()
-    return Instance.openedPresentation.theme
+    return { ...Instance.openedPresentation.theme }
   }
 
   async getFontList() {
     return await Instance.getFontList()
+  }
+
+  changePresetFontSize(name, newSize) {
+    let presets = Instance.openedPresentation?.theme.fontPresets
+    if (!presets) return
+    for (let i = 0; i < presets.length; i++) {
+      if (presets[i].name == name) presets[i].size = newSize
+    }
+    Instance.commitPresentationChanges()
+  }
+
+  changePresetFontWeight(name, newWeight) {
+    let presets = Instance.openedPresentation?.theme.fontPresets
+    if (!presets) return
+    for (let i = 0; i < presets.length; i++) {
+      if (presets[i].name == name) presets[i].weight = newWeight
+    }
+    Instance.commitPresentationChanges()
+  }
+
+  changePresetFontFamily(name, newFamily) {
+    let presets = Instance.openedPresentation?.theme.fontPresets
+    if (!presets) return
+    for (let i = 0; i < presets.length; i++) {
+      if (presets[i].name == name) presets[i].family = newFamily
+    }
+    Instance.commitPresentationChanges()
   }
 }

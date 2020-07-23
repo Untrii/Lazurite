@@ -23,15 +23,13 @@ export default class ConstructorService extends ReactiveService {
     if (!Instance.isPresentationOpened) return
     let presentation = Instance.openedPresentation
     presentation?.slides.push(new Map())
-    Instance.openedPresentation = Instance.openedPresentation
-    this.onChange()
+    Instance.commitPresentationChanges()
   }
   deleteSlide(index: number) {
     if (!Instance.isPresentationOpened) return
     let slides = Instance.openedPresentation?.slides
     slides = slides?.splice(index, 1)
-    Instance.openedPresentation = Instance.openedPresentation
-    this.onChange()
+    Instance.commitPresentationChanges()
   }
 
   selectObject(id: string) {
@@ -54,8 +52,7 @@ export default class ConstructorService extends ReactiveService {
       if (slides[this._selectedSlideIndex].has(objectId)) {
         slides[this._selectedSlideIndex].delete(objectId)
       }
-    Instance.openedPresentation = Instance.openedPresentation
-    this.onChange()
+    Instance.commitPresentationChanges()
   }
   copyObjects(objectIds: Set<string>) {
     this.clipboard.clear()
@@ -67,8 +64,7 @@ export default class ConstructorService extends ReactiveService {
         let obj = slides[this._selectedSlideIndex].get(objectId)
         if (obj) this.clipboard.add(obj)
       }
-    Instance.openedPresentation = Instance.openedPresentation
-    this.onChange()
+    Instance.commitPresentationChanges()
   }
 
   changeObjectProperty(objectId: string, propertyName: string, newVal: any) {
@@ -79,8 +75,7 @@ export default class ConstructorService extends ReactiveService {
       if (slides[slideMapId].has(objectId)) {
         let obj: any = slides[slideMapId].get(objectId)
         obj[propertyName] = newVal
-        Instance.openedPresentation = Instance.openedPresentation
-        this.onChange()
+        Instance.commitPresentationChanges()
         return
       }
     }

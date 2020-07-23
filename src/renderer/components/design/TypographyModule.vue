@@ -2,32 +2,50 @@
   <div class="root">
     <div class="content">
       <div class="presets">
-        <font-preview class="preview"></font-preview>
-        <div class="presets__add-button-wrap">
-          <b-button block @click="addPreset">Add preset</b-button>
-        </div>
+        <font-preview
+          class="preview"
+          @presetChanged="onPresetChanged"
+        ></font-preview>
       </div>
-      <div class="font-list">
-        <ul class="list-group">
-          <li
-            class="list-group-item d-flex justify-content-between align-items-center font-list__item"
-            v-for="font in fontList"
-            :key="font.name"
-          >
-            <div :style="'font-family:' + font.name">
-              {{ font.name.split("'").join('') }}
-            </div>
-            <span class="badge badge-pill" style="font-weight: 900">
-              <div
-                v-for="size in font.variants"
-                :key="size"
-                style="display: inline; margin: 0 10px;"
-              >
-                {{ size + ' ' }}
+      <div class="preset-redactor">
+        <div class="preset-redactor__font-settings">
+          <b-input-group prepend="Font size" class="preset-redactor__input">
+            <b-input
+              type="number"
+              :value="presetFont.size"
+              @input="onSizeChange"
+            ></b-input>
+          </b-input-group>
+          <b-input-group prepend="Font weight" class="preset-redactor__input">
+            <b-form-select
+              :value="presetFont.weight"
+              :options="presetFontVariants"
+              @change="onWeightChange"
+            ></b-form-select>
+          </b-input-group>
+        </div>
+        <div class="font-list">
+          <ul class="list-group">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center font-list__item"
+              v-for="font in fontList"
+              :key="font.name"
+            >
+              <div :style="'font-family:' + font.name">
+                {{ font.name.split("'").join('') }}
               </div>
-            </span>
-          </li>
-        </ul>
+              <span class="badge badge-pill" style="font-weight: 900">
+                <div
+                  v-for="size in font.variants"
+                  :key="size"
+                  class="badge-entry"
+                >
+                  {{ size + ' ' }}
+                </div>
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -37,8 +55,8 @@
 import { Vue, Component } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import localize from '@/utils/locales'
-import FontPreview from './FontPreview.vue'
 import { getBlankPreset } from '@/entities/FontPreset'
+import FontPreview from './FontPreview.vue'
 
 const service = new DesignService()
 
@@ -49,6 +67,7 @@ const service = new DesignService()
 })
 export default class TypographyModule extends Vue {
   pickedType = 'text'
+  selectedPreset = ''
   fontList: any[] = []
 
   localize(str) {
@@ -67,30 +86,42 @@ export default class TypographyModule extends Vue {
     service.addOnChangeListener(() => this.getState())
   }
 
-  addPreset() {
-    let preset = getBlankPreset()
-    let existingPresets = service.theme.fontPresets
-    let i = 1
+  onPresetChanged(selectedPreset) {
+    this.selectedPreset = selectedPreset
+  }
 
-    let isPresetExists = function(num) {
-      for (const entry of existingPresets) {
-        if (entry.name == 'New preset ' + num) return true
-      }
-      return false
+  onSizeChange(newSize) {
+    if (newSize == '') return
+    if (typeof newSize != 'number') newSize = parseInt(newSize)
+    if (newSize > 200) newSize = 200
+    service.changePresetFontSize(this.selectedPreset, newSize)
+  }
+
+  onWeightChange(newWeight) {
+    if (typeof newWeight != 'number') newWeight = parseInt(newWeight)
+    service.changePresetFontWeight(this.selectedPreset, newWeight)
+  }
+
+  get presetFont() {
+    let presets = service.theme.fontPresets
+    for (const entry of presets) {
+      if (entry.name == this.selectedPreset) return entry
     }
-    while (isPresetExists(i)) i++
-    preset.name = 'New preset ' + i
-
-    service.addFontPreset(preset)
+    return getBlankPreset()
+  }
+  get presetFontVariants() {
+    for (const entry of this.fontList) {
+      if (entry.name == "'" + this.presetFont.family + "'")
+        return entry.variants
+    }
+    return [400]
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .root {
-  overflow-y: scroll;
-  height: calc(100% - 30px);
-  margin-top: 15px;
+  height: 100%;
 
   &::-webkit-scrollbar-thumb {
     border-color: white;
@@ -114,17 +145,55 @@ export default class TypographyModule extends Vue {
   }
 }
 
-.font-list {
-  &__item {
-    cursor: pointer;
+.preset-redactor {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  height: 100%;
+
+  &__font-settings {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  &__input {
+    padding-top: 20px;
+    padding-right: 20px;
   }
 }
 
+.font-list {
+  overflow-y: scroll;
+  height: 100%;
+  max-height: calc(100vh - 124px);
+  margin-top: 20px;
+  padding-right: 2px;
+  margin-right: 6px;
+  &__item {
+    cursor: pointer;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-style: solid;
+    border-width: 4px 10px 0px 0px;
+    border-color: white;
+    &:hover {
+      border: solid 2px white;
+      border-radius: 10px;
+    }
+  }
+}
+
+.badge-entry {
+  display: inline;
+  margin: 0px 10px;
+}
+
 .preview {
-  padding: 0 15px;
+  padding: 20px;
+  position: sticky;
 }
 
 .content {
+  height: 100%;
   display: grid;
   grid-template-columns: 2fr 3fr;
 }
