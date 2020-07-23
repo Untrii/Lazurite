@@ -1,23 +1,12 @@
 <template>
   <div class="root">
-    <div class="type-picker">
-      <h4
-        class="type-picker__item"
-        :class="{ 'type-picker__item_selected': pickedType == 'text' }"
-        @click="pickedType = 'text'"
-      >
-        {{ localize('text') }}
-      </h4>
-      <h4
-        class="type-picker__item"
-        :class="{ 'type-picker__item_selected': pickedType == 'headers' }"
-        @click="pickedType = 'headers'"
-      >
-        {{ localize('headers') }}
-      </h4>
-    </div>
     <div class="content">
-      <font-preview class="preview"></font-preview>
+      <div class="presets">
+        <font-preview class="preview"></font-preview>
+        <div class="presets__add-button-wrap">
+          <b-button block @click="addPreset">Add preset</b-button>
+        </div>
+      </div>
       <div class="font-list">
         <ul class="list-group">
           <li
@@ -49,6 +38,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import localize from '@/utils/locales'
 import FontPreview from './FontPreview.vue'
+import { getBlankPreset } from '@/entities/FontPreset'
 
 const service = new DesignService()
 
@@ -76,13 +66,31 @@ export default class TypographyModule extends Vue {
     this.getState()
     service.addOnChangeListener(() => this.getState())
   }
+
+  addPreset() {
+    let preset = getBlankPreset()
+    let existingPresets = service.theme.fontPresets
+    let i = 1
+
+    let isPresetExists = function(num) {
+      for (const entry of existingPresets) {
+        if (entry.name == 'New preset ' + num) return true
+      }
+      return false
+    }
+    while (isPresetExists(i)) i++
+    preset.name = 'New preset ' + i
+
+    service.addFontPreset(preset)
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .root {
   overflow-y: scroll;
-  height: 100%;
+  height: calc(100% - 30px);
+  margin-top: 15px;
 
   &::-webkit-scrollbar-thumb {
     border-color: white;
@@ -119,5 +127,11 @@ export default class TypographyModule extends Vue {
 .content {
   display: grid;
   grid-template-columns: 2fr 3fr;
+}
+
+.presets {
+  &__add-button-wrap {
+    margin: 0 30px;
+  }
 }
 </style>

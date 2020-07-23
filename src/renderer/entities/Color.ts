@@ -14,7 +14,7 @@ export default class Color {
     let hexNum = parseInt(hex, 16)
 
     this.r = Math.floor(hexNum / 0x10000)
-    this.g = Math.floor(hexNum % 0x10000) / 0x100
+    this.g = Math.floor((hexNum % 0x10000) / 0x100)
     this.b = Math.floor(hexNum % 0x100)
 
     return this

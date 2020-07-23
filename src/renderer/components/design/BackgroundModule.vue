@@ -145,6 +145,7 @@ export default class BackgroundModule extends Vue {
         this.isColorPaletteOpened = true
         try {
           let result: string = await promise
+          await this.selectBackground(result)
           service.addBackground(this.pickedType, result)
           this.isColorPaletteOpened = false
         } catch {}

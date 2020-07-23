@@ -1,4 +1,5 @@
 import { Instance } from '@/repositories/CommonRepository'
+import Font from '@/entities/FontPreset'
 import ReactiveService from './ReactiveService'
 import BackgroundCollection, {
   getBlankCollection,
@@ -39,6 +40,21 @@ export default class DesignService extends ReactiveService {
         Instance.backgroundCollection = Instance.backgroundCollection
       }
     }
+  }
+
+  addFontPreset(preset: Font) {
+    Instance.openedPresentation?.theme.fontPresets.push(preset)
+    Instance.openedPresentation = Instance.openedPresentation
+  }
+
+  removeFontPreset(presetName: string) {
+    if (!Instance.openedPresentation) return
+
+    let filteredPresets = Instance.openedPresentation.theme.fontPresets.filter(
+      (entry) => entry.name != presetName
+    )
+    Instance.openedPresentation.theme.fontPresets = filteredPresets
+    Instance.openedPresentation = Instance.openedPresentation
   }
 
   deleteBackground(type: BackgroundType | string, value: string) {

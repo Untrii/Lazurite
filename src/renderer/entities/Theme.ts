@@ -1,5 +1,5 @@
 import Color from './Color'
-import Font from './Font'
+import Font from './FontPreset'
 
 export default interface Theme {
   backgroundColor: Color
@@ -23,7 +23,9 @@ export function getBlankTheme(): Theme {
     backgroundColor: new Color().fromRgb(255, 255, 255),
     backgroundType: BackgroundType.Color,
     backgroundValue: '#FFFFFF',
-    fontPresets: [],
+    fontPresets: [
+      { name: 'preset1', family: 'Alegreya', size: 80, weight: 400 },
+    ],
     palette: [],
   }
 }

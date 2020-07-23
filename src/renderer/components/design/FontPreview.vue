@@ -1,26 +1,25 @@
 <template>
   <div>
-    <div class="card">
+    <div
+      :class="getCardClasses(preset.name)"
+      class="card preset-card"
+      v-for="preset in presets"
+      :key="preset.name"
+      @click="selectedPreset = preset.name"
+    >
       <div class="card-body">
-        <h1 :style="getFontStyle('slideTitle')">
-          Slide title
-        </h1>
-        <h2 :style="getFontStyle('slideSubtitle')">
-          Slide subtitle
-        </h2>
-        <h3 :style="getFontStyle('paragraphTitle')">
-          Paragraph title
-        </h3>
-        <h4 :style="getFontStyle('paragraphText')">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </h4>
-        Scale 1:{{ 1 / this.scale }}
+        <div class="preset-card__content">
+          <div :style="preset.style">
+            {{ preset.name }}
+          </div>
+          <div>
+            {{ preset.family }}
+          </div>
+        </div>
+
+        <div class="preset-card__close" @click.stop="removePreset(preset.name)">
+          ×
+        </div>
       </div>
     </div>
   </div>
@@ -29,13 +28,16 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
+import ElementService from '@/services/ElementService'
 import Theme, { getBlankTheme } from '@/entities/Theme'
 //import localize from '@/utils/locales'
 
 const service = new DesignService()
+const elementService = new ElementService()
 
 @Component
 export default class FontPreview extends Vue {
+  selectedPreset = ''
   theme: Theme = getBlankTheme()
   scale: number = 1
 
@@ -46,6 +48,7 @@ export default class FontPreview extends Vue {
   beforeMount() {
     this.getState()
     service.addOnChangeListener(() => this.getState())
+    elementService.addOnChangeListener(() => this.getState())
     window.addEventListener('resize', this.updateScale)
   }
 
@@ -61,10 +64,31 @@ export default class FontPreview extends Vue {
     this.scale = scale
   }
 
+  get presets() {
+    let result: any[] = []
+
+    let fonts = this.theme.fontPresets
+
+    for (const font of fonts) {
+      result.push({
+        name: font.name,
+        family: font.family,
+        style: {
+          fontFamily: font.family,
+          fontWeight: font.weight,
+          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size *
+            (1 / 10.8)}vh)`,
+        },
+      })
+    }
+    return result
+  }
+
   getFontStyle(name) {
     this.updateScale()
 
     let fonts = this.theme.fontPresets
+
     for (const font of fonts) {
       if (font.name == name) {
         return {
@@ -76,7 +100,34 @@ export default class FontPreview extends Vue {
     }
     return `font-family:Arial;font-weight:400;font-size:${48 * this.scale}px;`
   }
+
+  getCardClasses(name) {
+    if (name == this.selectedPreset) return ['text-white', 'bg-info']
+    else return []
+  }
+
+  removePreset(name) {
+    console.log('Removing preset...')
+    service.removeFontPreset(name)
+  }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.preset-card {
+  margin-bottom: 15px;
+  user-select: none;
+
+  &__content {
+    float: left;
+  }
+
+  &__close {
+    color: gray;
+    font-size: 28px;
+    float: right;
+    cursor: pointer;
+    margin-top: -14px;
+  }
+}
+</style>

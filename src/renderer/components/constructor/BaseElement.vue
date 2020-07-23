@@ -3,7 +3,7 @@ import { Vue, Prop, Component } from 'vue-property-decorator'
 import VisualisationService from '@/services/VisualisationService'
 import SlideObject, { getBlankObject } from '@/entities/SlideObject'
 
-import TextBlock from '@/elements/TextBlock.vue'
+import TextBlock from '@/components/elements/TextBlock.vue'
 
 let service = new VisualisationService()
 
