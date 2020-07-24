@@ -202,7 +202,6 @@ export default class CommonRepository extends ReactiveRepository {
       fontWeight = fontWeight.replace('italic', '')
       let styleString = `@font-face { font-family: '${fontFamily}';font-style: ${fontStyle};font-weight: ${fontWeight};font-display: swap;src: url('${dataDir}/fonts/${fileName}');}`
       styles.push(styleString)
-      fontFamily = `'${fontFamily}'`
 
       let found = false
       if (fontStyle == 'regular') {

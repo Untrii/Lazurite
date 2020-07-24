@@ -27,12 +27,19 @@
         <div class="font-list">
           <ul class="list-group">
             <li
-              class="list-group-item d-flex justify-content-between align-items-center font-list__item"
+              class="list-group-item font-list__item"
+              :class="{
+                'list-group-item-info': presetFont.family == font.name,
+              }"
+              @click="selectFont(font.name)"
               v-for="font in fontList"
               :key="font.name"
             >
-              <div :style="'font-family:' + font.name">
-                {{ font.name.split("'").join('') }}
+              <div
+                :style="'font-family:' + font.name"
+                class="font-list__item-label"
+              >
+                {{ font.name }}
               </div>
               <span class="badge badge-pill" style="font-weight: 900">
                 <div
@@ -102,6 +109,10 @@ export default class TypographyModule extends Vue {
     service.changePresetFontWeight(this.selectedPreset, newWeight)
   }
 
+  selectFont(family) {
+    service.changePresetFontFamily(this.selectedPreset, family)
+  }
+
   get presetFont() {
     let presets = service.theme.fontPresets
     for (const entry of presets) {
@@ -111,8 +122,7 @@ export default class TypographyModule extends Vue {
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == "'" + this.presetFont.family + "'")
-        return entry.variants
+      if (entry.name == this.presetFont.family) return entry.variants
     }
     return [400]
   }
@@ -170,10 +180,16 @@ export default class TypographyModule extends Vue {
   margin-right: 6px;
   &__item {
     cursor: pointer;
+    justify-content: space-between !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  &__item-label {
+    font-size: 18px;
   }
   &::-webkit-scrollbar-thumb {
     border-style: solid;
-    border-width: 4px 10px 0px 0px;
+    border-width: 0px 10px 0px 0px;
     border-color: white;
     &:hover {
       border: solid 2px white;
@@ -187,6 +203,12 @@ export default class TypographyModule extends Vue {
   margin: 0px 10px;
 }
 
+@media (max-width: 1200px) {
+  .badge-entry {
+    display: none;
+  }
+}
+
 .preview {
   padding: 20px;
   position: sticky;
@@ -195,7 +217,7 @@ export default class TypographyModule extends Vue {
 .content {
   height: 100%;
   display: grid;
-  grid-template-columns: 2fr 3fr;
+  grid-template-columns: minmax(max-content, 2fr) 3fr;
 }
 
 .presets {
