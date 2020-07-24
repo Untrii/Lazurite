@@ -12,13 +12,13 @@
           <b-input-group prepend="Font size" class="preset-redactor__input">
             <b-input
               type="number"
-              :value="presetFont.size"
+              :value="getPresetFont(selectedPreset).size"
               @input="onSizeChange"
             ></b-input>
           </b-input-group>
           <b-input-group prepend="Font weight" class="preset-redactor__input">
             <b-form-select
-              :value="presetFont.weight"
+              :value="getPresetFont(selectedPreset).weight"
               :options="presetFontVariants"
               @change="onWeightChange"
             ></b-form-select>
@@ -29,7 +29,8 @@
             <li
               class="list-group-item font-list__item"
               :class="{
-                'list-group-item-info': presetFont.family == font.name,
+                'list-group-item-info':
+                  getPresetFont(selectedPreset).family == font.name,
               }"
               @click="selectFont(font.name)"
               v-for="font in fontList"
@@ -59,10 +60,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import localize from '@/utils/locales'
-import { getBlankPreset } from '@/entities/FontPreset'
+import FontPreset, { getBlankPreset } from '@/entities/FontPreset'
 import FontPreview from './FontPreview.vue'
 
 const service = new DesignService()
@@ -113,7 +114,7 @@ export default class TypographyModule extends Vue {
     service.changePresetFontFamily(this.selectedPreset, family)
   }
 
-  get presetFont() {
+  getPresetFont(presetName): FontPreset {
     let presets = service.theme.fontPresets
     for (const entry of presets) {
       if (entry.name == this.selectedPreset) return entry
@@ -122,7 +123,8 @@ export default class TypographyModule extends Vue {
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == this.presetFont.family) return entry.variants
+      if (entry.name == this.getPresetFont(this.selectedPreset).family)
+        return entry.variants
     }
     return [400]
   }

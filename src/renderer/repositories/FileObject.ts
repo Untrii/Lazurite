@@ -47,17 +47,19 @@ export default class FileObject {
       }
       this.cachedObject = obj
       return obj
-    } else return { ...this.cachedObject }
+    } else if (Array.isArray(this.cachedObject)) return [...this.cachedObject]
+    else return { ...this.cachedObject }
   }
 
   async push<T>(obj: T) {
-    this.cachedObject = { ...obj }
+    this.cachedObject = obj
 
     if (new Date().getTime() - this.lastSync.getTime() > this.syncRate) {
       let data = serialize(obj)
       if (!this.isSaveSchedulled) {
         this.isSaveSchedulled = true
         setTimeout(() => {
+          console.log('saving to disk...')
           this.pushToFs(serialize(this.cachedObject))
           this.isSaveSchedulled = false
         }, this.syncRate)
