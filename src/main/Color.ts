@@ -37,7 +37,7 @@ export default class Color {
     )
   }
 
-  public toCssRgb(): string {
+  public toCssColor(): string {
     return `rgb(${this.r},${this.g},${this.b})`
   }
 }

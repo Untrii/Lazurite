@@ -1,6 +1,6 @@
 import { Instance } from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
-import SlideObject from '@/entities/SlideObject'
+import SlideObject, { getBlankObject } from '@/entities/SlideObject'
 import Presentation from '@/entities/Presentation'
 import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
@@ -38,7 +38,7 @@ export default class ConstructorService extends ReactiveService {
     console.log('Creating ' + preset.type + '...')
     if (!Instance.openedPresentation || this.selectedSlideIndex == undefined)
       return
-    let slideObject: any = {}
+    let slideObject: any = getBlankObject()
     slideObject.id = randomString(12)
     slideObject.type = preset.type
     for (const key of preset.prameters.keys()) {

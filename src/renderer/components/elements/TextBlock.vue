@@ -15,10 +15,11 @@ export default class TextBlock extends Vue {
   fontSize = 0
   fontWeight = 400
   content = ''
-  color = new Color()
-  backgroundColor = new Color()
+  color = new Color(false)
+  backgroundColor = new Color(true)
 
   @Prop(String) id
+  @Prop(Number) scale
 
   getState() {
     let obj: any = service.elementById(this.id)
@@ -27,17 +28,17 @@ export default class TextBlock extends Vue {
     if (obj.fontSize) this.fontSize = obj.fontSize
     if (obj.fontWeight) this.fontWeight = obj.fontWeight
     if (obj.content) this.content = obj.content
-    if (obj.color) this.fontFamily = obj.color
-    if (obj.backgroundColor) this.fontFamily = obj.backgroundColor
+    if (obj.color) this.color = obj.color
+    if (obj.backgroundColor) this.backgroundColor = obj.backgroundColor
   }
 
-  blockStyle() {
+  get blockStyle() {
     return {
       fontFamily: "'" + this.fontFamily + "'",
-      fontSize: this.fontSize + 'px',
+      fontSize: this.fontSize * this.scale + 'px',
       fontWeight: this.fontWeight,
-      color: this.color.toCssRgb(),
-      backgroundColor: this.backgroundColor.toHex(),
+      color: this.color.toCssColor(),
+      backgroundColor: this.backgroundColor.toCssColor(),
     }
   }
 

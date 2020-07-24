@@ -1,6 +1,11 @@
 <template>
   <div class="slide" :style="rootStyle">
-    <base-element v-for="id in elementIds" :key="id" :id="id"></base-element>
+    <base-element
+      v-for="id in elementIds"
+      :key="id"
+      :id="id"
+      :scale="width / 1920"
+    ></base-element>
   </div>
 </template>
 
@@ -81,4 +86,8 @@ export default class Slide extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+.slide {
+  position: relative;
+}
+</style>

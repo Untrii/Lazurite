@@ -14,12 +14,10 @@ let service = new VisualisationService()
 })
 export default class BaseElement extends Vue {
   @Prop(String) id
-
-  getState() {}
+  @Prop(Number) scale
 
   beforeMount() {
-    this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(() => this.$forceUpdate())
   }
 
   get element(): SlideObject {
@@ -27,8 +25,16 @@ export default class BaseElement extends Vue {
   }
 
   render(createElement) {
+    let obj: any = service.elementById(this.id)
     return createElement(this.element.type.split('/')[0], {
-      props: this.element,
+      props: { ...this.element, scale: this.scale },
+      style: {
+        position: 'absolute',
+        height: obj.height * this.scale + 'px',
+        width: obj.width * this.scale + 'px',
+        top: obj.top * this.scale + 'px',
+        left: obj.left * this.scale + 'px',
+      },
       on: this.$listeners,
     })
   }

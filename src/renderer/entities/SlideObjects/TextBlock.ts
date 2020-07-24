@@ -32,7 +32,7 @@ export function getBlankObject(): TextBlock {
     fontSize: 0,
     fontWeight: 400,
     color: new Color(),
-    backgroundColor: new Color(),
+    backgroundColor: new Color(true),
     backgroundOpacity: 0,
     showBorder: false,
     borderStyle: BorderStyle.Solid,
