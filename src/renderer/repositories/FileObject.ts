@@ -9,6 +9,7 @@ export default class FileObject {
   private fileName: string
   private fs: FileSystem
   private ioActive: boolean
+  private isSaveSchedulled = false
   private lastSync: Date
   private syncRate: number //milliseconds
   private cachedObject: any
@@ -54,7 +55,13 @@ export default class FileObject {
 
     if (new Date().getTime() - this.lastSync.getTime() > this.syncRate) {
       let data = serialize(obj)
-      this.pushToFs(data)
+      if (!this.isSaveSchedulled) {
+        this.isSaveSchedulled = true
+        setTimeout(() => {
+          this.pushToFs(serialize(this.cachedObject))
+          this.isSaveSchedulled = false
+        }, this.syncRate)
+      }
     }
   }
 
