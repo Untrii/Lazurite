@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import localize from '@/utils/locales'
 import FontPreset, { getBlankPreset } from '@/entities/FontPreset'

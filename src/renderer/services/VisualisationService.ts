@@ -19,6 +19,7 @@ export default class VisualisationService extends ReactiveService {
   }
 
   elementById(id: string): SlideObject {
+    console.log('Rendering element with ID: ' + id)
     if (!Instance.openedPresentation) return getBlankObject()
     for (let slide of Instance.openedPresentation.slides) {
       if (slide.has(id)) {

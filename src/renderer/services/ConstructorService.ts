@@ -2,6 +2,8 @@ import { Instance } from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
 import SlideObject from '@/entities/SlideObject'
 import Presentation from '@/entities/Presentation'
+import ElementPreset from '@/entities/ElementPreset'
+import randomString from '@/utils/StringGenerator'
 
 export default class ConstructorService extends ReactiveService {
   private _selectedSlideIndex: number
@@ -32,6 +34,22 @@ export default class ConstructorService extends ReactiveService {
     Instance.commitPresentationChanges()
   }
 
+  createObject(preset: ElementPreset) {
+    console.log('Creating ' + preset.type + '...')
+    if (!Instance.openedPresentation || this.selectedSlideIndex == undefined)
+      return
+    let slideObject: any = {}
+    slideObject.id = randomString(12)
+    slideObject.type = preset.type
+    for (const key of preset.prameters.keys()) {
+      slideObject[key] = preset.prameters.get(key)
+    }
+    Instance.openedPresentation.slides[this.selectedSlideIndex].set(
+      slideObject.id,
+      slideObject
+    )
+    Instance.commitPresentationChanges()
+  }
   selectObject(id: string) {
     this._selectedObjectIds.add(id)
     this.onChange()

@@ -1,3 +1,7 @@
+/**
+ * Generates random string
+ * @param length Length of generated string, by default 8
+ */
 export default function randomString(length: number | undefined): string {
   if (length == undefined) length = 8
   let result: string[] = []
@@ -6,5 +10,5 @@ export default function randomString(length: number | undefined): string {
   for (let i = 0; i < length; i++) {
     result.push(characters.charAt(Math.floor(Math.random() * charactersLength)))
   }
-  return result.join()
+  return result.join('')
 }

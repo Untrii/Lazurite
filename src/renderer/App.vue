@@ -22,7 +22,7 @@ import Titlebar from './components/titlebar/Titlebar.vue'
   },
 })
 export default class App extends Vue {
-  openedTab = 'design'
+  openedTab = 'constructor'
 
   mounted() {
     console.log('loaded')

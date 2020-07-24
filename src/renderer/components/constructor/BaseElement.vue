@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Vue, Prop, Component } from 'vue-property-decorator'
 import VisualisationService from '@/services/VisualisationService'
-import SlideObject, { getBlankObject } from '@/entities/SlideObject'
+import SlideObject from '@/entities/SlideObject'
 
 import TextBlock from '@/components/elements/TextBlock.vue'
 
@@ -13,17 +13,17 @@ let service = new VisualisationService()
   },
 })
 export default class BaseElement extends Vue {
-  element: SlideObject = getBlankObject()
+  @Prop(String) id
 
-  @Prop(String) id = ''
-
-  getState() {
-    this.element = service.elementById(this.id)
-  }
+  getState() {}
 
   beforeMount() {
     this.getState()
     service.addOnChangeListener(() => this.getState())
+  }
+
+  get element(): SlideObject {
+    return service.elementById(this.id)
   }
 
   render(createElement) {

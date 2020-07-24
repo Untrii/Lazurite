@@ -18,7 +18,7 @@ export default class TextBlock extends Vue {
   color = new Color()
   backgroundColor = new Color()
 
-  @Prop(String) id = ''
+  @Prop(String) id
 
   getState() {
     let obj: any = service.elementById(this.id)

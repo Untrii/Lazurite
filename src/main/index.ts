@@ -14,8 +14,8 @@ app.on('ready', () => {
     .then((name: any) => console.log(`Added Extension:  ${name}`))
     .catch((err: any) => console.log('An error occurred: ', err))
   let window: BrowserWindow | null = new BrowserWindow({
-    width: 1024,
-    height: 600,
+    width: 1600,
+    height: 900,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,

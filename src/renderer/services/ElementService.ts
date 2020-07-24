@@ -19,7 +19,7 @@ export default class ElementService extends ReactiveService {
     let elementPresets: ElementPreset[] = []
     for (const entry of fontPresets) {
       elementPresets.push(
-        new ElementPreset(assets.text, entry.name, {
+        new ElementPreset(assets.text, entry.name, 'TextBlock', {
           height: entry.size,
           width: entry.size * 5,
           fontWeight: entry.weight,
