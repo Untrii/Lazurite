@@ -9,9 +9,6 @@
         :key="index"
         class="palette"
       >
-        <div class="sel-mark" v-if="selectedPaletteIndex == index">
-          <h5>selected</h5>
-        </div>
         <div class="palette__brick-wrap" @click="selectedPaletteIndex = index">
           <div
             class="palette__brick"
@@ -19,6 +16,9 @@
             :key="cindex"
             :style="{ background: color.toCssColor() }"
           ></div>
+        </div>
+        <div class="sel-mark" v-if="selectedPaletteIndex == index">
+          <h5>selected</h5>
         </div>
       </div>
     </div>
@@ -86,6 +86,11 @@ export default class ColorModule extends Vue {
 .root {
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar-thumb {
+    border-color: white;
+  }
 }
 .header {
   margin: 40px;
@@ -103,6 +108,7 @@ export default class ColorModule extends Vue {
   padding: 0 20px 40px 40px;
   border-radius: 8px;
   max-width: 600px;
+  position: relative;
   width: 100%;
 
   &__brick-wrap {
@@ -130,7 +136,8 @@ export default class ColorModule extends Vue {
 }
 
 .sel-mark {
-  position: fixed;
+  position: absolute;
+  top: 0;
 }
 .sel-mark h5 {
   padding: 4px;
