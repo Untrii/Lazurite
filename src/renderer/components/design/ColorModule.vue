@@ -17,7 +17,7 @@
             class="palette__brick"
             v-for="(color, cindex) in palette"
             :key="cindex"
-            :style="{ background: color.toCssRgb() }"
+            :style="{ background: color.toCssColor() }"
           ></div>
         </div>
       </div>

@@ -40,4 +40,5 @@ export async function getMedianColor(type, val: string): Promise<Color> {
       Math.floor(b / h / w)
     )
   }
+  return new Color()
 }

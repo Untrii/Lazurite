@@ -55,7 +55,6 @@ export default class FileObject {
     this.cachedObject = obj
 
     if (new Date().getTime() - this.lastSync.getTime() > this.syncRate) {
-      let data = serialize(obj)
       if (!this.isSaveSchedulled) {
         this.isSaveSchedulled = true
         setTimeout(() => {
