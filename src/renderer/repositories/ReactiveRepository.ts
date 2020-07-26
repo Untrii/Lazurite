@@ -5,7 +5,7 @@ export default class ReactiveRepository {
     this.onChangeListeners = []
   }
 
-  protected onChange() {
+  public onChange() {
     for (let callback of this.onChangeListeners) {
       callback()
     }

@@ -85,7 +85,9 @@ export default class Preview extends Vue {
     service.createSlide()
     this.getState()
   }
-  selectSlide(index: number) {
+  selectSlide(index: number | string) {
+    console.log('preview')
+    if (typeof index == 'string') index = parseInt(index)
     service.selectSlide(index)
   }
   deleteSlide(index: number) {

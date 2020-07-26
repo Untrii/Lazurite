@@ -6,20 +6,19 @@ import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
 
 export default class ConstructorService extends ReactiveService {
-  private _selectedSlideIndex: number
   private _selectedObjectIds: Set<string>
   private clipboard: Set<SlideObject>
 
   constructor() {
     super()
-    this._selectedSlideIndex = 0
+    Instance.variables.selectedSlideIndex = 0
     this._selectedObjectIds = new Set()
     this.clipboard = new Set()
   }
 
   selectSlide(index: number) {
-    this._selectedSlideIndex = index
-    this.onChange()
+    Instance.variables.selectedSlideIndex = index
+    Instance.onChange()
   }
   createSlide() {
     if (!Instance.isPresentationOpened) return
@@ -67,8 +66,8 @@ export default class ConstructorService extends ReactiveService {
     let slides = Instance.openedPresentation.slides
 
     for (let objectId of objectIds)
-      if (slides[this._selectedSlideIndex].has(objectId)) {
-        slides[this._selectedSlideIndex].delete(objectId)
+      if (slides[Instance.variables.selectedSlideIndex].has(objectId)) {
+        slides[Instance.variables.selectedSlideIndex].delete(objectId)
       }
     Instance.commitPresentationChanges()
   }
@@ -78,8 +77,8 @@ export default class ConstructorService extends ReactiveService {
     let slides = Instance.openedPresentation.slides
 
     for (let objectId of objectIds)
-      if (slides[this._selectedSlideIndex].has(objectId)) {
-        let obj = slides[this._selectedSlideIndex].get(objectId)
+      if (slides[Instance.variables.selectedSlideIndex].has(objectId)) {
+        let obj = slides[Instance.variables.selectedSlideIndex].get(objectId)
         if (obj) this.clipboard.add(obj)
       }
     Instance.commitPresentationChanges()
@@ -126,7 +125,7 @@ export default class ConstructorService extends ReactiveService {
   }
 
   get selectedSlideIndex(): number | undefined {
-    return this._selectedSlideIndex
+    return Instance.variables.selectedSlideIndex
   }
   get selectedObjectId(): string | undefined {
     if (this._selectedObjectIds.size == 1)

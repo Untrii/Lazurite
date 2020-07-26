@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import BaseElement from '@/components/elements/BaseElement.vue'
 import RedactableBaseElement from './redactableElements/RedactableBaseElement.vue'
 import VisualisationService from '@/services/VisualisationService'
@@ -40,6 +40,7 @@ export default class Slide extends Vue {
   @Prop(Number) height
   @Prop(Boolean) isRedactable
 
+  @Watch('index')
   getState() {
     this.elementIds = Array.from(service.slideByIndex(this.index).keys())
     this.theme = { ...service.theme }

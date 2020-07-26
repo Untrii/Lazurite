@@ -37,6 +37,10 @@ export default class CommonRepository extends ReactiveRepository {
   private _paletteCollectionFileHandle: FileObject | undefined
   private _paletteCollectionFile: string[][] | undefined
 
+  public variables = {
+    selectedSlideIndex: 0,
+  }
+
   constructor() {
     super()
     this._isFileOpened = false
