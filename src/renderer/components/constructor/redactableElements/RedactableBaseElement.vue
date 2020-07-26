@@ -18,6 +18,7 @@ export default class RedactableBaseElement extends Vue {
 
   beforeMount() {
     visualisationService.addOnChangeListener(() => this.$forceUpdate())
+    constructorService.addOnChangeListener(() => this.$forceUpdate())
   }
 
   get element(): SlideObject {
@@ -64,6 +65,8 @@ export default class RedactableBaseElement extends Vue {
       'DraggableResizable',
       {
         props: {
+          isActive: constructorService.selectedObjectIds.includes(this.id),
+
           gridX: 60 * this.scale,
           gridY: 60 * this.scale,
 
@@ -83,6 +86,13 @@ export default class RedactableBaseElement extends Vue {
               this.id,
               this.unscaleElement(newRect)
             )
+          },
+          activated: () => {
+            constructorService.deselectAllObjects()
+            constructorService.selectObject(this.id)
+          },
+          deactivated: () => {
+            constructorService.deselectObject(this.id)
           },
         },
       },
