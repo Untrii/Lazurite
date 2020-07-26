@@ -21,6 +21,7 @@
     "electron-webpack-vue": "^2.4.0",
     "file-loader": "^6.0.0",
     "node-sass": "^4.14.1",
+    "reflect-metadata": "^0.1.13",
     "sass-loader": "^8.0.2",
     "serialize-javascript": "^3.0.0",
     "ts-loader": "^7.0.4",
@@ -33,6 +34,8 @@
     "webpack": "^4.43.0"
   },
   "dependencies": {
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
+    "@vue/babel-preset-jsx": "^1.1.2",
     "jimp": "^0.12.1",
     "source-map-support": "^0.5.19"
   }

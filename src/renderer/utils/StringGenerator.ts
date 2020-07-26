@@ -2,7 +2,7 @@
  * Generates random string
  * @param length Length of generated string, by default 8
  */
-export default function randomString(length: number | undefined): string {
+export default function randomString(length?: number): string {
   if (length == undefined) length = 8
   let result: string[] = []
   let characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'

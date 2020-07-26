@@ -4,6 +4,7 @@
       :index="selectedSlideIndex"
       :width="workspaceWidth"
       :height="workspaceHeight"
+      :isRedactable="true"
     ></slide>
   </div>
 </template>

@@ -8,6 +8,7 @@
     }
   },
   "target": "es2017",
+  "jsx": "react",
   "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "experimentalDecorators": true,
   "typeRoots": ["./typings"]

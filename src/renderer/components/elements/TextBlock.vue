@@ -52,8 +52,8 @@ export default class TextBlock extends Vue {
 <style lang="css" scoped>
 .text-block {
   outline: none;
-  width: inherit;
-  height: fit-content;
+  width: 100%;
+  height: 100%;
   word-wrap: none;
   word-break: break-word;
 }

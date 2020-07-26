@@ -1,5 +1,13 @@
 <template>
-  <div class="slide" :style="rootStyle">
+  <div class="slide" :style="rootStyle" v-if="isRedactable">
+    <redactable-base-element
+      v-for="id in elementIds"
+      :key="id"
+      :id="id"
+      :scale="width / 1920"
+    ></redactable-base-element>
+  </div>
+  <div class="slide" :style="rootStyle" v-else>
     <base-element
       v-for="id in elementIds"
       :key="id"
@@ -11,7 +19,8 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import BaseElement from './BaseElement.vue'
+import BaseElement from '@/components/elements/BaseElement.vue'
+import RedactableBaseElement from './redactableElements/RedactableBaseElement.vue'
 import VisualisationService from '@/services/VisualisationService'
 import Theme, { getBlankTheme, BackgroundType } from '@/entities/Theme'
 
@@ -20,6 +29,7 @@ let service = new VisualisationService()
 @Component({
   components: {
     BaseElement,
+    RedactableBaseElement,
   },
 })
 export default class Slide extends Vue {
@@ -28,6 +38,7 @@ export default class Slide extends Vue {
   @Prop(Number) index
   @Prop(Number) width
   @Prop(Number) height
+  @Prop(Boolean) isRedactable
 
   getState() {
     this.elementIds = Array.from(service.slideByIndex(this.index).keys())

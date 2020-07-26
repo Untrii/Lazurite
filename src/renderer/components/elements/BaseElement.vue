@@ -3,14 +3,12 @@ import { Vue, Prop, Component } from 'vue-property-decorator'
 import VisualisationService from '@/services/VisualisationService'
 import SlideObject from '@/entities/SlideObject'
 
-import TextBlock from '@/components/elements/TextBlock.vue'
+import elements from './index'
 
 let service = new VisualisationService()
 
 @Component({
-  components: {
-    TextBlock,
-  },
+  components: elements,
 })
 export default class BaseElement extends Vue {
   @Prop(String) id
