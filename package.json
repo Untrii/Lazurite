@@ -2,14 +2,20 @@
   "name": "lazurite",
   "version": "0.1.1",
   "description": "Lazurite presentations",
-  "main": "index.js",
-  "scripts": {
-    "start": "electron-webpack dev",
-    "pack": "electron-webpack",
-    "build": "electron-webpack && electron-builder -c.mac.identity=null"
-  },
   "author": "Azullon",
-  "license": "MIT",
+  "scripts": {
+    "build": "electron-webpack && electron-builder -c.mac.identity=null",
+    "pack": "electron-webpack",
+    "start": "electron-webpack dev"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
+    "@vue/babel-preset-jsx": "^1.1.2",
+    "jimp": "^0.12.1",
+    "source-map-support": "^0.5.19",
+    "vue-tsx-support": "^2.3.0"
+  },
   "devDependencies": {
     "@jaames/iro": "^5.1.8",
     "bootstrap-vue": "^2.14.0",
@@ -28,15 +34,12 @@
     "typescript": "^3.9.2",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
+    "vue-cli-plugin-tsx-support": "^0.4.1",
+    "vue-jsx-hot-loader": "^1.4.1",
     "vue-loader": "^15.9.2",
     "vue-property-decorator": "^8.4.2",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0"
   },
-  "dependencies": {
-    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
-    "@vue/babel-preset-jsx": "^1.1.2",
-    "jimp": "^0.12.1",
-    "source-map-support": "^0.5.19"
-  }
+  "license": "MIT"
 }

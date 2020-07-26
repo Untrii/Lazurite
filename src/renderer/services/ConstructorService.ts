@@ -106,6 +106,12 @@ export default class ConstructorService extends ReactiveService {
     )
   }
 
+  changeObjectProperties(objectId: string, properties: any) {
+    for (const key in properties) {
+      this.changeObjectProperty(objectId, key, properties[key])
+    }
+  }
+
   changePreviewModuleSize(newSize: number) {
     if (Instance.settings) Instance.settings.previewModuleSize = newSize
     this.onChange()

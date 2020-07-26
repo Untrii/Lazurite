@@ -100,5 +100,6 @@ export default class Slide extends Vue {
 <style>
 .slide {
   position: relative;
+  overflow: hidden;
 }
 </style>

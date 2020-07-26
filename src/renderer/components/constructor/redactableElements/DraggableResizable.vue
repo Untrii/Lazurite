@@ -58,8 +58,8 @@ export default class DraggableResizable extends Vue {
   @Prop({ default: 100, validator: isntNegative }) h!: number
   @Prop({ default: 10, validator: isntNegative }) minw!: number
   @Prop({ default: 10, validator: isntNegative }) minh!: number
-  @Prop({ default: 0, validator: isntNegative }) x!: number
-  @Prop({ default: 0, validator: isntNegative }) y!: number
+  @Prop({ default: 0 }) x!: number
+  @Prop({ default: 0 }) y!: number
   @Prop({ default: 'auto', validator: zValidator }) z!: number | string
 
   @Prop() parentHeight!: number
@@ -379,14 +379,24 @@ export default class DraggableResizable extends Vue {
   }
 
   getStyle() {
-    return {
-      position: 'absolute',
-      left: this.x + 'px',
-      top: this.y + 'px',
-      width: this.w + 'px',
-      height: this.h + 'px',
-      userSelect: this.isDraggable ? 'none' : 'auto',
-    }
+    if (this.lastEvent.endsWith('Down'))
+      return {
+        position: 'absolute',
+        left: this.newRect.left + 'px',
+        top: this.newRect.top + 'px',
+        width: this.newRect.width + 'px',
+        height: this.newRect.height + 'px',
+        userSelect: this.isDraggable ? 'none' : 'auto',
+      }
+    else
+      return {
+        position: 'absolute',
+        left: this.x + 'px',
+        top: this.y + 'px',
+        width: this.w + 'px',
+        height: this.h + 'px',
+        userSelect: this.isDraggable ? 'none' : 'auto',
+      }
   }
 
   @Watch('lastEvent')
@@ -400,10 +410,10 @@ export default class DraggableResizable extends Vue {
         angle: 0,
       }
       this.newRect = {
-        width: 400,
-        height: 200,
-        top: 100,
-        left: 150,
+        width: this.w,
+        height: this.h,
+        top: this.y,
+        left: this.x,
         angle: 0,
       }
       this.startMousePosition = {
@@ -418,8 +428,14 @@ export default class DraggableResizable extends Vue {
       )
     }
     if (val == 'bodyDown' && !this.isActive) this.$emit('activated')
-    if (val == 'bodyUp') this.$emit('clicked')
+
+    if (val == 'stickUp' || val == 'bodyUp') this.onRectangleChanged()
     if (this.isActive && val == 'outerUp') this.$emit('deactivated')
+  }
+
+  onRectangleChanged() {
+    this.startRect = { ...this.newRect }
+    this.$emit('rectangleChanged', this.newRect)
   }
 
   @Watch('isActive')
