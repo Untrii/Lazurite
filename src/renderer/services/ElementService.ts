@@ -3,6 +3,7 @@ import ElementPreset from '@/entities/ElementPreset'
 import DesignService from './DesignService'
 import { Instance } from '@/repositories/CommonRepository'
 import assets from '@/assets'
+import DialogService from './DialogService'
 
 export default class ElementService extends ReactiveService {
   private _groups: Map<string, ElementPreset[]> = new Map()
@@ -11,12 +12,22 @@ export default class ElementService extends ReactiveService {
     super()
     let designService = new DesignService()
     designService.addOnChangeListener(() => this.reloadFontPresets())
+    this.setGroup('media', [
+      new ElementPreset(
+        assets.logo,
+        'image',
+        'ImageBlock',
+        this.generateImageProps
+      ),
+    ])
   }
 
-  private async openFileSelectionDialog(
-    type: 'iamge' | 'video'
-  ): Promise<string> {
-    return 'null'
+  private async generateImageProps() {
+    let dialogService = new DialogService()
+    let fileName = await dialogService.openChooseFileDialog('image')
+    return {
+      src: Instance.workspaceDataFolder + '/' + fileName,
+    }
   }
 
   private reloadFontPresets() {

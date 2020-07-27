@@ -41,6 +41,9 @@ export default class CommonRepository extends ReactiveRepository {
   public variables = {
     selectedSlideIndex: 0,
     clipboard: new Set<SlideObject>(),
+    showDialog: 'none',
+    dialogType: 'image',
+    choseFileDialogResolve: (fileName: string) => {},
   }
 
   constructor() {
@@ -91,7 +94,7 @@ export default class CommonRepository extends ReactiveRepository {
   }
 
   async openPresentation(fileName: string) {
-    this._openedPresentationFile = fileName.replace('\\', '/')
+    this._openedPresentationFile = fileName.split('\\').join('/')
 
     this._openedPresentationHandle = new FileObject(
       new LocalFileSystem(),

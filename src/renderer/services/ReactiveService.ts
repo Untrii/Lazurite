@@ -13,6 +13,7 @@ export default class ReactiveService {
     }
   }
   addOnChangeListener(callback: Function) {
+    if (callback == undefined) throw new Error('callback is undefined')
     this.onChangeListeners.push(callback)
   }
 }

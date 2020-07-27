@@ -4,6 +4,7 @@
     <div id="app">
       <constructor-tab v-if="openedTab == 'constructor'"></constructor-tab>
       <design-tab v-if="openedTab == 'design'"></design-tab>
+      <dialogs-wrapper></dialogs-wrapper>
     </div>
   </div>
 </template>
@@ -13,12 +14,14 @@ import { Vue, Component } from 'vue-property-decorator'
 import ConstructorTab from './ConstructorTab.vue'
 import DesignTab from './DesignTab.vue'
 import Titlebar from './components/titlebar/Titlebar.vue'
+import DialogsWrapper from '@/components/dialogs/DialogsWrapper.vue'
 
 @Component({
   components: {
     ConstructorTab,
     Titlebar,
     DesignTab,
+    DialogsWrapper,
   },
 })
 export default class App extends Vue {
