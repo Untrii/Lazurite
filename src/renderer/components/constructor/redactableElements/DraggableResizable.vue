@@ -23,6 +23,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import generateString from '@/utils/StringGenerator'
+import Hotkeys from '@/utils/Hotkeys'
 
 function isntNegative(x) {
   return x >= 0
@@ -33,9 +34,6 @@ function zValidator(val) {
 }
 
 const realStickSize = 8
-let key = {
-  shift: false,
-}
 
 /**
  * Generates events:
@@ -164,7 +162,8 @@ export default class DraggableResizable extends Vue {
   }
   callEvent(name, payload0?, payload1?, payload2?, payload3?) {
     if (!this.canActivate) return
-    this.lastEvent = name
+    if (!(Hotkeys.control && name == 'outerUp')) this.lastEvent = name
+    //else this.lastEvent = 'none'
     this[name](payload0, payload1, payload2, payload3)
   }
   handleRedaction(event) {
@@ -269,8 +268,8 @@ export default class DraggableResizable extends Vue {
     return rect
   }
   applyAspectRatio(rect) {
-    console.log('shift pressed: ' + key.shift)
-    if (!key.shift) return rect
+    console.log('shift pressed: ' + Hotkeys.shift)
+    if (!Hotkeys.shift) return rect
     if (this.lastEvent != 'stickDown') return rect
 
     let stick = this.pressedStick

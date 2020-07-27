@@ -2,6 +2,7 @@ import FileObject from './FileObject'
 import Presentation from '@/entities/Presentation'
 import LocalFileSystem from './LocalFileSystem'
 import AppSettings, { defaultSettings } from '@/entities/AppSettings'
+import SlideObject from '@/entities/SlideObject'
 import { promises as fs } from 'fs'
 
 import BackgroundCollection, {
@@ -39,6 +40,7 @@ export default class CommonRepository extends ReactiveRepository {
 
   public variables = {
     selectedSlideIndex: 0,
+    clipboard: new Set<SlideObject>(),
   }
 
   constructor() {

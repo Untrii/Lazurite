@@ -1,19 +1,17 @@
 import { Instance } from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
-import SlideObject, { getBlankObject } from '@/entities/SlideObject'
+import { getBlankObject } from '@/entities/SlideObject'
 import Presentation from '@/entities/Presentation'
 import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
 
 export default class ConstructorService extends ReactiveService {
   private _selectedObjectIds: Set<string>
-  private clipboard: Set<SlideObject>
 
   constructor() {
     super()
     Instance.variables.selectedSlideIndex = 0
     this._selectedObjectIds = new Set()
-    this.clipboard = new Set()
   }
 
   selectSlide(index: number) {
@@ -61,7 +59,7 @@ export default class ConstructorService extends ReactiveService {
     this._selectedObjectIds.clear()
     this.onChange()
   }
-  deleteObjects(objectIds: Set<string>) {
+  deleteObjects(objectIds: Set<string> | string[]) {
     if (!Instance.openedPresentation) return
     let slides = Instance.openedPresentation.slides
 
@@ -72,14 +70,14 @@ export default class ConstructorService extends ReactiveService {
     Instance.commitPresentationChanges()
   }
   copyObjects(objectIds: Set<string>) {
-    this.clipboard.clear()
+    Instance.variables.clipboard.clear()
     if (Instance.openedPresentation == undefined) return
     let slides = Instance.openedPresentation.slides
 
     for (let objectId of objectIds)
       if (slides[Instance.variables.selectedSlideIndex].has(objectId)) {
         let obj = slides[Instance.variables.selectedSlideIndex].get(objectId)
-        if (obj) this.clipboard.add(obj)
+        if (obj) Instance.variables.clipboard.add(obj)
       }
     Instance.commitPresentationChanges()
   }

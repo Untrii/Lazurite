@@ -5,6 +5,7 @@ import VisualisationService from '@/services/VisualisationService'
 import SlideObject from '@/entities/SlideObject'
 import DraggableResizable from './DraggableResizable.vue'
 import ConstructorService from '@/services/ConstructorService'
+import Hotkeys from '@/utils/Hotkeys'
 
 let visualisationService = new VisualisationService()
 let constructorService = new ConstructorService()
@@ -88,11 +89,18 @@ export default class RedactableBaseElement extends Vue {
             )
           },
           activated: () => {
-            constructorService.deselectAllObjects()
+            if (!Hotkeys.control) constructorService.deselectAllObjects()
             constructorService.selectObject(this.id)
+            Hotkeys.unbind('delete')
+            Hotkeys.bind('delete', () => {
+              console.log('deleteng...')
+              constructorService.deleteObjects(
+                constructorService.selectedObjectIds
+              )
+            })
           },
           deactivated: () => {
-            constructorService.deselectObject(this.id)
+            if (!Hotkeys.control) constructorService.deselectAllObjects()
           },
         },
       },
