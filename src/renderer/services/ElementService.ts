@@ -13,7 +13,13 @@ export default class ElementService extends ReactiveService {
     designService.addOnChangeListener(() => this.reloadFontPresets())
   }
 
-  reloadFontPresets() {
+  private async openFileSelectionDialog(
+    type: 'iamge' | 'video'
+  ): Promise<string> {
+    return 'null'
+  }
+
+  private reloadFontPresets() {
     if (!Instance.openedPresentation) return
     let fontPresets = Instance.openedPresentation.theme.fontPresets
     let elementPresets: ElementPreset[] = []
