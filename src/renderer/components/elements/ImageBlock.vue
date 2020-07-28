@@ -12,10 +12,8 @@
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import VisualisationService from '@/services/VisualisationService'
 import ColorCorrector from './hocs/ColorCorrector.vue'
 
-let service = new VisualisationService()
 @Component({
   components: {
     ColorCorrector,
@@ -25,13 +23,6 @@ export default class ImageBlock extends Vue {
   @Prop() src!: string
   @Prop() width!: number
   @Prop() height!: number
-
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(() => this.getState())
-  }
 }
 </script>
 
