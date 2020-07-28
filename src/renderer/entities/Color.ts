@@ -2,6 +2,7 @@ export default class Color {
   public r: number
   public g: number
   public b: number
+  public a: number
   public isTransparet = false
 
   public constructor(isTransparent?: boolean) {
@@ -10,6 +11,7 @@ export default class Color {
     this.r = 0
     this.g = 0
     this.b = 0
+    this.a = 1
   }
 
   public fromHex(hex: string) {
@@ -27,8 +29,16 @@ export default class Color {
     this.r = r
     this.g = g
     this.b = b
+    if (a) this.a = a
 
     return this
+  }
+
+  public fromOther(color: Color) {
+    this.r = color.r
+    this.g = color.g
+    this.b = color.b
+    this.a = color.a
   }
 
   public toHex(): string {
@@ -42,7 +52,7 @@ export default class Color {
 
   public toCssColor(): string {
     if (this.isTransparet) return 'transparent'
-    return `rgb(${this.r},${this.g},${this.b})`
+    return `rgba(${this.r},${this.g},${this.b},${this.a})`
   }
 
   public equals(color: Color): boolean {

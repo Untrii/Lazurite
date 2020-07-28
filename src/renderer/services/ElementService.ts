@@ -21,6 +21,45 @@ export default class ElementService extends ReactiveService {
         this.generateImageProps
       ),
     ])
+    this.setGroup('datavis', [
+      new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', {
+        rowCount: 5,
+        columnCount: 5,
+        rowSizes: [0.2, 0.2, 0.2, 0.2, 0.2],
+        columnSizes: [0.2, 0.2, 0.2, 0.2, 0.2],
+        highlightTop: true,
+        highlightBottom: false,
+        highlightLeft: false,
+        highlightRight: false,
+        stripHorizontally: true,
+        stripVertically: false,
+        darkStyle: false,
+        borderRadius: 10,
+        content: this.genetate2DMap('', 5),
+
+        top: 270,
+        left: 480,
+        width: 960,
+        height: 540,
+        fontSize: 44,
+        showBorders: true,
+      }),
+    ])
+  }
+
+  private genetate2DMap(
+    value: string,
+    size: number
+  ): Map<number, Map<number, string>> {
+    let result = new Map<number, Map<number, string>>()
+    let sampleMap = new Map<number, string>()
+    for (let i = 0; i < size; i++) {
+      sampleMap.set(i, value)
+    }
+    for (let i = 0; i < size; i++) {
+      result.set(i, sampleMap)
+    }
+    return result
   }
 
   private async generateImageProps() {
