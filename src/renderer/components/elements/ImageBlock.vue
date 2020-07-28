@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts">
+import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import VisualisationService from '@/services/VisualisationService'
 import ColorCorrector from './hocs/ColorCorrector.vue'

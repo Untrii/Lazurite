@@ -9,6 +9,7 @@ export default class DialogService extends ReactiveService {
 
   private handleChooseFileDialog(resolve, reject) {
     Instance.variables.choseFileDialogResolve = resolve
+    Instance.variables.choseFileDialogReject = reject
     Instance.onChange()
   }
 
@@ -34,5 +35,7 @@ export default class DialogService extends ReactiveService {
 
   onFileChosen(fileName: string) {
     Instance.variables.choseFileDialogResolve(fileName)
+    Instance.variables.showDialog = 'none'
+    Instance.onChange()
   }
 }

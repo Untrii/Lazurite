@@ -16,4 +16,13 @@ import ChooseFileDialog from './ChooseFileDialog.vue'
 export default class DialogsWrapper extends Vue {}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.modal-backdrop {
+  opacity: 0.5;
+  top: 31px !important;
+}
+.modal {
+  top: 31px !important;
+  height: calc(100% - 62px);
+}
+</style>

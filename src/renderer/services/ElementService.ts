@@ -4,6 +4,7 @@ import DesignService from './DesignService'
 import { Instance } from '@/repositories/CommonRepository'
 import assets from '@/assets'
 import DialogService from './DialogService'
+import ResourceService from './ResourceService'
 
 export default class ElementService extends ReactiveService {
   private _groups: Map<string, ElementPreset[]> = new Map()
@@ -24,9 +25,22 @@ export default class ElementService extends ReactiveService {
 
   private async generateImageProps() {
     let dialogService = new DialogService()
+    let resourceService = new ResourceService()
     let fileName = await dialogService.openChooseFileDialog('image')
+
+    let imageSize = resourceService.getImageSize(fileName)
+    if (imageSize.height > 540) {
+      imageSize.width /= imageSize.height / 540
+      imageSize.height = 540
+    }
+    if (imageSize.width > 960) {
+      imageSize.height /= imageSize.width / 960
+      imageSize.width = 960
+    }
     return {
       src: Instance.workspaceDataFolder + '/' + fileName,
+      height: imageSize.height,
+      width: imageSize.width,
     }
   }
 

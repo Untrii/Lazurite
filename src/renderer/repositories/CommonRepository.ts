@@ -4,6 +4,7 @@ import LocalFileSystem from './LocalFileSystem'
 import AppSettings, { defaultSettings } from '@/entities/AppSettings'
 import SlideObject from '@/entities/SlideObject'
 import { promises as fs } from 'fs'
+import fsSync from 'fs'
 
 import BackgroundCollection, {
   getBlankCollection,
@@ -44,6 +45,7 @@ export default class CommonRepository extends ReactiveRepository {
     showDialog: 'none',
     dialogType: 'image',
     choseFileDialogResolve: (fileName: string) => {},
+    choseFileDialogReject: () => {},
   }
 
   constructor() {
@@ -72,7 +74,11 @@ export default class CommonRepository extends ReactiveRepository {
     let path = this._openedPresentationFile.split('/')
     path.pop()
     path.push('workspace')
-    return path.join('/')
+    let result = path.join('/')
+    try {
+      fsSync.mkdirSync(result)
+    } catch {}
+    return result
   }
   get openedPresentation(): Presentation | undefined {
     return this._openedPresentation
