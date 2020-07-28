@@ -41,6 +41,7 @@ export default class CommonRepository extends ReactiveRepository {
 
   public variables = {
     selectedSlideIndex: 0,
+    selectedObjectsIds: new Set<string>(),
     clipboard: new Set<SlideObject>(),
     showDialog: 'none',
     dialogType: 'image',

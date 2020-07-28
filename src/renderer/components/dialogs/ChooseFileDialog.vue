@@ -1,5 +1,11 @@
 <template>
-  <b-modal centered id="choseFileDialog" title="Project files" size="xl">
+  <b-modal
+    centered
+    id="choseFileDialog"
+    title="Project files"
+    size="xl"
+    @close="rejectChoose"
+  >
     <div class="dialog__content">
       <div class="row">
         <div
@@ -115,6 +121,10 @@ export default class ChooseFileDialog extends Vue {
   }
   reloadFiles() {
     this.getState()
+  }
+
+  rejectChoose() {
+    dialogService.onChooseRejected()
   }
 }
 </script>

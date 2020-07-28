@@ -35,4 +35,9 @@ export default class DialogService extends ReactiveService {
     Instance.variables.showDialog = 'none'
     Instance.onChange()
   }
+
+  onChooseRejected() {
+    Instance.variables.choseFileDialogReject()
+    Instance.variables.showDialog = 'none'
+  }
 }

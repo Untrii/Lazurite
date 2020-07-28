@@ -6,12 +6,9 @@ import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
 
 export default class ConstructorService extends ReactiveService {
-  private _selectedObjectIds: Set<string>
-
   constructor() {
     super()
     Instance.variables.selectedSlideIndex = 0
-    this._selectedObjectIds = new Set()
   }
 
   selectSlide(index: number) {
@@ -50,16 +47,16 @@ export default class ConstructorService extends ReactiveService {
     Instance.commitPresentationChanges()
   }
   selectObject(id: string) {
-    this._selectedObjectIds.add(id)
-    this.onChange()
+    Instance.variables.selectedObjectsIds.add(id)
+    Instance.onChange()
   }
   deselectObject(id: string) {
-    this._selectedObjectIds.delete(id)
-    this.onChange()
+    Instance.variables.selectedObjectsIds.delete(id)
+    Instance.onChange()
   }
   deselectAllObjects() {
-    this._selectedObjectIds.clear()
-    this.onChange()
+    Instance.variables.selectedObjectsIds.clear()
+    Instance.onChange()
   }
   deleteObjects(objectIds: Set<string> | string[]) {
     if (!Instance.openedPresentation) return
@@ -128,12 +125,12 @@ export default class ConstructorService extends ReactiveService {
     return Instance.variables.selectedSlideIndex
   }
   get selectedObjectId(): string | undefined {
-    if (this._selectedObjectIds.size == 1)
-      for (let index of this._selectedObjectIds) return index
+    if (Instance.variables.selectedObjectsIds.size == 1)
+      for (let index of Instance.variables.selectedObjectsIds) return index
     return undefined
   }
   get selectedObjectIds(): string[] {
-    return Array.from(this._selectedObjectIds.values())
+    return Array.from(Instance.variables.selectedObjectsIds.values())
   }
 
   get previewModuleSize(): number | undefined {

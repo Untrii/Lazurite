@@ -13,6 +13,7 @@
     </div>
     <div class="main">
       <add-tab v-if="selectedTab == 'add'"></add-tab>
+      <edit-tab v-if="selectedTab == 'edit'"></edit-tab>
     </div>
     <div class="bottom-buttons"></div>
   </div>
@@ -23,12 +24,14 @@ import { Vue, Component } from 'vue-property-decorator'
 import ConstructorService from '@/services/ConstructorService'
 import assets from '@/assets/index'
 import AddTab from './instrumentsTab/AddTab.vue'
+import EditTab from './instrumentsTab/EditTab.vue'
 
 let service = new ConstructorService()
 
 @Component({
   components: {
     AddTab,
+    EditTab,
   },
 })
 export default class Instruments extends Vue {
@@ -43,7 +46,7 @@ export default class Instruments extends Vue {
       icon: assets.spark,
     },
     {
-      name: 'elprops',
+      name: 'edit',
       icon: assets.spark,
     },
   ]
