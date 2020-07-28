@@ -1,7 +1,6 @@
 import ReactiveService from './ReactiveService'
 import { Instance } from '@/repositories/CommonRepository'
 import { promises as fs } from 'fs'
-import randomString from '@/utils/StringGenerator'
 
 export default class ResourceService extends ReactiveService {
   async getResourceFiles(type: 'image' | 'video'): Promise<string[]> {
@@ -10,8 +9,20 @@ export default class ResourceService extends ReactiveService {
       let stats = await fs.lstat(Instance.workspaceDataFolder)
       if (!stats.isDirectory()) return []
 
-      let files = await fs.readdir(Instance.workspaceDataFolder)
-      return files
+      let allFiles = await fs.readdir(Instance.workspaceDataFolder)
+      let filteredFiles: string[] = []
+      for (const item of allFiles) {
+        if (type == 'image') {
+          if (item.endsWith('.jpg') || item.endsWith('.png')) {
+            filteredFiles.push(item)
+          }
+        } else {
+          if (item.endsWith('.mp4')) {
+            filteredFiles.push(item)
+          }
+        }
+      }
+      return filteredFiles
     } catch {
       return []
     }
@@ -36,12 +47,38 @@ export default class ResourceService extends ReactiveService {
   getImageSize(fileName: string) {
     let image = document.createElement('img')
     image.src = this.resourceFolder + '/' + fileName
-    image.naturalHeight
 
     return {
       width: image.naturalWidth,
       height: image.naturalHeight,
     }
+  }
+
+  getVideoSize(fileName: string): Promise<{ width: number; height: number }> {
+    console.log('video width')
+    let video = document.createElement('video')
+    video.src = this.resourceFolder + '/' + fileName
+
+    let container = document.createElement('x-internal')
+    container.style.display = 'none'
+    container.appendChild(video)
+    document.body.appendChild(container)
+
+    let onGotMetadata
+    let result: Promise<{ width: number; height: number }> = new Promise(
+      (resolve, reject) => {
+        onGotMetadata = resolve
+      }
+    )
+
+    video.addEventListener('loadedmetadata', () => {
+      onGotMetadata({
+        width: video.videoWidth,
+        height: video.videoHeight,
+      })
+    })
+
+    return result
   }
 
   get resourceFolder(): string {

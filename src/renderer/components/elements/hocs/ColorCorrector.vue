@@ -22,7 +22,7 @@ let defaultProps = {
   dropShadow: 0,
 }
 
-@Component
+@Component({ name: 'ColorCorrector' })
 export default class ColorCorrector extends Vue {
   @Prop() blur!: string | number
   @Prop() brightness!: string | number

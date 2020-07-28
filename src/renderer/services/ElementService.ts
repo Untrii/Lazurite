@@ -13,12 +13,19 @@ export default class ElementService extends ReactiveService {
     super()
     let designService = new DesignService()
     designService.addOnChangeListener(() => this.reloadFontPresets())
+    this.reloadFontPresets()
     this.setGroup('media', [
       new ElementPreset(
         assets.logo,
         'image',
         'ImageBlock',
         this.generateImageProps
+      ),
+      new ElementPreset(
+        assets.logo,
+        'video',
+        'VideoBlock',
+        this.generateVideoProps
       ),
     ])
     this.setGroup('datavis', [
@@ -80,6 +87,27 @@ export default class ElementService extends ReactiveService {
       src: Instance.workspaceDataFolder + '/' + fileName,
       height: imageSize.height,
       width: imageSize.width,
+    }
+  }
+
+  private async generateVideoProps() {
+    let dialogService = new DialogService()
+    let resourceService = new ResourceService()
+    let fileName = await dialogService.openChooseFileDialog('video')
+
+    let videoSize = await resourceService.getVideoSize(fileName)
+    if (videoSize.height > 540) {
+      videoSize.width /= videoSize.height / 540
+      videoSize.height = 540
+    }
+    if (videoSize.width > 960) {
+      videoSize.height /= videoSize.width / 960
+      videoSize.width = 960
+    }
+    return {
+      src: Instance.workspaceDataFolder + '/' + fileName,
+      height: videoSize.height,
+      width: videoSize.width,
     }
   }
 

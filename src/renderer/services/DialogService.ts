@@ -26,10 +26,7 @@ export default class DialogService extends ReactiveService {
   }
 
   get chooseFileDialogType(): 'image' | 'video' {
-    switch (Instance.variables.dialogType) {
-      case 'video':
-        return Instance.variables.dialogType
-    }
+    if (Instance.variables.dialogType == 'video') return 'video'
     return 'image'
   }
 

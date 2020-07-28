@@ -12,7 +12,7 @@
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import ColorCorrector from './hocs/ColorCorrector.vue'
+import ColorCorrector from '@/components/elements/hocs/ColorCorrector.vue'
 
 @Component({
   components: {
