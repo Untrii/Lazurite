@@ -1,6 +1,6 @@
 <template>
   <color-corrector v-bind="$props">
-    <video :src="src" alt="" :style="style" style="position:absolute" />
+    <video :src="src" alt="" :style="style" class="video-block" />
   </color-corrector>
 </template>
 
@@ -16,22 +16,15 @@ import ColorCorrector from '@/components/elements/hocs/ColorCorrector.vue'
 })
 export default class VideoBlock extends Vue {
   @Prop() src!: string
-  @Prop() width!: number
-  @Prop() height!: number
-
-  @Prop() id!: string
-  @Prop() scale!: number
-
-  get style() {
-    return {
-      alignSelf: 'center',
-      margin: 'auto',
-      height: this.height * this.scale + 'px',
-      width: this.width * this.scale + 'px', //,
-      //transform: `scale(${this.parentScale},${this.parentScale})`
-    }
-  }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.video-block {
+  position: absolute;
+  margin: auto;
+  align-self: 'center';
+  height: 100%;
+  width: 100%;
+}
+</style>
