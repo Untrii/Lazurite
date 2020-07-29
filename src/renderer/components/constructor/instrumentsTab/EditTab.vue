@@ -1,6 +1,6 @@
 <template>
   <div v-if="isOneElementSelected">
-    <div v-for="(value, name) in element" :key="name">{{ name }}</div>
+    <!-- <div v-for="(value, name) in element" :key="name">{{ name }}</div> -->
     <size-editor v-if="isSizeEditorShown"></size-editor>
   </div>
   <div v-else>

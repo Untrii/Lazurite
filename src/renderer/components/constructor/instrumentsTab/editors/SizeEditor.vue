@@ -1,17 +1,15 @@
 <template>
-  <div>
-    <b-input-group
-      v-for="form in forms"
-      size="sm"
-      :key="form.propertyName"
-      :prepend="form.displayName"
-    >
-      <b-form-input
-        :value="element[form.propertyName]"
-        @input="onInput(form.propertyName, $event)"
-        type="number"
-      ></b-form-input>
-    </b-input-group>
+  <div class="editor-root">
+    <h6 class="header">Size and position</h6>
+    <div v-for="form in forms" :key="form.propertyName" class="editor-input">
+      <b-input-group size="sm" :prepend="form.displayName">
+        <b-form-input
+          :value="element[form.propertyName]"
+          @input="onInput(form.propertyName, $event)"
+          type="number"
+        ></b-form-input>
+      </b-input-group>
+    </div>
   </div>
 </template>
 
@@ -59,4 +57,18 @@ export default class SizeEditor extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.editor-root {
+  padding: 20px 3px 0 15px;
+}
+
+.editor-input {
+  display: inline-block;
+  width: calc(50% - 0px);
+  padding: 0 5px 10px 5px;
+}
+
+.header {
+  padding-left: 5px;
+}
+</style>
