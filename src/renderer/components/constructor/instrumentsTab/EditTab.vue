@@ -1,5 +1,7 @@
 <template>
-  <div v-if="isOneElementSelected"></div>
+  <div v-if="isOneElementSelected">
+    <div v-for="(value, name) in element" :key="name">{{ name }}</div>
+  </div>
   <div v-else>
     Please select one element.
   </div>
@@ -7,16 +9,19 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '@/services/ConstructorService'
+import EditorService from '@/services/EditorService'
 
-let service = new ConstructorService()
+let service = new EditorService()
 
 @Component
 export default class EditTab extends Vue {
-  selectedElementsCount = 0
+  isOneElementSelected: boolean = false
+  element: any
 
   getState() {
-    this.selectedElementsCount = service.selectedObjectIds.length
+    //this.element = service.
+    this.isOneElementSelected = service.isOneElementSelected
+    this.element = service.selectedElement
   }
 
   beforeMount() {
@@ -24,8 +29,9 @@ export default class EditTab extends Vue {
     service.addOnChangeListener(() => this.getState())
   }
 
-  get isOneElementSelected() {
-    return this.selectedElementsCount == 1
+  getEditorType(propertyName) {
+    switch (propertyName) {
+    }
   }
 }
 </script>
