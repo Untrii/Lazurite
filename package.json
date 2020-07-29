@@ -10,11 +10,8 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
-    "@vue/babel-preset-jsx": "^1.1.2",
     "jimp": "^0.12.1",
-    "source-map-support": "^0.5.19",
-    "vue-tsx-support": "^2.3.0"
+    "source-map-support": "^0.5.19"
   },
   "devDependencies": {
     "@jaames/iro": "^5.1.8",

@@ -5,6 +5,8 @@ import { Instance } from '@/repositories/CommonRepository'
 import assets from '@/assets'
 import DialogService from './DialogService'
 import ResourceService from './ResourceService'
+import { getBlankObject as getBlankImage } from '@/entities/SlideObjects/ImageBlock'
+import { getBlankObject as getBlankVideo } from '@/entities/SlideObjects/VideoBlock'
 
 export default class ElementService extends ReactiveService {
   private _groups: Map<string, ElementPreset[]> = new Map()
@@ -83,11 +85,12 @@ export default class ElementService extends ReactiveService {
       imageSize.height /= imageSize.width / 960
       imageSize.width = 960
     }
-    return {
-      src: Instance.workspaceDataFolder + '/' + fileName,
-      height: imageSize.height,
-      width: imageSize.width,
-    }
+    let result = getBlankImage()
+    result.height = imageSize.height
+    result.width = imageSize.width
+    result.src = Instance.workspaceDataFolder + '/' + fileName
+
+    return result
   }
 
   private async generateVideoProps() {
@@ -104,11 +107,13 @@ export default class ElementService extends ReactiveService {
       videoSize.height /= videoSize.width / 960
       videoSize.width = 960
     }
-    return {
-      src: Instance.workspaceDataFolder + '/' + fileName,
-      height: videoSize.height,
-      width: videoSize.width,
-    }
+
+    let result = getBlankVideo()
+    result.height = videoSize.height
+    result.width = videoSize.width
+    result.src = Instance.workspaceDataFolder + '/' + fileName
+
+    return result
   }
 
   private reloadFontPresets() {
