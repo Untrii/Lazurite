@@ -3,7 +3,9 @@
     <!-- <div v-for="(value, name) in element" :key="name">{{ name }}</div> -->
     <size-editor v-if="isSizeEditorShown"></size-editor>
     <spreadsheet-editor v-if="isSpreadsheetEditorShown"> </spreadsheet-editor>
-    <color-correction-editor></color-correction-editor>
+    <color-correction-editor
+      v-if="isColorCorrectionEditorShown"
+    ></color-correction-editor>
   </div>
   <div v-else>
     Please select one element.

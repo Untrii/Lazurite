@@ -1,5 +1,5 @@
 <template>
-  <video-block v-bind="$props"></video-block>
+  <video-block v-bind="$attrs"></video-block>
 </template>
 
 <script lang="ts">
@@ -12,10 +12,6 @@ import VideoBlock from '@/components/elements/VideoBlock.vue'
   },
 })
 export default class RedactableVideoBlock extends Vue {
-  @Prop() src!: string
-  @Prop() width!: number
-  @Prop() height!: number
-
   @Prop() id!: string
   @Prop() scale!: number
 

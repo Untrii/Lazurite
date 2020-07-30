@@ -8,7 +8,6 @@ import randomString from '@/utils/StringGenerator'
 export default class ConstructorService extends ReactiveService {
   constructor() {
     super()
-    Instance.variables.selectedSlideIndex = 0
   }
 
   selectSlide(index: number) {

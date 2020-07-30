@@ -26,6 +26,7 @@ export default class BaseElement extends Vue {
     let obj: any = service.elementById(this.id)
     return createElement(this.element.type.split('/')[0], {
       props: { ...this.element, scale: this.scale },
+      attrs: { ...this.element, scale: this.scale },
       style: {
         position: 'absolute',
         height: obj.height * this.scale + 'px',

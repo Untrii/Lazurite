@@ -1,5 +1,5 @@
 <template>
-  <image-block v-bind="$props"></image-block>
+  <image-block v-bind="$attrs"></image-block>
 </template>
 
 <script lang="ts">
