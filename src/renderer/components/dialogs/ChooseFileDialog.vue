@@ -68,6 +68,7 @@ const dialog = remote.dialog
 
 let dialogService = new DialogService()
 let resourceService = new ResourceService()
+let isDialogShown = false
 
 @Component({
   components: {
@@ -79,16 +80,19 @@ export default class ChooseFileDialog extends Vue {
   isBrowserOpened = false
 
   async getState() {
-    if (dialogService.isChooseFileDialogOpened)
+    if (dialogService.isChooseFileDialogOpened && !isDialogShown) {
       this.$bvModal.show('choseFileDialog')
-    else this.$bvModal.hide('choseFileDialog')
+      isDialogShown = true
+    } else if (!dialogService.isChooseFileDialogOpened && isDialogShown) {
+      this.$bvModal.hide('choseFileDialog')
+      isDialogShown = false
+    }
     this.files = await resourceService.getResourceFiles(
       dialogService.chooseFileDialogType
     )
   }
 
   beforeMount() {
-    console.log('Dialog')
     this.getState()
     dialogService.addOnChangeListener(() => this.getState())
     resourceService.addOnChangeListener(() => this.getState())

@@ -55,7 +55,6 @@ export default class ResourceService extends ReactiveService {
   }
 
   getVideoSize(fileName: string): Promise<{ width: number; height: number }> {
-    console.log('video width')
     let video = document.createElement('video')
     video.src = this.resourceFolder + '/' + fileName
 

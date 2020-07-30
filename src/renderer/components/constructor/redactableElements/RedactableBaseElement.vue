@@ -62,7 +62,6 @@ export default class RedactableBaseElement extends Vue {
   // }
 
   render(h) {
-    console.log('rerendering')
     return h(
       'DraggableResizable',
       {
@@ -83,7 +82,6 @@ export default class RedactableBaseElement extends Vue {
         },
         on: {
           rectangleChanged: (newRect) => {
-            console.log('rectangle changed')
             constructorService.changeObjectProperties(
               this.id,
               this.unscaleElement(newRect)
@@ -94,7 +92,6 @@ export default class RedactableBaseElement extends Vue {
             constructorService.selectObject(this.id)
             Hotkeys.unbind('delete')
             Hotkeys.bind('delete', () => {
-              console.log('deleteng...')
               constructorService.deleteObjects(
                 constructorService.selectedObjectIds
               )

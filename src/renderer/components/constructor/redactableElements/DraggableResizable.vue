@@ -34,6 +34,7 @@ function zValidator(val) {
 }
 
 const realStickSize = 8
+let lastUpdate = new Date().getTime()
 
 /**
  * Generates events:
@@ -46,7 +47,7 @@ export default class DraggableResizable extends Vue {
   @Prop({ default: true }) isResizable!: boolean
   @Prop({ default: true }) aspectRatio!: boolean
   @Prop({ default: 'none' }) parentLimitation!: string
-  @Prop({ default: true }) snapToGrid!: boolean
+  @Prop({ default: false }) snapToGrid!: boolean
   @Prop({ default: () => ['tl', 'tm', 'tr', 'mr', 'br', 'bm', 'bl', 'ml'] })
   sticks!: string[]
 
@@ -128,21 +129,13 @@ export default class DraggableResizable extends Vue {
       event.stopPropagation()
       if (this.isActive) event.preventDefault()
     }
-    console.log('bodyDown')
   }
   stickDown(stick, event) {
     this.pressedStick = stick
-    console.log('stickDown')
   }
-  bodyUp(event) {
-    console.log('bodyUp')
-  }
-  stickUp(stick, event) {
-    console.log('stickUp')
-  }
-  outerUp(event) {
-    console.log('outerUp')
-  }
+  bodyUp(event) {}
+  stickUp(stick, event) {}
+  outerUp(event) {}
   mouseUp(event) {
     let eventName
     if (this.lastEvent == 'bodyDown') eventName = 'bodyUp'
@@ -268,7 +261,6 @@ export default class DraggableResizable extends Vue {
     return rect
   }
   applyAspectRatio(rect) {
-    console.log('shift pressed: ' + Hotkeys.shift)
     if (!Hotkeys.shift) return rect
     if (this.lastEvent != 'stickDown') return rect
 
@@ -452,16 +444,32 @@ export default class DraggableResizable extends Vue {
     if (this.lastEvent == 'bodyDown' && this.isDraggable) {
       this.newRect = this.calcNewRect('move')
 
-      //this.$emit('resizing', newRect)
+      //this.$emit('rectangleChanged', this.newRect)
     }
     if (this.lastEvent == 'stickDown' && this.isResizable) {
       this.newRect = this.calcNewRect('resize', this.pressedStick)
+    }
+    let isChanged = false
+    for (const entry in this.startRect) {
+      if (this.newRect[entry] != this.startRect[entry]) isChanged = true
+    }
+    if (isChanged) {
+      this.debouncedUpdate(200, true)
+    }
+  }
+
+  debouncedUpdate(rate, requestNext?: boolean) {
+    if (lastUpdate + rate < new Date().getTime()) {
+      lastUpdate = new Date().getTime()
+
+      this.$emit('rectangleChanged', this.newRect)
+      if (requestNext)
+        setTimeout(() => this.debouncedUpdate(rate, false), rate + 10)
     }
   }
 
   mounted() {
     this.registerEvents()
-    console.log('a')
   }
   beforeDestroy() {
     this.removeEvents()
@@ -470,6 +478,7 @@ export default class DraggableResizable extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/css/variables.scss';
 .vdr {
   position: absolute;
   box-sizing: border-box;
@@ -482,7 +491,7 @@ export default class DraggableResizable extends Vue {
     top: 0;
     left: 0;
     box-sizing: border-box;
-    outline: 1px dashed #d6d6d6;
+    outline: 1px solid $blue-normal;
   }
 }
 
@@ -490,8 +499,9 @@ export default class DraggableResizable extends Vue {
   box-sizing: border-box;
   position: absolute;
   font-size: 1px;
-  background: #ffffff;
-  border: 1px solid #6c6c6c;
+  background: $blue-dark;
+  border: 1px solid $gray-dark;
+  border-radius: 3px;
   box-shadow: 0 0 2px #bbb;
   z-index: 999;
 }

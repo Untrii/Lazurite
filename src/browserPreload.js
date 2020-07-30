@@ -1,8 +1,6 @@
 const { ipcRenderer } = require('electron')
 
 window.lzsubcode = function(handlerWebContentsID) {
-  console.log('here')
-
   let getBase64Image = function(img) {
     let canvas = document.createElement('canvas')
 
@@ -18,8 +16,7 @@ window.lzsubcode = function(handlerWebContentsID) {
   }
 
   window.savedFiles = {}
-  window.lzmdev = event => {
-    console.log('click: ' + event.button)
+  window.lzmdev = (event) => {
     if (event.button != 2) return
 
     let elems = document.elementsFromPoint(event.clientX, event.clientY)

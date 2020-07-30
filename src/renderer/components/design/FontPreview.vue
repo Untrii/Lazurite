@@ -64,7 +64,6 @@ export default class FontPreview extends Vue {
   }
 
   beforeMount() {
-    console.log('here')
     this.getState()
     service.addOnChangeListener(() => this.getState())
     elementService.addOnChangeListener(() => this.getState())
@@ -133,7 +132,6 @@ export default class FontPreview extends Vue {
   }
 
   removePreset(name) {
-    console.log('Removing preset...')
     service.removeFontPreset(name)
     if (this.selectedPreset == name) {
       if (service.theme.fontPresets.length > 0)

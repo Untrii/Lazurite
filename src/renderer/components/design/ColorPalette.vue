@@ -155,7 +155,6 @@ export default class ColorPalette extends Vue {
   }
 
   mountColorPicker() {
-    console.log('Mounting color picker...')
     if (!document.querySelector('#color-palette')) colorPicker = null
     if (document.querySelector('#color-palette') && !colorPicker) {
       colorPicker = null
