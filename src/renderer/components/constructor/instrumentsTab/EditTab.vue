@@ -1,7 +1,9 @@
 <template>
-  <div v-if="isOneElementSelected">
+  <div v-if="isOneElementSelected" class="tab-root">
     <!-- <div v-for="(value, name) in element" :key="name">{{ name }}</div> -->
     <size-editor v-if="isSizeEditorShown"></size-editor>
+    <spreadsheet-editor v-if="isSpreadsheetEditorShown"> </spreadsheet-editor>
+    <color-correction-editor></color-correction-editor>
   </div>
   <div v-else>
     Please select one element.
@@ -12,23 +14,29 @@
 import { Vue, Component } from 'vue-property-decorator'
 import EditorService from '@/services/EditorService'
 import SizeEditor from './editors/SizeEditor.vue'
+import SpreadsheetEditor from './editors/SpreadsheetEditor.vue'
+import ColorCorrectionEditor from './editors/ColorCorrectionEditor.vue'
 
 let service = new EditorService()
 
 @Component({
   components: {
     SizeEditor,
+    SpreadsheetEditor,
+    ColorCorrectionEditor,
   },
 })
 export default class EditTab extends Vue {
   isOneElementSelected: boolean = false
   element: any
+  elementType: string = ''
   editableProps: string[] = []
 
   getState() {
     //this.element = service.
     this.isOneElementSelected = service.isOneElementSelected
     this.element = service.selectedElement
+    this.elementType = this.element.type ?? ''
     this.editableProps = service.getEditableProperties(this.element.type ?? '')
   }
 
@@ -68,9 +76,12 @@ export default class EditTab extends Vue {
   }
 
   get isSpreadsheetEditorShown() {
-    return this.element.type == 'Spreadsheet'
+    return this.elementType == 'Spreadsheet'
   }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tab-root {
+}
+</style>

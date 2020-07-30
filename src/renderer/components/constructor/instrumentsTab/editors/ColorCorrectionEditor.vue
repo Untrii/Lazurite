@@ -20,25 +20,45 @@ import EditorService from '@/services/EditorService'
 let service = new EditorService()
 
 @Component
-export default class SizeEditor extends Vue {
+export default class ColorCorrectionEditor extends Vue {
   element: any = {}
 
   forms = [
     {
-      displayName: 'X',
-      propertyName: 'left',
+      displayName: 'Blur',
+      propertyName: 'blur',
     },
     {
-      displayName: 'Y',
-      propertyName: 'top',
+      displayName: 'Brightness',
+      propertyName: 'brightness',
     },
     {
-      displayName: 'W',
-      propertyName: 'width',
+      displayName: 'Contrast',
+      propertyName: 'contrast',
     },
     {
-      displayName: 'H',
-      propertyName: 'height',
+      displayName: 'Grayscale',
+      propertyName: 'grayscale',
+    },
+    {
+      displayName: 'Hue rotate',
+      propertyName: 'hueRotate',
+    },
+    {
+      displayName: 'opacity',
+      propertyName: 'opacity',
+    },
+    {
+      displayName: 'Saturate',
+      propertyName: 'saturate',
+    },
+    {
+      displayName: 'Sepia',
+      propertyName: 'sepia',
+    },
+    {
+      displayName: 'Drop shadow',
+      propertyName: 'dropShadow',
     },
   ]
 
@@ -52,6 +72,8 @@ export default class SizeEditor extends Vue {
   }
 
   onInput(propertyName, newVal) {
+    if (newVal == '') return
+    if (typeof newVal != 'number') newVal = parseInt(newVal)
     service.changeSelectedObjectProperty(propertyName, newVal)
   }
 }
@@ -69,6 +91,5 @@ export default class SizeEditor extends Vue {
 }
 
 .header {
-  padding-left: 5px;
 }
 </style>

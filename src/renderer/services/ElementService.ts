@@ -7,6 +7,7 @@ import DialogService from './DialogService'
 import ResourceService from './ResourceService'
 import { getBlankObject as getBlankImage } from '@/entities/SlideObjects/ImageBlock'
 import { getBlankObject as getBlankVideo } from '@/entities/SlideObjects/VideoBlock'
+import generateString from '@/utils/StringGenerator'
 
 export default class ElementService extends ReactiveService {
   private _groups: Map<string, ElementPreset[]> = new Map()
@@ -89,6 +90,7 @@ export default class ElementService extends ReactiveService {
     result.height = imageSize.height
     result.width = imageSize.width
     result.src = Instance.workspaceDataFolder + '/' + fileName
+    result.id = generateString(12)
 
     return result
   }
@@ -112,6 +114,7 @@ export default class ElementService extends ReactiveService {
     result.height = videoSize.height
     result.width = videoSize.width
     result.src = Instance.workspaceDataFolder + '/' + fileName
+    result.id = generateString(12)
 
     return result
   }
