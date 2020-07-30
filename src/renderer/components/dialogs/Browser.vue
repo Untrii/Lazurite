@@ -16,7 +16,7 @@
         style="margin-left: 40px;"
         @click="currentURL = availableURLs[0]"
       >
-        <span>
+        <span style="display:inline-flex;">
           <span style="color: #4285f4;">G</span>
           <span style="color: #ea4335;">o</span>
           <span style="color: #fbbc05;">o</span>
@@ -29,14 +29,14 @@
         class="browser-navbar__button browser-navbar__button_wide"
         @click="currentURL = availableURLs[1]"
       >
-        <span>
+        <span style="display:inline-flex;">
           <span style="color: red;">Y</span>
           <span style="color: black;">andex</span>
         </span>
       </div>
 
       <div
-        class="browser-navbar__button browser-navbar__button_wide"
+        class="browser-navbar__lettering"
         style="margin-left: 40px; cursor: auto;"
       >
         <span>
@@ -122,6 +122,8 @@ export default class Browser extends Vue {
         )
       }
     })
+
+    window.addEventListener('resize', this.onWindowResize)
   }
 
   beforeDestroy() {
@@ -132,9 +134,20 @@ export default class Browser extends Vue {
     view = undefined
 
     ipcRenderer.removeAllListeners('imgdata')
+    window.removeEventListener('resize', this.onWindowResize)
   }
 
-  @Watch('currentUrl')
+  onWindowResize() {
+    if (view)
+      view.setBounds({
+        x: 0,
+        y: 67,
+        width: window.innerWidth,
+        height: window.innerHeight - 67,
+      })
+  }
+
+  @Watch('currentURL')
   changeUrl(val) {
     if (view) view.webContents.loadURL(val)
   }
@@ -156,6 +169,8 @@ export default class Browser extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/css/variables.scss';
+
 .root {
   position: fixed;
   top: 31px;
@@ -166,7 +181,17 @@ export default class Browser extends Vue {
 }
 .browser-navbar {
   height: 36px;
-  background: #f5f5fa;
+  background: $gray-extralight;
+
+  &__lettering {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+    vertical-align: middle;
+    font-weight: 500;
+    font-size: 14px;
+    margin: 0 10px;
+  }
 
   &__button {
     height: 36px;
@@ -175,6 +200,12 @@ export default class Browser extends Vue {
     align-items: center;
     justify-content: space-around;
     vertical-align: middle;
+
+    &:hover {
+      background-color: $gray-light;
+      // border-radius: 16px;
+      // border: 4px solid $gray-extralight;
+    }
 
     * {
       position: relative;
@@ -188,7 +219,7 @@ export default class Browser extends Vue {
       font-weight: 500;
       font-size: 14px;
       width: fit-content;
-      margin: 0 10px;
+      padding: 0 10px;
       cursor: pointer;
     }
   }
