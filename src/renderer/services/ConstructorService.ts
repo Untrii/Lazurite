@@ -12,6 +12,7 @@ export default class ConstructorService extends ReactiveService {
 
   selectSlide(index: number) {
     Instance.variables.selectedSlideIndex = index
+    this.deselectAllObjects()
     Instance.onChange()
   }
   createSlide() {

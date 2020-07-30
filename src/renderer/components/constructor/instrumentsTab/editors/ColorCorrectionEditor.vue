@@ -6,7 +6,10 @@
         <b-form-input
           :value="element[form.propertyName]"
           @input="onInput(form.propertyName, $event)"
-          type="number"
+          type="range"
+          :min="form.min"
+          :max="form.max"
+          :step="0.01"
         ></b-form-input>
       </b-input-group>
     </div>
@@ -27,38 +30,65 @@ export default class ColorCorrectionEditor extends Vue {
     {
       displayName: 'Blur',
       propertyName: 'blur',
+      min: 0,
+      max: 30,
+      default: 0,
     },
     {
       displayName: 'Brightness',
       propertyName: 'brightness',
+      min: 0,
+      max: 2,
+      default: 1,
     },
     {
       displayName: 'Contrast',
       propertyName: 'contrast',
+      min: 0,
+      max: 2,
+      default: 1,
     },
     {
       displayName: 'Grayscale',
       propertyName: 'grayscale',
+      min: 0,
+      max: 1,
+      default: 0,
     },
     {
       displayName: 'Hue rotate',
       propertyName: 'hueRotate',
+      min: 0,
+      max: 360,
+      default: 0,
     },
     {
       displayName: 'opacity',
       propertyName: 'opacity',
+      min: 0,
+      max: 1,
+      default: 1,
     },
     {
       displayName: 'Saturate',
       propertyName: 'saturate',
+      min: 0,
+      max: 5,
+      default: 1,
     },
     {
       displayName: 'Sepia',
       propertyName: 'sepia',
+      min: 0,
+      max: 1,
+      default: 0,
     },
     {
       displayName: 'Drop shadow',
       propertyName: 'dropShadow',
+      min: 0,
+      max: 40,
+      default: 0,
     },
   ]
 
@@ -73,7 +103,7 @@ export default class ColorCorrectionEditor extends Vue {
 
   onInput(propertyName, newVal) {
     if (newVal == '') return
-    if (typeof newVal != 'number') newVal = parseInt(newVal)
+    if (typeof newVal != 'number') newVal = parseFloat(newVal)
     service.changeSelectedObjectProperty(propertyName, newVal)
   }
 }
@@ -85,9 +115,9 @@ export default class ColorCorrectionEditor extends Vue {
 }
 
 .editor-input {
-  display: inline-block;
-  width: calc(50% - 0px);
-  padding: 0 5px 10px 5px;
+  // display: inline-block;
+  // width: calc(50% - 0px);
+  // padding: 0 5px 10px 5px;
 }
 
 .header {

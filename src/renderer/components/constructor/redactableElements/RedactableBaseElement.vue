@@ -51,7 +51,7 @@ export default class RedactableBaseElement extends Vue {
   renderTargetElement(h) {
     return h(this.tagName, {
       props: { ...this.element, scale: this.scale },
-      attrs: { ...this.element },
+      attrs: { ...this.element, scale: this.scale },
       on: this.$listeners,
     })
   }

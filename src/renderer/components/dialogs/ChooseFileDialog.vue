@@ -52,6 +52,7 @@
         >Reload files</b-button
       >
     </div>
+    <browser v-if="isBrowserOpened" @closed="onBrowserClosed"></browser>
   </b-modal>
 </template>
 
@@ -59,16 +60,23 @@
 import { Vue, Component } from 'vue-property-decorator'
 import DialogService from '@/services/DialogService'
 import ResourceService from '@/services/ResourceService'
-
+import Browser from './Browser.vue'
+import { promises as fs } from 'fs'
+import { Buffer } from 'buffer'
 import { shell, remote } from 'electron'
 const dialog = remote.dialog
 
 let dialogService = new DialogService()
 let resourceService = new ResourceService()
 
-@Component
+@Component({
+  components: {
+    Browser,
+  },
+})
 export default class ChooseFileDialog extends Vue {
   files: string[] = []
+  isBrowserOpened = false
 
   async getState() {
     if (dialogService.isChooseFileDialogOpened)
@@ -115,7 +123,9 @@ export default class ChooseFileDialog extends Vue {
       }
     }
   }
-  showBrowser() {}
+  showBrowser() {
+    this.isBrowserOpened = true
+  }
   openProjectFolder() {
     shell.openItem(resourceService.resourceFolder)
   }
@@ -125,6 +135,28 @@ export default class ChooseFileDialog extends Vue {
 
   rejectChoose() {
     dialogService.onChooseRejected()
+  }
+
+  async onBrowserClosed(data) {
+    let start = new Date()
+
+    for (const key in data) {
+      let d = data[key].split(',')
+      let format = d[0].replace('data:image/', '').replace(';base64', '')
+
+      let dataArr = new Buffer(d[1], 'base64')
+
+      await fs.writeFile(
+        resourceService.resourceFolder + '/' + key + '.' + format,
+        dataArr
+      )
+    }
+
+    this.isBrowserOpened = false
+    this.reloadFiles()
+    console.log(
+      'Saved images in:' + (new Date().getTime() - start.getTime()) + 'ms'
+    )
   }
 }
 </script>
