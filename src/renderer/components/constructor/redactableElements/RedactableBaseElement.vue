@@ -17,6 +17,10 @@ export default class RedactableBaseElement extends Vue {
   @Prop(String) id
   @Prop(Number) scale
 
+  isDraggable = true
+  isResizable = true
+  isActive = true
+
   beforeMount() {
     visualisationService.addOnChangeListener(() => this.$forceUpdate())
     constructorService.addOnChangeListener(() => this.$forceUpdate())
@@ -52,7 +56,18 @@ export default class RedactableBaseElement extends Vue {
     return h(this.tagName, {
       props: { ...this.element, scale: this.scale },
       attrs: { ...this.element, scale: this.scale },
-      on: this.$listeners,
+      on: {
+        locked: () => {
+          this.isDraggable = false
+          this.isResizable = false
+          this.isActive = false
+        },
+        unlocked: () => {
+          this.isDraggable = true
+          this.isResizable = true
+          this.isActive = true
+        },
+      },
     })
   }
 
@@ -66,7 +81,9 @@ export default class RedactableBaseElement extends Vue {
       'DraggableResizable',
       {
         props: {
-          isActive: constructorService.selectedObjectIds.includes(this.id),
+          isActive:
+            constructorService.selectedObjectIds.includes(this.id) &&
+            this.isActive,
 
           gridX: 60 * this.scale,
           gridY: 60 * this.scale,
@@ -75,6 +92,9 @@ export default class RedactableBaseElement extends Vue {
           h: this.getScaledElement().height,
           x: this.getScaledElement().left,
           y: this.getScaledElement().top,
+
+          isDraggable: this.isDraggable,
+          isResizable: this.isResizable,
 
           parentWidth: 1920 * this.scale,
           parentHeight: 1080 * this.scale,

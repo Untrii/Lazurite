@@ -454,7 +454,7 @@ export default class DraggableResizable extends Vue {
       if (this.newRect[entry] != this.startRect[entry]) isChanged = true
     }
     if (isChanged) {
-      this.debouncedUpdate(200, true)
+      this.debouncedUpdate(16, true)
     }
   }
 
@@ -464,7 +464,7 @@ export default class DraggableResizable extends Vue {
 
       this.$emit('rectangleChanged', this.newRect)
       if (requestNext)
-        setTimeout(() => this.debouncedUpdate(rate, false), rate + 10)
+        setTimeout(() => this.debouncedUpdate(rate, false), rate * 1.5)
     }
   }
 

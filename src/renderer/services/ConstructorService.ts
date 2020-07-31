@@ -81,7 +81,12 @@ export default class ConstructorService extends ReactiveService {
     Instance.commitPresentationChanges()
   }
 
-  changeObjectProperty(objectId: string, propertyName: string, newVal: any) {
+  changeObjectProperty(
+    objectId: string,
+    propertyName: string,
+    newVal: any,
+    notReactive?: boolean
+  ) {
     if (!Instance.openedPresentation) return
     let slides = Instance.openedPresentation.slides
 
@@ -89,7 +94,7 @@ export default class ConstructorService extends ReactiveService {
       if (slides[slideMapId].has(objectId)) {
         let obj: any = slides[slideMapId].get(objectId)
         obj[propertyName] = newVal
-        Instance.commitPresentationChanges()
+        if (!notReactive) Instance.commitPresentationChanges()
         return
       }
     }
@@ -104,8 +109,9 @@ export default class ConstructorService extends ReactiveService {
 
   changeObjectProperties(objectId: string, properties: any) {
     for (const key in properties) {
-      this.changeObjectProperty(objectId, key, properties[key])
+      this.changeObjectProperty(objectId, key, properties[key], true)
     }
+    Instance.commitPresentationChanges()
   }
 
   changePreviewModuleSize(newSize: number) {

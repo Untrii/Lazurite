@@ -1,17 +1,36 @@
 <template>
   <div>
     <div class="control-buttons" :style="controlDockStyle" v-show="isSelected">
-      <div class="control-buttons__item">
-        hui
+      <div
+        class="control-buttons__item"
+        v-for="(button, index) in buttons"
+        :key="index"
+        @click.stop.prevent="button.handler"
+        @mousedown.stop.prevent
+        @mouseup.stop.prevent
+        @mouseenter="showPrompt(button.prompt)"
+        @mouseleave="hidePrompt(button.prompt)"
+      >
+        <img :src="button.image" alt="" />
       </div>
-      <div class="control-buttons__item">
-        hui
-      </div>
-      <div class="control-buttons__item">
-        hui
+      <div class="control-buttons__prompt" v-if="prompt != ''">
+        {{ prompt }}
       </div>
     </div>
-    <text-block v-bind="$attrs" class="content"></text-block>
+    <text-block
+      v-bind="$attrs"
+      class="content"
+      v-if="!isRedacting"
+    ></text-block>
+    <div v-else>
+      <div
+        @click.stop
+        class="text-block text-block_editable"
+        :style="blockStyle"
+        v-html="content"
+        contenteditable="true"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -21,6 +40,7 @@ import ConstructorService from '@/services/ConstructorService'
 import TextBlock from '@/components/elements/TextBlock.vue'
 import assets from '@/assets'
 import VisualisationService from '@/services/VisualisationService'
+import Color from '@/entities/Color'
 
 let service = new ConstructorService()
 let visualisationService = new VisualisationService()
@@ -29,13 +49,61 @@ let visualisationService = new VisualisationService()
   components: { TextBlock },
 })
 export default class RedactableTextBlock extends Vue {
-  @Prop(String) id
-  @Prop(Number) scale
+  @Prop() fontFamily!: string
+  @Prop() fontSize!: number
+  @Prop() fontWeight!: number
+  @Prop() content!: string
+  @Prop({ default: () => new Color(false) }) color!: Color
+  @Prop({ default: () => new Color(true) }) backgroundColor!: Color
+
+  @Prop() id!: string
+  @Prop() scale!: number
 
   blockSize = 0
   isSelected = false
   isRedacting = false
   x = 0
+
+  prompt = ''
+
+  // onBoldClick() {}
+  // onItalicClick() {}
+  // onStrikethroughClick() {}
+  // onUnderlineClick() {}
+  // onClearClick() {}
+
+  buttons = [
+    {
+      image: assets.edit,
+      handler: () => this.onEditClick(),
+      prompt: 'Edit element',
+    },
+    {
+      image: assets.bold,
+      handler: () => this.onBoldClick(),
+      prompt: 'Bold',
+    },
+    {
+      image: assets.italic,
+      handler: () => this.onItalicClick(),
+      prompt: 'Italic',
+    },
+    {
+      image: assets.strikethrough,
+      handler: () => this.onStrikethroughClick(),
+      prompt: 'Strikethrough',
+    },
+    {
+      image: assets.underline,
+      handler: () => this.onUnderlineClick(),
+      prompt: 'Underline',
+    },
+    {
+      image: assets.clear,
+      handler: () => this.onClearClick(),
+      prompt: 'Clear style',
+    },
+  ]
 
   getState() {
     let element = visualisationService.elementById(this.id)
@@ -49,6 +117,38 @@ export default class RedactableTextBlock extends Vue {
     service.addOnChangeListener(() => this.getState())
   }
 
+  onEditClick() {
+    let newRedactState = !this.isRedacting
+    if (!newRedactState) {
+      let el = document.querySelector('.text-block_editable')
+      if (el) service.changeObjectProperty(this.id, 'content', el.innerHTML)
+    }
+    this.isRedacting = newRedactState
+    this.buttons[0].image = newRedactState ? assets.tick : assets.edit
+    this.buttons[0].prompt = newRedactState ? 'Save' : 'Edit element'
+    this.prompt = newRedactState ? 'Save' : 'Edit element'
+
+    this.$emit(newRedactState ? 'locked' : 'unlocked')
+  }
+  onBoldClick() {
+    let virtualElement = document.createElement('content')
+    virtualElement.innerHTML = this.content
+    if (!this.isRedacting) {
+    }
+  }
+  onItalicClick() {}
+  onStrikethroughClick() {}
+  onUnderlineClick() {}
+  onClearClick() {}
+
+  showPrompt(text) {
+    this.prompt = text
+  }
+
+  hidePrompt(text) {
+    if (this.prompt == text) this.prompt = ''
+  }
+
   get assets() {
     return assets
   }
@@ -59,6 +159,16 @@ export default class RedactableTextBlock extends Vue {
         marginTop: this.blockSize * this.scale + 8 + 'px',
       }
     else return {}
+  }
+
+  get blockStyle() {
+    return {
+      fontFamily: "'" + this.fontFamily + "'",
+      fontSize: this.fontSize * this.scale + 'px',
+      fontWeight: this.fontWeight,
+      color: this.color.toCssColor(),
+      backgroundColor: this.backgroundColor.toCssColor(),
+    }
   }
 }
 </script>
@@ -79,6 +189,12 @@ export default class RedactableTextBlock extends Vue {
     height: 32px;
     display: inline-block;
 
+    img {
+      margin: 8px;
+      height: 16px;
+      width: 16px;
+    }
+
     &:hover {
       background: $gray-dark;
       cursor: pointer;
@@ -97,9 +213,34 @@ export default class RedactableTextBlock extends Vue {
       border-bottom-right-radius: 4px;
     }
   }
+
+  &__prompt {
+    background: $gray-extradark;
+    padding: 4px 10px;
+    height: 32px;
+    display: inline-block;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    color: white;
+  }
 }
 .content {
   width: 100%;
   height: 100%;
+}
+
+.text-block {
+  outline: none;
+  width: 100%;
+  height: 100%;
+  word-wrap: none;
+  word-break: break-word;
+}
+.text-block:active,
+.text-block:hover,
+.text-block:focus {
+  outline: 0;
+  outline-offset: 0;
 }
 </style>
