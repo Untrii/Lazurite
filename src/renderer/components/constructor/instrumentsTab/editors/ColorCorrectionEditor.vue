@@ -2,16 +2,21 @@
   <div class="editor-root">
     <h5 class="header">Size and position</h5>
     <div v-for="form in forms" :key="form.propertyName" class="editor-input">
-      <b-input-group size="sm" :prepend="form.displayName">
-        <b-form-input
-          :value="element[form.propertyName]"
-          @input="onInput(form.propertyName, $event)"
-          type="range"
-          :min="form.min"
-          :max="form.max"
-          :step="0.01"
-        ></b-form-input>
-      </b-input-group>
+      {{ form.displayName }}
+      <small
+        class="reset-button"
+        @click="onInput(form.propertyName, form.default)"
+      >
+        reset
+      </small>
+      <b-form-input
+        :value="element[form.propertyName]"
+        @input="onInput(form.propertyName, $event)"
+        type="range"
+        :min="form.min"
+        :max="form.max"
+        :step="0.01"
+      ></b-form-input>
     </div>
   </div>
 </template>
@@ -63,7 +68,7 @@ export default class ColorCorrectionEditor extends Vue {
       default: 0,
     },
     {
-      displayName: 'opacity',
+      displayName: 'Opacity',
       propertyName: 'opacity',
       min: 0,
       max: 1,
@@ -102,7 +107,7 @@ export default class ColorCorrectionEditor extends Vue {
   }
 
   onInput(propertyName, newVal) {
-    if (newVal == '') return
+    if (typeof newVal == 'string' && newVal == '') return
     if (typeof newVal != 'number') newVal = parseFloat(newVal)
     service.changeSelectedObjectProperty(propertyName, newVal)
   }
@@ -110,6 +115,7 @@ export default class ColorCorrectionEditor extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/css/variables.scss';
 .editor-root {
   padding: 20px 3px 0 15px;
 }
@@ -121,5 +127,14 @@ export default class ColorCorrectionEditor extends Vue {
 }
 
 .header {
+}
+
+.reset-button {
+  background: $blue-normal;
+  color: white;
+  padding: 2px 6px 4px 6px;
+  border-radius: 4px;
+  float: right;
+  cursor: pointer;
 }
 </style>

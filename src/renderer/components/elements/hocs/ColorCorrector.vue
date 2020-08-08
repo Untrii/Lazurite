@@ -24,15 +24,17 @@ let defaultProps = {
 
 @Component({ name: 'ColorCorrector' })
 export default class ColorCorrector extends Vue {
-  @Prop() blur!: string | number
-  @Prop() brightness!: string | number
-  @Prop() contrast!: string | number
-  @Prop() grayscale!: string | number
-  @Prop() hueRotate!: string | number
-  @Prop() opacity!: string | number
-  @Prop() saturate!: string | number
-  @Prop() sepia!: string | number
-  @Prop() dropShadow!: string | number
+  @Prop() blur!: number
+  @Prop() brightness!: number
+  @Prop() contrast!: number
+  @Prop() grayscale!: number
+  @Prop() hueRotate!: number
+  @Prop() opacity!: number
+  @Prop() saturate!: number
+  @Prop() sepia!: number
+  @Prop() dropShadow!: number
+
+  @Prop() scale!: number
 
   getState() {}
 
@@ -43,11 +45,12 @@ export default class ColorCorrector extends Vue {
 
   get style() {
     let filters = {
-      blur: `blur(${this.blur}px)`,
+      blur: `blur(${this.blur * this.scale}px)`,
       brightness: `brightness(${this.brightness})`,
       contrast: `contrast(${this.contrast})`,
       grayscale: `grayscale(${this.grayscale})`,
-      dropShadow: `drop-shadow(0px 10px ${this.dropShadow}px black)`,
+      dropShadow: `drop-shadow(0px 0px ${this.dropShadow *
+        this.scale}px black)`,
       hueRotate: `hue-rotate(${this.hueRotate}deg)`,
       opacity: `opacity(${this.opacity})`,
       saturate: `saturate(${this.saturate})`,
