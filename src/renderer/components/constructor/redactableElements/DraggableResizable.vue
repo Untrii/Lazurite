@@ -412,6 +412,7 @@ export default class DraggableResizable extends Vue {
         y: -1,
       }
       document.documentElement.addEventListener('mousemove', this.mouseUpdate)
+      this.$emit('rectangleChangeStarted', this.startRect)
     } else {
       document.documentElement.removeEventListener(
         'mousemove',
@@ -422,6 +423,9 @@ export default class DraggableResizable extends Vue {
 
     if (val == 'stickUp' || val == 'bodyUp') this.onRectangleChanged()
     if (this.isActive && val == 'outerUp') this.$emit('deactivated')
+
+    if (val == 'stickUp') this.$emit('resized', this.newRect)
+    if (val == 'bodyUp') this.$emit('moved', this.newRect)
   }
 
   onRectangleChanged() {

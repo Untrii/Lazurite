@@ -14,6 +14,7 @@
     <div class="main">
       <add-tab v-if="selectedTab == 'add'"></add-tab>
       <edit-tab v-if="selectedTab == 'edit'"></edit-tab>
+      <history-tab v-if="selectedTab == 'history'"></history-tab>
     </div>
     <div class="bottom-buttons"></div>
   </div>
@@ -25,6 +26,7 @@ import ConstructorService from '@/services/ConstructorService'
 import assets from '@/assets/index'
 import AddTab from './instrumentsTab/AddTab.vue'
 import EditTab from './instrumentsTab/EditTab.vue'
+import HistoryTab from './instrumentsTab/HistoryTab.vue'
 
 let service = new ConstructorService()
 
@@ -32,6 +34,7 @@ let service = new ConstructorService()
   components: {
     AddTab,
     EditTab,
+    HistoryTab,
   },
 })
 export default class Instruments extends Vue {
@@ -43,10 +46,18 @@ export default class Instruments extends Vue {
     },
     {
       name: 'history',
+      icon: assets.refresh,
+    },
+    {
+      name: 'layers',
       icon: assets.spark,
     },
     {
       name: 'edit',
+      icon: assets.spark,
+    },
+    {
+      name: 'editorSettings',
       icon: assets.spark,
     },
   ]
@@ -78,12 +89,14 @@ export default class Instruments extends Vue {
     -webkit-user-drag: none;
     display: inline-flex;
     align-items: center;
-    width: 33.3333%;
+    width: 20%;
     height: 40px;
     background-color: #e6e6eb;
 
     img {
       margin: auto;
+      height: 21px;
+      width: 21px;
     }
 
     &_selected {

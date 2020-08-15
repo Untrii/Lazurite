@@ -107,7 +107,6 @@ export default class ColorCorrectionEditor extends Vue {
   }
 
   onInput(propertyName, newVal) {
-    if (typeof newVal == 'string' && newVal == '') return
     if (typeof newVal != 'number') newVal = parseFloat(newVal)
     service.changeSelectedObjectProperty(propertyName, newVal)
   }

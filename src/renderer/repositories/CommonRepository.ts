@@ -1,5 +1,5 @@
 import FileObject from './FileObject'
-import Presentation from '@/entities/Presentation'
+import Presentation, { getBlankPresentation } from '@/entities/Presentation'
 import LocalFileSystem from './LocalFileSystem'
 import AppSettings, { defaultSettings } from '@/entities/AppSettings'
 import SlideObject from '@/entities/SlideObject'
@@ -11,6 +11,7 @@ import BackgroundCollection, {
 } from '@/entities/BackgroundCollection'
 import track from '@/utils/ReactiveTrack'
 import ReactiveRepository from './ReactiveRepository'
+import { Instance as HistoryRepository } from './HistoryRepository'
 
 const settingsFileName = 'data/settings.json'
 const backgroundCollectionFileName = 'data/bg.json'
@@ -102,13 +103,19 @@ export default class CommonRepository extends ReactiveRepository {
 
   async openPresentation(fileName: string) {
     this._openedPresentationFile = fileName.split('\\').join('/')
+    await HistoryRepository.openFile(this._openedPresentationFile + '.history')
 
     this._openedPresentationHandle = new FileObject(
       new LocalFileSystem(),
       fileName
     )
-    this._openedPresentation = await this._openedPresentationHandle.pull()
+    let pulled: Presentation = await this._openedPresentationHandle.pull()
+    this._openedPresentation = pulled
     this._isFileOpened = true
+    if (!pulled.theme || !pulled.scenaries || !pulled.slides) {
+      this.openedPresentation = getBlankPresentation()
+      return
+    }
     this.onChange()
   }
   async openSettings() {

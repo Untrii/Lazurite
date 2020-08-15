@@ -6,9 +6,13 @@ import SlideObject from '@/entities/SlideObject'
 import DraggableResizable from './DraggableResizable.vue'
 import ConstructorService from '@/services/ConstructorService'
 import Hotkeys from '@/utils/Hotkeys'
+import HistoryService from '@/services/HistoryService'
 
 let visualisationService = new VisualisationService()
 let constructorService = new ConstructorService()
+let historyService = new HistoryService()
+
+let start
 
 @Component({
   components: { ...elements, DraggableResizable },
@@ -45,6 +49,10 @@ export default class RedactableBaseElement extends Vue {
     element.height /= this.scale
     element.top /= this.scale
     element.left /= this.scale
+    element.width = Math.round(element.width)
+    element.height = Math.round(element.height)
+    element.top = Math.round(element.top)
+    element.left = Math.round(element.left)
     return element
   }
 
@@ -102,9 +110,42 @@ export default class RedactableBaseElement extends Vue {
         },
         on: {
           rectangleChanged: (newRect) => {
-            constructorService.changeObjectProperties(
+            let unscaledElement = this.unscaleElement(newRect)
+            constructorService.changeObjectProperties(this.id, unscaledElement)
+          },
+          rectangleChangeStarted: (startRect) => {
+            start = this.unscaleElement(startRect)
+          },
+          moved: (newRect) => {
+            newRect = this.unscaleElement(newRect)
+            historyService.registerElementMove(
               this.id,
-              this.unscaleElement(newRect)
+              {
+                top: start.top,
+                left: start.left,
+              },
+              {
+                top: newRect.top,
+                left: newRect.left,
+              }
+            )
+          },
+          resized: (newRect) => {
+            newRect = this.unscaleElement(newRect)
+            historyService.registerElementResize(
+              this.id,
+              {
+                top: start.top,
+                left: start.left,
+                width: start.width,
+                height: start.height,
+              },
+              {
+                top: newRect.top,
+                left: newRect.left,
+                width: newRect.width,
+                height: newRect.height,
+              }
             )
           },
           activated: () => {
