@@ -3,6 +3,10 @@ import { Instance } from '@/repositories/CommonRepository'
 import { promises as fs } from 'fs'
 
 export default class ResourceService extends ReactiveService {
+  constructor() {
+    super()
+    Instance.addOnChangeListener(() => this.onChange())
+  }
   async getResourceFiles(type: 'image' | 'video'): Promise<string[]> {
     if (!Instance.workspaceDataFolder) return []
     try {
@@ -64,11 +68,12 @@ export default class ResourceService extends ReactiveService {
     document.body.appendChild(container)
 
     let onGotMetadata
-    let result: Promise<{ width: number; height: number }> = new Promise(
-      (resolve, reject) => {
-        onGotMetadata = resolve
-      }
-    )
+    let result: Promise<{
+      width: number
+      height: number
+    }> = new Promise((resolve, reject) => {
+      onGotMetadata = resolve
+    })
 
     video.addEventListener('loadedmetadata', () => {
       onGotMetadata({

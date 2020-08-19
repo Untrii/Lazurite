@@ -21,6 +21,7 @@ export default class DesignService extends ReactiveService {
 
   constructor() {
     super()
+    Instance.addOnChangeListener(() => this.onChange())
   }
 
   getBackgroundCollection(): BackgroundCollection {

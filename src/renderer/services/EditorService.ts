@@ -8,6 +8,10 @@ import { getBlankObject as getBlankSpreadsheet } from '@/entities/SlideObjects/S
 import ConstructorService from './ConstructorService'
 
 export default class ResourceService extends ReactiveService {
+  constructor() {
+    super()
+    Instance.addOnChangeListener(() => this.onChange())
+  }
   private getObjectFields(obj: object) {
     let result: string[] = []
     for (const key in obj) {

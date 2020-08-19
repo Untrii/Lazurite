@@ -16,6 +16,7 @@
         :min="form.min"
         :max="form.max"
         :step="0.01"
+        @change="registerHistory(form.propertyName, $event)"
       ></b-form-input>
     </div>
   </div>
@@ -24,8 +25,11 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import EditorService from '@/services/EditorService'
+import HistoryService from '@/services/HistoryService'
 
 let service = new EditorService()
+let historyService = new HistoryService()
+let startVal: null | string = null
 
 @Component
 export default class ColorCorrectionEditor extends Vue {
@@ -108,7 +112,20 @@ export default class ColorCorrectionEditor extends Vue {
 
   onInput(propertyName, newVal) {
     if (typeof newVal != 'number') newVal = parseFloat(newVal)
+    if (startVal == null) startVal = this.element[propertyName]
     service.changeSelectedObjectProperty(propertyName, newVal)
+  }
+
+  registerHistory(propertyName, newVal) {
+    if (startVal != null) {
+      historyService.registerColorCorrection(
+        this.element.id,
+        propertyName,
+        startVal,
+        newVal
+      )
+      startVal = null
+    }
   }
 }
 </script>

@@ -4,7 +4,7 @@ import { Instance } from '@/repositories/CommonRepository'
 export default class DialogService extends ReactiveService {
   constructor() {
     super()
-    //this.addOnChangeListener()
+    Instance.addOnChangeListener(() => this.onChange())
   }
 
   private handleChooseFileDialog(resolve, reject) {

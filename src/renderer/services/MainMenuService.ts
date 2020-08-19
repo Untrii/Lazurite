@@ -3,6 +3,10 @@ import { getBlankPresentation } from '@/entities/Presentation'
 import ReactiveService from '@/services/ReactiveService'
 
 export default class MainMenuService extends ReactiveService {
+  constructor() {
+    super()
+    Instance.addOnChangeListener(() => this.onChange())
+  }
   async createPresentation(fileName: string) {
     await Instance.openPresentation(fileName)
     Instance.openedPresentation = getBlankPresentation()

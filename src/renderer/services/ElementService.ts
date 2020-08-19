@@ -14,6 +14,8 @@ export default class ElementService extends ReactiveService {
 
   constructor() {
     super()
+
+    Instance.addOnChangeListener(() => this.onChange())
     let designService = new DesignService()
     designService.addOnChangeListener(() => this.reloadFontPresets())
     this.reloadFontPresets()

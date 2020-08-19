@@ -41,9 +41,11 @@ import TextBlock from '@/components/elements/TextBlock.vue'
 import assets from '@/assets'
 import VisualisationService from '@/services/VisualisationService'
 import Color from '@/entities/Color'
+import HistoryService from '@/services/HistoryService'
 
 let service = new ConstructorService()
 let visualisationService = new VisualisationService()
+let historyService = new HistoryService()
 
 @Component({
   components: { TextBlock },
@@ -121,7 +123,10 @@ export default class RedactableTextBlock extends Vue {
     let newRedactState = !this.isRedacting
     if (!newRedactState) {
       let el = document.querySelector('.text-block_editable')
-      if (el) service.changeObjectProperty(this.id, 'content', el.innerHTML)
+      if (el) {
+        historyService.registerTextChange(this.id, this.content, el.innerHTML)
+        service.changeObjectProperty(this.id, 'content', el.innerHTML)
+      }
     }
     this.isRedacting = newRedactState
     this.buttons[0].image = newRedactState ? assets.tick : assets.edit

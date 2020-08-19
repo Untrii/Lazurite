@@ -3,9 +3,42 @@ import ReactiveService from '@/services/ReactiveService'
 import HistoryRecord from '@/entities/history/HistoryRecord'
 import ConstructorService from './ConstructorService'
 import WaybackProperties from '@/entities/history/WaybackProperties'
+import HistoryDeclarationInfo from '@/entities/history/HistoryDeclarationInfo'
+import HistoryRecordInfo from '@/entities/history/HistoryRecordInfo'
+import assets from '@/assets'
 
 export default class HistoryService extends ReactiveService {
-  async getHistory() {}
+  constructor() {
+    super()
+    HistoryRepository.addOnChangeListener(() => this.onChange())
+  }
+  async getHistory(): Promise<HistoryDeclarationInfo> {
+    console.log('here')
+    let undoInfo: HistoryRecordInfo[] = []
+    let redoInfo: HistoryRecordInfo[] = []
+
+    let history = await HistoryRepository.getFile()
+    let undo = [...history.undo].reverse()
+    let redo = history.redo
+
+    for (let i = 0; i < undo.length; i++) {
+      undoInfo.push({
+        icon: assets.logo,
+        actionType: undo[i].actionType,
+      })
+    }
+    for (let i = 0; i < redo.length; i++) {
+      redoInfo.push({
+        icon: assets.logo,
+        actionType: redo[i].actionType,
+      })
+    }
+
+    return {
+      redo: redoInfo,
+      undo: undoInfo,
+    }
+  }
 
   async undo(count: number) {
     let history = await HistoryRepository.getFile()
@@ -18,8 +51,22 @@ export default class HistoryService extends ReactiveService {
         this[record.waybackFunction](record)
       }
     }
+    await HistoryRepository.setFile(history)
   }
-  async redo(count: number) {}
+  async redo(count: number) {
+    let history = await HistoryRepository.getFile()
+    let undo = history.undo
+    let redo = history.redo
+    for (let i = 0; i < count; i++) {
+      let record = redo.pop()
+      if (record) {
+        undo.push(record)
+        this[record.waybackFunction](record, true)
+      }
+    }
+
+    await HistoryRepository.setFile(history)
+  }
 
   /**
    * Adds in history resize action
@@ -42,7 +89,11 @@ export default class HistoryService extends ReactiveService {
       left: number
     }
   ) {
-    this.registerAction('resizeElement', { id }, oldVal, newVal)
+    let isChanged = false
+    for (const key in oldVal) {
+      if (oldVal[key] != newVal[key]) isChanged = true
+    }
+    if (isChanged) this.registerAction('resizeElement', { id }, oldVal, newVal)
   }
 
   /**
@@ -56,7 +107,11 @@ export default class HistoryService extends ReactiveService {
     oldVal: { top: number; left: number },
     newVal: { top: number; left: number }
   ) {
-    this.registerAction('moveElement', { id }, oldVal, newVal)
+    let isChanged = false
+    for (const key in oldVal) {
+      if (oldVal[key] != newVal[key]) isChanged = true
+    }
+    if (isChanged) this.registerAction('moveElement', { id }, oldVal, newVal)
   }
 
   registerPropertyChange(
@@ -74,12 +129,41 @@ export default class HistoryService extends ReactiveService {
     this.registerAction('changeElementProperty', { id }, old, rnew)
   }
 
+  registerTextChange(id: string, oldVal: string, newVal: string) {
+    this.registerAction(
+      'textChange',
+      { id },
+      { content: oldVal },
+      { content: newVal }
+    )
+  }
+
+  registerColorCorrection(
+    id: string,
+    parameter: string,
+    oldVal: string,
+    newVal: string
+  ) {
+    this.registerAction(
+      'colorCorrectionChange',
+      { id },
+      { [parameter]: oldVal },
+      { [parameter]: newVal }
+    )
+  }
+
   async registerAction(
-    actionType: 'resizeElement' | 'moveElement' | 'changeElementProperty',
+    actionType:
+      | 'resizeElement'
+      | 'moveElement'
+      | 'changeElementProperty'
+      | 'textChange'
+      | 'colorCorrectionChange',
     waybackArgs: WaybackProperties,
     oldValue: any,
     newValue: any
   ) {
+    console.log('registering action')
     let newRecord: HistoryRecord = {
       actionType,
       timeStamp: new Date().getTime(),
@@ -93,6 +177,8 @@ export default class HistoryService extends ReactiveService {
       case 'resizeElement':
       case 'moveElement':
       case 'changeElementProperty':
+      case 'textChange':
+      case 'colorCorrectionChange':
         newRecord.waybackFunction = 'changeElementWayback'
         break
     }
@@ -109,7 +195,7 @@ export default class HistoryService extends ReactiveService {
     }
     history.undo.push(newRecord)
 
-    HistoryRepository.setFile(history)
+    await HistoryRepository.setFile(history)
     this.onChange()
   }
 
