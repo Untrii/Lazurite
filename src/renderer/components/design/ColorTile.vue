@@ -32,19 +32,22 @@ export default class ColorTile extends Vue {
   }
 
   get tileStyle() {
-    if (this.type == 'add') return 'background: #ddd'
-    if (this.type == 'color') return 'background:' + this.value
-    else if (this.type == 'gradient') return 'background-image: linear-gradient( ' + this.value + ');'
-    else if (this.type == 'pattern')
-      return `background-image: url("${process
-        .cwd()
-        .split('\\')
-        .join('/')}/data${this.value}")`
-    else
-      return `background-image: url("${process
-        .cwd()
-        .split('\\')
-        .join('/')}/data${this.value}");background-size:cover`
+    switch (this.type) {
+      case 'add':
+        return 'background: #ddd'
+      case 'color':
+        return 'background:' + this.value
+      case 'gradient':
+      case 'gradicolor':
+        return 'background-image: linear-gradient( ' + this.value + ');'
+      case 'pattern':
+      case 'image':
+        return `background-image: url("${process
+          .cwd()
+          .split('\\')
+          .join('/')}/data${this.value}");background-size:cover`
+    }
+    return ''
   }
 }
 </script>
