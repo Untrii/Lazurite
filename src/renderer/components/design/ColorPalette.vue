@@ -29,6 +29,10 @@
         <b-input type="number" v-model="pickedColorHSL.s" min="0" max="100"></b-input>
         <b-input type="number" v-model="pickedColorHSL.l" min="0" max="100"></b-input>
       </b-input-group>
+
+      <b-input-group size="sm" prepend="Hex" style="margin-top: 12px;">
+        <b-input type="text" v-model="pickedColor"></b-input>
+      </b-input-group>
     </div>
   </b-modal>
 </template>
