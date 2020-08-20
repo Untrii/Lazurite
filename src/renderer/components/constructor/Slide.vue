@@ -64,12 +64,10 @@ export default class Slide extends Vue {
         }
         break
       case BackgroundType.Gradient:
+      case BackgroundType.Gradicolor:
         bgStyle = {
           backgroundImage: 'linear-gradient(' + val + ')',
         }
-        break
-      case BackgroundType.Gradicolor:
-        throw new Error('Gradicolor doesnt implemented')
         break
       case BackgroundType.Pattern:
         bgStyle = {
