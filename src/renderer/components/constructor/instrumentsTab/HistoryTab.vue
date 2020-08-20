@@ -4,6 +4,7 @@
       class="history__item history__item_disabled"
       v-for="(item, index) in history.redo"
       @click="onRedoClick(index)"
+      :key="'redo' + k + index"
     >
       {{ item.actionType }}
     </div>
@@ -11,6 +12,7 @@
       class="history__item"
       v-for="(item, index) in history.undo"
       @click="onUndoClick(index)"
+      :key="'undo' + k + index"
     >
       {{ item.actionType }}
     </div>
@@ -18,7 +20,8 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable vue/require-v-for-key */
+/* eslint-disable-file no-use-before-define */
+// eslint-disable vue/require-v-for-key
 import { Vue, Component } from 'vue-property-decorator'
 import HistoryService from '@/services/HistoryService'
 import HistoryDeclarationInfo from '@/entities/history/HistoryDeclarationInfo'
@@ -33,9 +36,6 @@ export default class HistoryTab extends Vue {
   }
   async getState() {
     this.history = await service.getHistory()
-
-    // this.history.redo = [...history.redo]
-    // this.history.undo = [...history.undo]
   }
 
   beforeMount() {
@@ -51,6 +51,10 @@ export default class HistoryTab extends Vue {
   async onRedoClick(index: number | string) {
     if (typeof index == 'string') index = parseInt(index)
     await service.redo(this.history.redo.length - index)
+  }
+
+  get k() {
+    return new Date().getTime().toString()
   }
 }
 </script>

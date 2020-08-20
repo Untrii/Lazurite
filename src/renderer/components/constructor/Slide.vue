@@ -8,12 +8,7 @@
     ></redactable-base-element>
   </div>
   <div class="slide" :style="rootStyle" v-else>
-    <base-element
-      v-for="id in elementIds"
-      :key="id"
-      :id="id"
-      :scale="width / 1920"
-    ></base-element>
+    <base-element v-for="id in elementIds" :key="id" :id="id" :scale="width / 1920"></base-element>
   </div>
 </template>
 
@@ -78,12 +73,29 @@ export default class Slide extends Vue {
         break
       case BackgroundType.Pattern:
         bgStyle = {
-          backgroundImage: 'url("' + val + '")',
+          backgroundImage:
+            'url("' +
+            process
+              .cwd()
+              .split('\\')
+              .join('/') +
+            '/data' +
+            val +
+            '")',
+          backgroundSize: '20%',
         }
         break
       case BackgroundType.Image:
         bgStyle = {
-          backgroundImage: 'url("' + val + '")',
+          backgroundImage:
+            'url("' +
+            process
+              .cwd()
+              .split('\\')
+              .join('/') +
+            '/data' +
+            val +
+            '")',
           backgroundSize: 'cover',
         }
         break
