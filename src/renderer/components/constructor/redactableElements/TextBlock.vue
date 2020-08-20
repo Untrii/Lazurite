@@ -17,15 +17,12 @@
         {{ prompt }}
       </div>
     </div>
-    <text-block
-      v-bind="$attrs"
-      class="content"
-      v-if="!isRedacting"
-    ></text-block>
+    <text-block v-bind="$attrs" class="content" v-if="!isRedacting"></text-block>
     <div v-else>
       <div
         @click.stop
         class="text-block text-block_editable"
+        :id="'tbr' + id"
         :style="blockStyle"
         v-html="content"
         contenteditable="true"
@@ -82,27 +79,27 @@ export default class RedactableTextBlock extends Vue {
     },
     {
       image: assets.bold,
-      handler: () => this.onBoldClick(),
+      handler: () => this.applyDecoration('bold'),
       prompt: 'Bold',
     },
     {
       image: assets.italic,
-      handler: () => this.onItalicClick(),
+      handler: () => this.applyDecoration('italic'),
       prompt: 'Italic',
     },
     {
       image: assets.strikethrough,
-      handler: () => this.onStrikethroughClick(),
+      handler: () => this.applyDecoration('strikeThrough'),
       prompt: 'Strikethrough',
     },
     {
       image: assets.underline,
-      handler: () => this.onUnderlineClick(),
+      handler: () => this.applyDecoration('underline'),
       prompt: 'Underline',
     },
     {
       image: assets.clear,
-      handler: () => this.onClearClick(),
+      handler: () => this.applyDecoration('removeFormat'),
       prompt: 'Clear style',
     },
   ]
@@ -115,6 +112,7 @@ export default class RedactableTextBlock extends Vue {
   }
 
   beforeMount() {
+    console.log('text block')
     this.getState()
     service.addOnChangeListener(() => this.getState())
   }
@@ -135,16 +133,115 @@ export default class RedactableTextBlock extends Vue {
 
     this.$emit(newRedactState ? 'locked' : 'unlocked')
   }
-  onBoldClick() {
-    let virtualElement = document.createElement('content')
-    virtualElement.innerHTML = this.content
-    if (!this.isRedacting) {
+
+  applyDecoration(name: string) {
+    let virtualElement = document.querySelector('#tbr' + this.id) ?? document.createElement('content')
+
+    let getStyledText = function(node: ChildNode, inheritStyle: string[]): { text: string; style: Set<string> }[] {
+      let result: { text: string; style: Set<string> }[] = []
+      for (let i = 0; i < node.childNodes.length; i++) {
+        const element = node.childNodes[i]
+        if (element.nodeName == '#text') {
+          let decorations = new Set<string>()
+          for (const item of inheritStyle) {
+            decorations.add(item)
+          }
+          result.push({ text: element.textContent ?? '', style: decorations })
+        } else {
+          let style = [...inheritStyle]
+          style.push(element.nodeName)
+
+          result = [...result, ...getStyledText(element, style)]
+        }
+      }
+
+      return result
     }
+    let getHTML = function(styledText: { text: string; style: Set<string> }[]): string {
+      let result: string[] = []
+      if (styledText.length == 1) {
+        let text = styledText[0]
+        let t = text.text
+        for (const item of text.style) {
+          t = `<${item}>${t}</${item}>`
+        }
+        return t
+      } else {
+        for (const item of styledText) {
+          result.push(getHTML([item]))
+        }
+        return result.join('')
+      }
+    }
+
+    let isThisTextBlockSelected = () => {
+      let selection = getSelection()
+      if (!selection) return false
+      if (selection.type != 'Range') return false
+      let currentElement = document.querySelector('#tbr' + this.id)
+      let focusedElement: Node | null | undefined = getSelection()?.focusNode ?? document
+      let result = false
+      while (focusedElement?.parentNode != document && focusedElement) {
+        if (focusedElement == currentElement) result = true
+        focusedElement = focusedElement?.parentNode
+      }
+      return result
+    }
+
+    let applyDecorationInStyle = function(styledText: { text: string; style: Set<string> }[]) {
+      let dCount = 0
+      for (let i = 0; i < styledText.length; i++) {
+        switch (name) {
+          case 'bold':
+            if (styledText[i].style.has('B')) dCount++
+            styledText[i].style.add('B')
+            break
+          case 'italic':
+            if (styledText[i].style.has('I')) dCount++
+            styledText[i].style.add('I')
+            break
+          case 'underline':
+            if (styledText[i].style.has('U')) dCount++
+            styledText[i].style.add('U')
+            break
+          case 'strikeThrough':
+            if (styledText[i].style.has('STRIKE')) dCount++
+            styledText[i].style.add('STRIKE')
+            break
+          case 'removeFormat':
+            let isDiv = styledText[i].style.has('DIV')
+            styledText[i].style.clear()
+            if (isDiv) styledText[i].style.add('DIV')
+            break
+        }
+      }
+      for (let i = 0; i < styledText.length; i++) {
+        if (dCount == styledText.length) {
+          switch (name) {
+            case 'bold':
+              styledText[i].style.delete('B')
+              break
+            case 'italic':
+              styledText[i].style.delete('I')
+              break
+            case 'underline':
+              styledText[i].style.delete('U')
+              break
+            case 'strikeThrough':
+              styledText[i].style.delete('STRIKE')
+              break
+          }
+        }
+      }
+      return styledText
+    }
+
+    if (!isThisTextBlockSelected()) {
+      let html = getHTML(applyDecorationInStyle(getStyledText(virtualElement, [])))
+      historyService.registerTextChange(this.id, this.content, html)
+      service.changeObjectProperty(this.id, 'content', html)
+    } else document.execCommand(name)
   }
-  onItalicClick() {}
-  onStrikethroughClick() {}
-  onUnderlineClick() {}
-  onClearClick() {}
 
   showPrompt(text) {
     this.prompt = text
