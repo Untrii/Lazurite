@@ -1,9 +1,6 @@
 <template>
   <div class="root">
-    <div
-      class="type-picker"
-      :class="{ 'type-picker_underlined': isListScrolled }"
-    >
+    <div class="type-picker" :class="{ 'type-picker_underlined': isListScrolled }">
       <h4
         class="type-picker__item"
         v-for="type in availableBackgrounds.default.keys()"
@@ -54,14 +51,17 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import BackgroundCollection, {
-  getBlankCollection,
-} from '@/entities/BackgroundCollection'
+import BackgroundCollection, { getBlankCollection } from '@/entities/BackgroundCollection'
 import DesignService from '@/services/DesignService'
 import VisualisationService from '@/services/VisualisationService'
 import ColorTile from './ColorTile.vue'
 import ColorPalette from './ColorPalette.vue'
 import { stringFromType } from '@/entities/Theme'
+import { remote } from 'electron'
+import { promises as fs } from 'fs'
+
+const dialog = remote.dialog
+const { ImageProcessing } = remote.require('./main')
 
 let service = new DesignService()
 let visService = new VisualisationService()
@@ -89,9 +89,7 @@ export default class BackgroundModule extends Vue {
 
   getState() {
     this.availableBackgrounds = service.getBackgroundCollection()
-    this.pickedTileType = this.pickedType = stringFromType(
-      visService.theme.backgroundType
-    )
+    this.pickedTileType = this.pickedType = stringFromType(visService.theme.backgroundType)
     this.pickedTileVal = visService.theme.backgroundValue
   }
 
@@ -123,8 +121,7 @@ export default class BackgroundModule extends Vue {
     if (element.scrollTop > 0) this.isListScrolled = true
     else this.isListScrolled = false
 
-    if (iteration != 0)
-      requestAnimationFrame(() => this.trackScroll(iteration - 1))
+    if (iteration != 0) requestAnimationFrame(() => this.trackScroll(iteration - 1))
   }
 
   async selectBackground(val) {
@@ -134,6 +131,17 @@ export default class BackgroundModule extends Vue {
   }
 
   async addBackground() {
+    let getFreeFileName = async function(folder: string): Promise<string> {
+      let files = await fs.readdir(folder)
+      let index = 0
+      while (true) {
+        if (!files.includes(`custom${index}.png`) && !files.includes(`custom${index}.jpg`)) {
+          return 'custom' + index
+        }
+        index++
+      }
+      return ''
+    }
     switch (this.pickedType) {
       case 'color':
       case 'gradient':
@@ -149,6 +157,31 @@ export default class BackgroundModule extends Vue {
           service.addBackground(this.pickedType, result)
           this.isColorPaletteOpened = false
         } catch {}
+        break
+      case 'image':
+      case 'pattern':
+        let result = await dialog.showOpenDialog({
+          properties: ['openFile', 'multiSelections'],
+          filters: [{ name: 'Images', extensions: ['jpg', 'png'] }],
+        })
+        if (!result.canceled) {
+          for (const file of result.filePaths) {
+            let dataPath =
+              process
+                .cwd()
+                .split('\\')
+                .join('/') + '/data'
+            let path = dataPath + (this.pickedType == 'image' ? '/background' : '/patterns')
+            let extension = '.' + file.split('.').pop()
+            let fileName = (await getFreeFileName(path)) + extension
+            let filePath = path + '/' + fileName
+            await fs.copyFile(file, filePath)
+            if (this.pickedType == 'image') {
+              await ImageProcessing.createPreviews()
+            }
+            service.addBackground(this.pickedType, filePath.replace(dataPath, ''))
+          }
+        }
         break
     }
 

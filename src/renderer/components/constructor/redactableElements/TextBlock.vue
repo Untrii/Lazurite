@@ -154,9 +154,9 @@ export default class RedactableTextBlock extends Vue {
           result = [...result, ...getStyledText(element, style)]
         }
       }
-
       return result
     }
+
     let getHTML = function(styledText: { text: string; style: Set<string> }[]): string {
       let result: string[] = []
       if (styledText.length == 1) {

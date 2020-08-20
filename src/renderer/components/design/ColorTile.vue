@@ -6,11 +6,7 @@
     <div class="tile-plus" v-if="type == 'add'" @click.stop="$emit('add')">
       <img :src="assets.plus" data-toggle="color-palette" />
     </div>
-    <div
-      v-if="isDeletable"
-      @click.stop="$emit('delete', value)"
-      class="tile-delete-wrap"
-    >
+    <div v-if="isDeletable" @click.stop="$emit('delete', value)" class="tile-delete-wrap">
       <div class="tile-delete">
         <img :src="assets.delete_black" alt="" />
       </div>
@@ -38,8 +34,7 @@ export default class ColorTile extends Vue {
   get tileStyle() {
     if (this.type == 'add') return 'background: #ddd'
     if (this.type == 'color') return 'background:' + this.value
-    else if (this.type == 'gradient')
-      return 'background-image: linear-gradient( ' + this.value + ');'
+    else if (this.type == 'gradient') return 'background-image: linear-gradient( ' + this.value + ');'
     else if (this.type == 'pattern')
       return `background-image: url("${process
         .cwd()

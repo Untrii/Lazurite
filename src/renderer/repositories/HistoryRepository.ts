@@ -4,7 +4,6 @@ import LocalFileSystem from './LocalFileSystem'
 import HistoryDeclaration from '@/entities/history/HistoryDeclaration'
 
 export default class HistoryRepository extends ReactiveRepository {
-  private _file!: string
   private _handle!: FileObject
   private _isFileOpened = false
 
@@ -13,7 +12,6 @@ export default class HistoryRepository extends ReactiveRepository {
   }
 
   async openFile(fileName: string) {
-    this._file = fileName.split('\\').join('/')
     this._handle = new FileObject(new LocalFileSystem(), fileName)
     this._isFileOpened = true
     this.onChange()
