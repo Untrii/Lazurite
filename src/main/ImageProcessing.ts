@@ -2,7 +2,7 @@ import jimp from 'jimp'
 import Color from './Color'
 import { promises as fs } from 'fs'
 
-export async function getMedianColor(type, val: string): Promise<Color> {
+export async function getMedianColor(type, val: string & { matchAll?: Function }): Promise<Color> {
   if (type == 'color') return new Color().fromHex(val)
   if (type == 'gradient') {
     let cols = val.split(' ')
@@ -14,6 +14,24 @@ export async function getMedianColor(type, val: string): Promise<Color> {
       Math.floor((col0.r + col1.r) / 2),
       Math.floor((col0.g + col1.g) / 2),
       Math.floor((col0.b + col1.b) / 2)
+    )
+  }
+  if (type == 'gradicolor' && val.matchAll) {
+    let regexp = /(\d+),(\d+),(\d+),\d+/g
+    let matches = Array.from(val.matchAll(regexp))
+    let r = 0
+    let g = 0
+    let b = 0
+    for (let i = 0; i < matches.length; i++) {
+      const element: any = matches[i]
+      r += parseInt(element[1])
+      g += parseInt(element[2])
+      b += parseInt(element[3])
+    }
+    return new Color().fromRgb(
+      Math.floor(r / matches.length),
+      Math.floor(g / matches.length),
+      Math.floor(b / matches.length)
     )
   }
   if (type == 'image' || type == 'pattern') {
