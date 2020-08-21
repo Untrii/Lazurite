@@ -1,12 +1,9 @@
 <template>
   <div class="editor-root">
-    <h5 class="header">Size and position</h5>
+    <h5 class="header">Color correction</h5>
     <div v-for="form in forms" :key="form.propertyName" class="editor-input">
       {{ form.displayName }}
-      <small
-        class="reset-button"
-        @click="onInput(form.propertyName, form.default)"
-      >
+      <small class="reset-button" @click="onInput(form.propertyName, form.default)">
         reset
       </small>
       <b-form-input
@@ -118,12 +115,7 @@ export default class ColorCorrectionEditor extends Vue {
 
   registerHistory(propertyName, newVal) {
     if (startVal != null) {
-      historyService.registerColorCorrection(
-        this.element.id,
-        propertyName,
-        startVal,
-        newVal
-      )
+      historyService.registerColorCorrection(this.element.id, propertyName, startVal, newVal)
       startVal = null
     }
   }
