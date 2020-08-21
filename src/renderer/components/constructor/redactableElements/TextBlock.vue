@@ -135,8 +135,12 @@ export default class RedactableTextBlock extends Vue {
   }
 
   applyDecoration(name: string) {
-    let virtualElement = document.querySelector('#tbr' + this.id) ?? document.createElement('content')
-
+    let virtualElement
+    if (this.isRedacting) virtualElement = document.querySelector('#tbr' + this.id) ?? document.createElement('content')
+    else {
+      virtualElement = document.createElement('content')
+      virtualElement.innerHTML = this.content
+    }
     let getStyledText = function(node: ChildNode, inheritStyle: string[]): { text: string; style: Set<string> }[] {
       let result: { text: string; style: Set<string> }[] = []
       for (let i = 0; i < node.childNodes.length; i++) {
@@ -284,6 +288,8 @@ export default class RedactableTextBlock extends Vue {
   margin-left: 10px;
   display: inline-flex;
   transition: 0.3s;
+  z-index: 900;
+  width: 100vw;
 
   &__item {
     background: $gray-extradark;
