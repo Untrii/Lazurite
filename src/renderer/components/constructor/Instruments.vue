@@ -15,6 +15,7 @@
       <add-tab v-if="selectedTab == 'add'"></add-tab>
       <edit-tab v-if="selectedTab == 'edit'"></edit-tab>
       <history-tab v-if="selectedTab == 'history'"></history-tab>
+      <slide-settings-tab v-if="selectedTab == 'editorSettings'"></slide-settings-tab>
     </div>
     <div class="bottom-buttons"></div>
   </div>
@@ -27,6 +28,7 @@ import assets from '@/assets/index'
 import AddTab from './instrumentsTab/AddTab.vue'
 import EditTab from './instrumentsTab/EditTab.vue'
 import HistoryTab from './instrumentsTab/HistoryTab.vue'
+import SlideSettingsTab from './instrumentsTab/SlideSettingsTab.vue'
 
 let service = new ConstructorService()
 
@@ -35,6 +37,7 @@ let service = new ConstructorService()
     AddTab,
     EditTab,
     HistoryTab,
+    SlideSettingsTab,
   },
 })
 export default class Instruments extends Vue {
@@ -45,15 +48,15 @@ export default class Instruments extends Vue {
       icon: assets.plusblue,
     },
     {
+      name: 'edit',
+      icon: assets.spark,
+    },
+    {
       name: 'history',
       icon: assets.refresh,
     },
     {
       name: 'layers',
-      icon: assets.spark,
-    },
-    {
-      name: 'edit',
       icon: assets.spark,
     },
     {

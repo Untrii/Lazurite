@@ -9,11 +9,14 @@ export class RuntimeRepository extends ReactiveRepository {
   dialogType = 'image'
   choseFileDialogResolve = (fileName: string) => {}
   choseFileDialogReject = () => {}
+
+  isGridEnabled = false
+  gridSize = 144
 }
 
 function getInstance(): RuntimeRepository {
   let win: any = window
-  if (!win.__repoInstance) win.__repoInstance = new RuntimeRepository()
-  return win.__repoInstance
+  if (!win.__rtrepoInstance) win.__rtrepoInstance = new RuntimeRepository()
+  return win.__rtrepoInstance
 }
 export default getInstance()

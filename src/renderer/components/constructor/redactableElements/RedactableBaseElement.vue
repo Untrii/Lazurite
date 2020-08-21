@@ -7,10 +7,12 @@ import DraggableResizable from './DraggableResizable.vue'
 import ConstructorService from '@/services/ConstructorService'
 import Hotkeys from '@/utils/Hotkeys'
 import HistoryService from '@/services/HistoryService'
+import EditorService from '@/services/EditorService'
 
 let visualisationService = new VisualisationService()
 let constructorService = new ConstructorService()
 let historyService = new HistoryService()
+let editorSevice = new EditorService()
 
 let start
 
@@ -26,7 +28,7 @@ export default class RedactableBaseElement extends Vue {
   isActive = true
 
   beforeMount() {
-    visualisationService.addOnChangeListener(() => this.$forceUpdate())
+    //visualisationService.addOnChangeListener(() => this.$forceUpdate())
     constructorService.addOnChangeListener(() => this.$forceUpdate())
   }
 
@@ -89,12 +91,12 @@ export default class RedactableBaseElement extends Vue {
       'DraggableResizable',
       {
         props: {
-          isActive:
-            constructorService.selectedObjectIds.includes(this.id) &&
-            this.isActive,
+          isActive: constructorService.selectedObjectIds.includes(this.id) && this.isActive,
 
-          gridX: 60 * this.scale,
-          gridY: 60 * this.scale,
+          gridX: 30 * this.scale,
+          gridY: 30 * this.scale,
+
+          snapToGrid: editorSevice.isGridEnabled,
 
           w: this.getScaledElement().width,
           h: this.getScaledElement().height,
@@ -153,9 +155,7 @@ export default class RedactableBaseElement extends Vue {
             constructorService.selectObject(this.id)
             Hotkeys.unbind('delete')
             Hotkeys.bind('delete', () => {
-              constructorService.deleteObjects(
-                constructorService.selectedObjectIds
-              )
+              constructorService.deleteObjects(constructorService.selectedObjectIds)
             })
           },
           deactivated: () => {

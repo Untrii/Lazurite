@@ -26,11 +26,7 @@
     </b-form-group>
 
     <b-input-group size="sm" prepend="Font size">
-      <b-form-input
-        :value="element.fontSize"
-        @input="onInput('fontSize', $event)"
-        type="number"
-      ></b-form-input>
+      <b-form-input :value="element.fontSize" @input="onInput('fontSize', $event)" type="number"></b-form-input>
     </b-input-group>
   </div>
 </template>
@@ -106,8 +102,5 @@ export default class SizeEditor extends Vue {
   display: inline-block;
   width: calc(50% - 0px);
   padding: 0 5px 10px 5px;
-}
-
-.header {
 }
 </style>

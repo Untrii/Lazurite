@@ -3,9 +3,7 @@
     <!-- <div v-for="(value, name) in element" :key="name">{{ name }}</div> -->
     <size-editor v-if="isSizeEditorShown"></size-editor>
     <spreadsheet-editor v-if="isSpreadsheetEditorShown"> </spreadsheet-editor>
-    <color-correction-editor
-      v-if="isColorCorrectionEditorShown"
-    ></color-correction-editor>
+    <color-correction-editor v-if="isColorCorrectionEditorShown"></color-correction-editor>
   </div>
   <div v-else>
     Please select one element.
@@ -83,7 +81,4 @@ export default class EditTab extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-.tab-root {
-}
-</style>
+<style lang="scss" scoped></style>

@@ -1,12 +1,7 @@
 <template>
   <div>
     <b-form-group>
-      <b-form-checkbox
-        v-for="checker in checkers"
-        :key="checker.propertyName"
-        :checked="element[checker.propertyName]"
-        @change="onGridEnabledChange($event)"
-      >
+      <b-form-checkbox :checked="isGridEnabled" @change="onGridEnabledChange($event)">
         Enable grid
       </b-form-checkbox>
     </b-form-group>
@@ -20,15 +15,21 @@ import EditorService from '@/services/EditorService'
 let service = new EditorService()
 
 @Component
-export default class SlideSettings extends Vue {
-  getState() {}
+export default class SlideSettingsTab extends Vue {
+  isGridEnabled = false
+
+  getState() {
+    this.isGridEnabled = service.isGridEnabled
+  }
 
   beforeMount() {
     this.getState()
     service.addOnChangeListener(() => this.getState())
   }
 
-  onGridEnabledChange(newVal: boolean) {}
+  onGridEnabledChange(newVal: boolean) {
+    service.changeGridState(newVal)
+  }
 }
 </script>
 

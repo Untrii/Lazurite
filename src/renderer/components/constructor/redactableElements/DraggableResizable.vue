@@ -29,7 +29,7 @@ function isntNegative(x) {
   return x >= 0
 }
 function zValidator(val) {
-  let valid = typeof val === 'string' ? val === 'auto' : val >= 0
+  let valid = typeof val === 'string' ? val == 'auto' : val >= 0
   return valid
 }
 
@@ -165,16 +165,13 @@ export default class DraggableResizable extends Vue {
   mouseUpdate(event) {
     if (!this.isActive) return
     this.currentMousePosition = { x: event.clientX, y: event.clientY }
-    if (this.startMousePosition.x == -1)
-      this.startMousePosition = { x: event.clientX, y: event.clientY }
+    if (this.startMousePosition.x == -1) this.startMousePosition = { x: event.clientX, y: event.clientY }
   }
   registerEvents() {
     let el = document.documentElement
     if (!this.isEventsRegistered) {
       el.addEventListener('mouseup', this.mouseUp)
-      document
-        .getElementById(this.uid)
-        ?.parentNode?.addEventListener('mouseup', this.fieldMouseUp)
+      document.getElementById(this.uid)?.parentNode?.addEventListener('mouseup', this.fieldMouseUp)
       //el.addEventListener('mousemove', this.mouseUpdate)
       this.isEventsRegistered = true
     }
@@ -184,9 +181,7 @@ export default class DraggableResizable extends Vue {
       let el = document.documentElement
       if (this.isEventsRegistered) {
         el.removeEventListener('mouseup', this.mouseUp)
-        document
-          .getElementById(this.uid)
-          ?.parentNode?.removeEventListener('mouseup', this.fieldMouseUp)
+        document.getElementById(this.uid)?.parentNode?.removeEventListener('mouseup', this.fieldMouseUp)
         //el.removeEventListener('mousemove', this.mouseUpdate)
 
         this.isEventsRegistered = false
@@ -299,17 +294,14 @@ export default class DraggableResizable extends Vue {
     if (this.lastEvent == 'bodyDown') {
       //snap x
       let left0 = Math.round(rect.left / gridX) * gridX
-      let left1 =
-        Math.round((rect.left + rect.width) / gridX) * gridX - rect.width
+      let left1 = Math.round((rect.left + rect.width) / gridX) * gridX - rect.width
 
-      if (Math.abs(rect.left - left0) < Math.abs(rect.left - left1))
-        rect.left = left0
+      if (Math.abs(rect.left - left0) < Math.abs(rect.left - left1)) rect.left = left0
       else rect.left = left1
 
       //snap y
       let top0 = Math.round(rect.top / gridY) * gridY
-      let top1 =
-        Math.round((rect.top + rect.height) / gridY) * gridY - rect.height
+      let top1 = Math.round((rect.top + rect.height) / gridY) * gridY - rect.height
 
       if (Math.abs(rect.top - top0) < Math.abs(rect.top - top1)) rect.top = top0
       else rect.top = top1
@@ -332,32 +324,26 @@ export default class DraggableResizable extends Vue {
         case 'tr':
           rect.height += rect.top - ntop
           rect.top = ntop
-          rect.width =
-            Math.round((rect.width + rect.left) / gridY) * gridY - rect.left
+          rect.width = Math.round((rect.width + rect.left) / gridY) * gridY - rect.left
           break
         case 'bl':
-          rect.height =
-            Math.round((rect.height + rect.top) / gridY) * gridY - rect.top
+          rect.height = Math.round((rect.height + rect.top) / gridY) * gridY - rect.top
           rect.width += rect.left - nleft
           rect.left = nleft
           break
         case 'bm':
-          rect.height =
-            Math.round((rect.height + rect.top) / gridY) * gridY - rect.top
+          rect.height = Math.round((rect.height + rect.top) / gridY) * gridY - rect.top
           break
         case 'br':
-          rect.height =
-            Math.round((rect.height + rect.top) / gridY) * gridY - rect.top
-          rect.width =
-            Math.round((rect.width + rect.left) / gridY) * gridY - rect.left
+          rect.height = Math.round((rect.height + rect.top) / gridY) * gridY - rect.top
+          rect.width = Math.round((rect.width + rect.left) / gridY) * gridY - rect.left
           break
         case 'ml':
           rect.width += rect.left - nleft
           rect.left = nleft
           break
         case 'mr':
-          rect.width =
-            Math.round((rect.width + rect.left) / gridY) * gridY - rect.left
+          rect.width = Math.round((rect.width + rect.left) / gridY) * gridY - rect.left
           break
       }
     }
@@ -414,10 +400,7 @@ export default class DraggableResizable extends Vue {
       document.documentElement.addEventListener('mousemove', this.mouseUpdate)
       this.$emit('rectangleChangeStarted', this.startRect)
     } else {
-      document.documentElement.removeEventListener(
-        'mousemove',
-        this.mouseUpdate
-      )
+      document.documentElement.removeEventListener('mousemove', this.mouseUpdate)
     }
     if (val == 'bodyDown' && !this.isActive) this.$emit('activated')
 
@@ -436,10 +419,7 @@ export default class DraggableResizable extends Vue {
   @Watch('isActive')
   onDeactivate(val) {
     if (!val) {
-      document.documentElement.removeEventListener(
-        'mousemove',
-        this.mouseUpdate
-      )
+      document.documentElement.removeEventListener('mousemove', this.mouseUpdate)
     }
   }
 
@@ -467,8 +447,7 @@ export default class DraggableResizable extends Vue {
       lastUpdate = new Date().getTime()
 
       this.$emit('rectangleChanged', this.newRect)
-      if (requestNext)
-        setTimeout(() => this.debouncedUpdate(rate, false), rate * 1.5)
+      if (requestNext) setTimeout(() => this.debouncedUpdate(rate, false), rate * 1.5)
     }
   }
 

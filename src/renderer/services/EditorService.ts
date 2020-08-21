@@ -34,6 +34,30 @@ export default class ResourceService extends ReactiveService {
     return {}
   }
 
+  get isGridEnabled() {
+    return RuntimeRepository.isGridEnabled
+  }
+
+  get gridSize() {
+    return RuntimeRepository.gridSize
+  }
+
+  /**
+   * Disable or enable grid
+   * @param newVal New state
+   */
+  changeGridState(newVal: boolean) {
+    RuntimeRepository.isGridEnabled = newVal
+  }
+
+  /**
+   * Changes grid size. Variants: 16*9(144) or 32*18(576)
+   * @param newVal New size
+   */
+  changeGridSize(newVal: 144 | 576) {
+    RuntimeRepository.gridSize = newVal
+  }
+
   changeSelectedObjectProperty(propertyName: string, newVal: any) {
     let service = new ConstructorService()
     service.changeObjectProperty(service.selectedObjectId ?? '', propertyName, newVal)
