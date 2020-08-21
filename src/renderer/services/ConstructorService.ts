@@ -1,38 +1,39 @@
-import { Instance } from '@/repositories/CommonRepository'
+import CommonRepository from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
 import { getBlankObject } from '@/entities/SlideObject'
 import Presentation from '@/entities/Presentation'
 import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 export default class ConstructorService extends ReactiveService {
   constructor() {
     super()
-    Instance.addOnChangeListener(() => this.onChange())
+    CommonRepository.addOnChangeListener(() => this.onChange())
+    RuntimeRepository.addOnChangeListener(() => this.onChange())
   }
 
   selectSlide(index: number) {
-    Instance.variables.selectedSlideIndex = index
+    RuntimeRepository.selectedSlideIndex = index
     this.deselectAllObjects()
-    Instance.onChange()
+    CommonRepository.onChange()
   }
   createSlide() {
-    if (!Instance.isPresentationOpened) return
-    let presentation = Instance.openedPresentation
+    if (!CommonRepository.isPresentationOpened) return
+    let presentation = CommonRepository.openedPresentation
     presentation?.slides.push(new Map())
-    Instance.commitPresentationChanges()
+    CommonRepository.commitPresentationChanges()
   }
   deleteSlide(index: number) {
-    if (!Instance.isPresentationOpened) return
-    let slides = Instance.openedPresentation?.slides
+    if (!CommonRepository.isPresentationOpened) return
+    let slides = CommonRepository.openedPresentation?.slides
     slides = slides?.splice(index, 1)
-    Instance.commitPresentationChanges()
+    CommonRepository.commitPresentationChanges()
   }
 
   async createObject(preset: ElementPreset) {
     console.log('Creating ' + preset.type + '...')
-    if (!Instance.openedPresentation || this.selectedSlideIndex == undefined)
-      return
+    if (!CommonRepository.openedPresentation || this.selectedSlideIndex == undefined) return
     let slideObject: any = getBlankObject()
     slideObject.id = randomString(12)
     slideObject.type = preset.type
@@ -41,61 +42,53 @@ export default class ConstructorService extends ReactiveService {
     for (const key of parameters.keys()) {
       slideObject[key] = parameters.get(key)
     }
-    Instance.openedPresentation.slides[this.selectedSlideIndex].set(
-      slideObject.id,
-      slideObject
-    )
-    Instance.commitPresentationChanges()
+    CommonRepository.openedPresentation.slides[this.selectedSlideIndex].set(slideObject.id, slideObject)
+    CommonRepository.commitPresentationChanges()
   }
   selectObject(id: string) {
-    Instance.variables.selectedObjectsIds.add(id)
-    Instance.onChange()
+    RuntimeRepository.selectedObjectsIds.add(id)
+    CommonRepository.onChange()
   }
   deselectObject(id: string) {
-    Instance.variables.selectedObjectsIds.delete(id)
-    Instance.onChange()
+    RuntimeRepository.selectedObjectsIds.delete(id)
+    CommonRepository.onChange()
   }
   deselectAllObjects() {
-    Instance.variables.selectedObjectsIds.clear()
-    Instance.onChange()
+    RuntimeRepository.selectedObjectsIds.clear()
+    CommonRepository.onChange()
   }
   deleteObjects(objectIds: Set<string> | string[]) {
-    if (!Instance.openedPresentation) return
-    let slides = Instance.openedPresentation.slides
+    if (!CommonRepository.openedPresentation) return
+    let slides = CommonRepository.openedPresentation.slides
 
     for (let objectId of objectIds)
-      if (slides[Instance.variables.selectedSlideIndex].has(objectId)) {
-        slides[Instance.variables.selectedSlideIndex].delete(objectId)
+      if (slides[RuntimeRepository.selectedSlideIndex].has(objectId)) {
+        slides[RuntimeRepository.selectedSlideIndex].delete(objectId)
       }
-    Instance.commitPresentationChanges()
+    CommonRepository.commitPresentationChanges()
   }
   copyObjects(objectIds: Set<string>) {
-    Instance.variables.clipboard.clear()
-    if (Instance.openedPresentation == undefined) return
-    let slides = Instance.openedPresentation.slides
+    RuntimeRepository.clipboard.clear()
+    if (CommonRepository.openedPresentation == undefined) return
+    let slides = CommonRepository.openedPresentation.slides
 
     for (let objectId of objectIds)
-      if (slides[Instance.variables.selectedSlideIndex].has(objectId)) {
-        let obj = slides[Instance.variables.selectedSlideIndex].get(objectId)
-        if (obj) Instance.variables.clipboard.add(obj)
+      if (slides[RuntimeRepository.selectedSlideIndex].has(objectId)) {
+        let obj = slides[RuntimeRepository.selectedSlideIndex].get(objectId)
+        if (obj) RuntimeRepository.clipboard.add(obj)
       }
-    Instance.commitPresentationChanges()
+    CommonRepository.commitPresentationChanges()
   }
 
-  changeObjectProperty(
-    objectId: string,
-    propertyName: string,
-    newVal: any,
-    notReactive?: boolean
-  ) {
-    if (!Instance.openedPresentation) return
-    let slides = Instance.openedPresentation.slides
+  changeObjectProperty(objectId: string, propertyName: string, newVal: any, notReactive?: boolean) {
+    if (!CommonRepository.openedPresentation) return
+    let slides = CommonRepository.openedPresentation.slides
 
     for (let slideMapId in slides) {
       if (slides[slideMapId].has(objectId)) {
         let obj: any = slides[slideMapId].get(objectId)
         obj[propertyName] = newVal
-        if (!notReactive) Instance.commitPresentationChanges()
+        if (!notReactive) CommonRepository.commitPresentationChanges()
         return
       }
     }
@@ -112,45 +105,45 @@ export default class ConstructorService extends ReactiveService {
     for (const key in properties) {
       this.changeObjectProperty(objectId, key, properties[key], true)
     }
-    Instance.commitPresentationChanges()
+    CommonRepository.commitPresentationChanges()
   }
 
   changePreviewModuleSize(newSize: number) {
-    if (Instance.settings) Instance.settings.previewModuleSize = newSize
+    if (CommonRepository.settings) CommonRepository.settings.previewModuleSize = newSize
     this.onChange()
   }
   changeInstrumentsModuleSize(newSize: number) {
-    if (Instance.settings) Instance.settings.instrumentsModuleSize = newSize
+    if (CommonRepository.settings) CommonRepository.settings.instrumentsModuleSize = newSize
     this.onChange()
   }
   changeTimelineModuleSize(newSize: number) {
-    if (Instance.settings) Instance.settings.timelineModuleSize = newSize
+    if (CommonRepository.settings) CommonRepository.settings.timelineModuleSize = newSize
     this.onChange()
   }
 
   get selectedSlideIndex(): number | undefined {
-    return Instance.variables.selectedSlideIndex
+    return RuntimeRepository.selectedSlideIndex
   }
   get selectedObjectId(): string | undefined {
-    if (Instance.variables.selectedObjectsIds.size == 1)
-      for (let index of Instance.variables.selectedObjectsIds) return index
+    if (RuntimeRepository.selectedObjectsIds.size == 1)
+      for (let index of RuntimeRepository.selectedObjectsIds) return index
     return undefined
   }
   get selectedObjectIds(): string[] {
-    return Array.from(Instance.variables.selectedObjectsIds.values())
+    return Array.from(RuntimeRepository.selectedObjectsIds.values())
   }
 
   get previewModuleSize(): number | undefined {
-    return Instance.settings?.previewModuleSize
+    return CommonRepository.settings?.previewModuleSize
   }
   get instrumentsModuleSize(): number | undefined {
-    return Instance.settings?.instrumentsModuleSize
+    return CommonRepository.settings?.instrumentsModuleSize
   }
   get timelineModuleSize(): number | undefined {
-    return Instance.settings?.timelineModuleSize
+    return CommonRepository.settings?.timelineModuleSize
   }
 
   get presentation(): Presentation | undefined {
-    return Instance.openedPresentation
+    return CommonRepository.openedPresentation
   }
 }

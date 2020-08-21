@@ -1,4 +1,4 @@
-import { Instance } from '@/repositories/CommonRepository'
+import CommonRepository from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
 import SlideObject, { getBlankObject } from '@/entities/SlideObject'
 import Theme, { getBlankTheme } from '@/entities/Theme'
@@ -6,13 +6,13 @@ import Theme, { getBlankTheme } from '@/entities/Theme'
 export default class VisualisationService extends ReactiveService {
   constructor() {
     super()
-    Instance.addOnChangeListener(() => this.onChange())
+    CommonRepository.addOnChangeListener(() => this.onChange())
   }
 
   slideByIndex(index: number): Map<string, SlideObject> {
-    if (Instance.openedPresentation && index >= 0) {
-      if (Instance.openedPresentation.slides.length <= index) return new Map()
-      let res: any = Instance.openedPresentation.slides
+    if (CommonRepository.openedPresentation && index >= 0) {
+      if (CommonRepository.openedPresentation.slides.length <= index) return new Map()
+      let res: any = CommonRepository.openedPresentation.slides
       return new Map(res[index])
     }
 
@@ -21,8 +21,8 @@ export default class VisualisationService extends ReactiveService {
 
   elementById(id: string): SlideObject {
     //console.log('Rendering element with ID: ' + id)
-    if (!Instance.openedPresentation) return getBlankObject()
-    for (let slide of Instance.openedPresentation.slides) {
+    if (!CommonRepository.openedPresentation) return getBlankObject()
+    for (let slide of CommonRepository.openedPresentation.slides) {
       if (slide.has(id)) {
         let res = slide.get(id)
         if (res) return res
@@ -32,7 +32,7 @@ export default class VisualisationService extends ReactiveService {
   }
 
   get theme(): Theme {
-    if (!Instance.openedPresentation) return getBlankTheme()
-    return Instance.openedPresentation.theme
+    if (!CommonRepository.openedPresentation) return getBlankTheme()
+    return CommonRepository.openedPresentation.theme
   }
 }

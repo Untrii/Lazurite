@@ -3,7 +3,7 @@ import FileObject from './FileObject'
 import LocalFileSystem from './LocalFileSystem'
 import HistoryDeclaration from '@/entities/history/HistoryDeclaration'
 
-export default class HistoryRepository extends ReactiveRepository {
+export class HistoryRepository extends ReactiveRepository {
   private _handle!: FileObject
   private _isFileOpened = false
 
@@ -42,4 +42,4 @@ function getInstance(): HistoryRepository {
   return win.__historyInstance
 }
 
-export let Instance = getInstance()
+export default getInstance()

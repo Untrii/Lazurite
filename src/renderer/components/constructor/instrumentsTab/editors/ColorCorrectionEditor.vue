@@ -128,15 +128,6 @@ export default class ColorCorrectionEditor extends Vue {
   padding: 20px 3px 0 15px;
 }
 
-.editor-input {
-  // display: inline-block;
-  // width: calc(50% - 0px);
-  // padding: 0 5px 10px 5px;
-}
-
-.header {
-}
-
 .reset-button {
   background: $blue-normal;
   color: white;

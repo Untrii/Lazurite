@@ -1,19 +1,19 @@
 import ReactiveService from './ReactiveService'
-import { Instance } from '@/repositories/CommonRepository'
+import CommonRepository from '@/repositories/CommonRepository'
 import { promises as fs } from 'fs'
 
 export default class ResourceService extends ReactiveService {
   constructor() {
     super()
-    Instance.addOnChangeListener(() => this.onChange())
+    CommonRepository.addOnChangeListener(() => this.onChange())
   }
   async getResourceFiles(type: 'image' | 'video'): Promise<string[]> {
-    if (!Instance.workspaceDataFolder) return []
+    if (!CommonRepository.workspaceDataFolder) return []
     try {
-      let stats = await fs.lstat(Instance.workspaceDataFolder)
+      let stats = await fs.lstat(CommonRepository.workspaceDataFolder)
       if (!stats.isDirectory()) return []
 
-      let allFiles = await fs.readdir(Instance.workspaceDataFolder)
+      let allFiles = await fs.readdir(CommonRepository.workspaceDataFolder)
       let filteredFiles: string[] = []
       for (const item of allFiles) {
         if (type == 'image') {
@@ -86,6 +86,6 @@ export default class ResourceService extends ReactiveService {
   }
 
   get resourceFolder(): string {
-    return Instance.workspaceDataFolder ?? ''
+    return CommonRepository.workspaceDataFolder ?? ''
   }
 }

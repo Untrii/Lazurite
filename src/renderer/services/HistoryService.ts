@@ -1,4 +1,4 @@
-import { Instance as HistoryRepository } from '@/repositories/HistoryRepository'
+import HistoryRepository from '@/repositories/HistoryRepository'
 import ReactiveService from '@/services/ReactiveService'
 import HistoryRecord from '@/entities/history/HistoryRecord'
 import ConstructorService from './ConstructorService'
@@ -102,11 +102,7 @@ export default class HistoryService extends ReactiveService {
    * @param oldVal Old value
    * @param newVal New value
    */
-  registerElementMove(
-    id: string,
-    oldVal: { top: number; left: number },
-    newVal: { top: number; left: number }
-  ) {
+  registerElementMove(id: string, oldVal: { top: number; left: number }, newVal: { top: number; left: number }) {
     let isChanged = false
     for (const key in oldVal) {
       if (oldVal[key] != newVal[key]) isChanged = true
@@ -114,12 +110,7 @@ export default class HistoryService extends ReactiveService {
     if (isChanged) this.registerAction('moveElement', { id }, oldVal, newVal)
   }
 
-  registerPropertyChange(
-    id: string,
-    propertyName: string,
-    oldVal: any,
-    newVal: any
-  ) {
+  registerPropertyChange(id: string, propertyName: string, oldVal: any, newVal: any) {
     let old: any = {}
     old[propertyName] = oldVal
 
@@ -130,35 +121,15 @@ export default class HistoryService extends ReactiveService {
   }
 
   registerTextChange(id: string, oldVal: string, newVal: string) {
-    this.registerAction(
-      'textChange',
-      { id },
-      { content: oldVal },
-      { content: newVal }
-    )
+    this.registerAction('textChange', { id }, { content: oldVal }, { content: newVal })
   }
 
-  registerColorCorrection(
-    id: string,
-    parameter: string,
-    oldVal: string,
-    newVal: string
-  ) {
-    this.registerAction(
-      'colorCorrectionChange',
-      { id },
-      { [parameter]: oldVal },
-      { [parameter]: newVal }
-    )
+  registerColorCorrection(id: string, parameter: string, oldVal: string, newVal: string) {
+    this.registerAction('colorCorrectionChange', { id }, { [parameter]: oldVal }, { [parameter]: newVal })
   }
 
   async registerAction(
-    actionType:
-      | 'resizeElement'
-      | 'moveElement'
-      | 'changeElementProperty'
-      | 'textChange'
-      | 'colorCorrectionChange',
+    actionType: 'resizeElement' | 'moveElement' | 'changeElementProperty' | 'textChange' | 'colorCorrectionChange',
     waybackArgs: WaybackProperties,
     oldValue: any,
     newValue: any
@@ -208,9 +179,6 @@ export default class HistoryService extends ReactiveService {
     //args: any, oldValue: object, newValue: object
     let service = new ConstructorService()
     let id = record.waybackArguments?.id ?? 'null'
-    service.changeObjectProperties(
-      id,
-      reverse ? record.newValue : record.oldValue
-    )
+    service.changeObjectProperties(id, reverse ? record.newValue : record.oldValue)
   }
 }

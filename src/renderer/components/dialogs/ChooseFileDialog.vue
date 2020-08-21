@@ -1,37 +1,12 @@
 <template>
-  <b-modal
-    centered
-    id="choseFileDialog"
-    title="Project files"
-    size="xl"
-    @close="rejectChoose"
-  >
+  <b-modal centered id="choseFileDialog" title="Project files" size="xl" @close="rejectChoose">
     <div class="dialog__content">
       <div class="row">
-        <div
-          class="col-md-6 col-lg-4 col-xl-3"
-          v-for="file in files"
-          :key="file"
-        >
+        <div class="col-md-6 col-lg-4 col-xl-3" v-for="file in files" :key="file">
           <div class="card dialog__card" @click="createElement(file)">
-            <div
-              class="card-img-top dialog__card-preview"
-              :style="{ backgroundImage: `url('${getFullPath(file)}')` }"
-            >
-              <img
-                v-if="isImage(file)"
-                :src="getFullPath(file)"
-                height="0"
-                width="0"
-                :id="'selrs' + file"
-              />
-              <video
-                v-if="isVideo(file)"
-                :src="getFullPath(file)"
-                height="0"
-                width="0"
-                :id="'selrs' + file"
-              ></video>
+            <div class="card-img-top dialog__card-preview" :style="{ backgroundImage: `url('${getFullPath(file)}')` }">
+              <img v-if="isImage(file)" :src="getFullPath(file)" height="0" width="0" :id="'selrs' + file" />
+              <video v-if="isVideo(file)" :src="getFullPath(file)" height="0" width="0" :id="'selrs' + file"></video>
             </div>
             <div class="card-body">
               <p class="card-text">{{ file }}</p>
@@ -42,15 +17,9 @@
     </div>
     <div class="dialog__btn-dock">
       <b-button block variant="primary" @click="openFile">Add file</b-button>
-      <b-button block variant="primary" @click="showBrowser"
-        >Add file from internet</b-button
-      >
-      <b-button block variant="primary" @click="openProjectFolder"
-        >Open workspace in explorer</b-button
-      >
-      <b-button block variant="primary" @click="reloadFiles"
-        >Reload files</b-button
-      >
+      <b-button block variant="primary" @click="showBrowser">Add file from internet</b-button>
+      <b-button block variant="primary" @click="openProjectFolder">Open workspace in explorer</b-button>
+      <b-button block variant="primary" @click="reloadFiles">Reload files</b-button>
     </div>
     <browser v-if="isBrowserOpened" @closed="onBrowserClosed"></browser>
   </b-modal>
@@ -87,9 +56,7 @@ export default class ChooseFileDialog extends Vue {
       this.$bvModal.hide('choseFileDialog')
       isDialogShown = false
     }
-    this.files = await resourceService.getResourceFiles(
-      dialogService.chooseFileDialogType
-    )
+    this.files = await resourceService.getResourceFiles(dialogService.chooseFileDialogType)
   }
 
   beforeMount() {
@@ -150,17 +117,12 @@ export default class ChooseFileDialog extends Vue {
 
       let dataArr = new Buffer(d[1], 'base64')
 
-      await fs.writeFile(
-        resourceService.resourceFolder + '/' + key + '.' + format,
-        dataArr
-      )
+      await fs.writeFile(resourceService.resourceFolder + '/' + key + '.' + format, dataArr)
     }
 
     this.isBrowserOpened = false
     this.reloadFiles()
-    console.log(
-      'Saved images in:' + (new Date().getTime() - start.getTime()) + 'ms'
-    )
+    console.log('Saved images in:' + (new Date().getTime() - start.getTime()) + 'ms')
   }
 }
 </script>
@@ -168,7 +130,7 @@ export default class ChooseFileDialog extends Vue {
 <style lang="scss" scoped>
 .dialog {
   &__content {
-    width: calc(100% - 220px);
+    width: calc(100% - 230px);
     float: left;
     max-height: calc(100vh - 320px);
     overflow-y: scroll;

@@ -1,7 +1,7 @@
 import ReactiveService from './ReactiveService'
 import ElementPreset from '@/entities/ElementPreset'
 import DesignService from './DesignService'
-import { Instance } from '@/repositories/CommonRepository'
+import CommonRepository from '@/repositories/CommonRepository'
 import assets from '@/assets'
 import DialogService from './DialogService'
 import ResourceService from './ResourceService'
@@ -15,23 +15,13 @@ export default class ElementService extends ReactiveService {
   constructor() {
     super()
 
-    Instance.addOnChangeListener(() => this.onChange())
+    CommonRepository.addOnChangeListener(() => this.onChange())
     let designService = new DesignService()
     designService.addOnChangeListener(() => this.reloadFontPresets())
     this.reloadFontPresets()
     this.setGroup('media', [
-      new ElementPreset(
-        assets.logo,
-        'image',
-        'ImageBlock',
-        this.generateImageProps
-      ),
-      new ElementPreset(
-        assets.logo,
-        'video',
-        'VideoBlock',
-        this.generateVideoProps
-      ),
+      new ElementPreset(assets.logo, 'image', 'ImageBlock', this.generateImageProps),
+      new ElementPreset(assets.logo, 'video', 'VideoBlock', this.generateVideoProps),
     ])
     this.setGroup('datavis', [
       new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', {
@@ -59,10 +49,7 @@ export default class ElementService extends ReactiveService {
     ])
   }
 
-  private genetate2DMap(
-    value: string,
-    size: number
-  ): Map<number, Map<number, string>> {
+  private genetate2DMap(value: string, size: number): Map<number, Map<number, string>> {
     let result = new Map<number, Map<number, string>>()
     let sampleMap = new Map<number, string>()
     for (let i = 0; i < size; i++) {
@@ -91,7 +78,7 @@ export default class ElementService extends ReactiveService {
     let result = getBlankImage()
     result.height = imageSize.height
     result.width = imageSize.width
-    result.src = Instance.workspaceDataFolder + '/' + fileName
+    result.src = CommonRepository.workspaceDataFolder + '/' + fileName
     result.id = generateString(12)
 
     return result
@@ -115,15 +102,15 @@ export default class ElementService extends ReactiveService {
     let result = getBlankVideo()
     result.height = videoSize.height
     result.width = videoSize.width
-    result.src = Instance.workspaceDataFolder + '/' + fileName
+    result.src = CommonRepository.workspaceDataFolder + '/' + fileName
     result.id = generateString(12)
 
     return result
   }
 
   private reloadFontPresets() {
-    if (!Instance.openedPresentation) return
-    let fontPresets = Instance.openedPresentation.theme.fontPresets
+    if (!CommonRepository.openedPresentation) return
+    let fontPresets = CommonRepository.openedPresentation.theme.fontPresets
     let elementPresets: ElementPreset[] = []
     for (const entry of fontPresets) {
       elementPresets.push(

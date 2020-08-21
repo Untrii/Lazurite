@@ -1,16 +1,18 @@
 import ReactiveService from './ReactiveService'
-import { Instance } from '@/repositories/CommonRepository'
+import CommonRepository from '@/repositories/CommonRepository'
 import VisualisationService from './VisualisationService'
 import { getBlankObject as getBlankTextBlock } from '@/entities/SlideObjects/TextBlock'
 import { getBlankObject as getBlankImageBlock } from '@/entities/SlideObjects/ImageBlock'
 import { getBlankObject as getBlankVideoBlock } from '@/entities/SlideObjects/VideoBlock'
 import { getBlankObject as getBlankSpreadsheet } from '@/entities/SlideObjects/Spreadsheet'
 import ConstructorService from './ConstructorService'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 export default class ResourceService extends ReactiveService {
   constructor() {
     super()
-    Instance.addOnChangeListener(() => this.onChange())
+    CommonRepository.addOnChangeListener(() => this.onChange())
+    RuntimeRepository.addOnChangeListener(() => this.onChange())
   }
   private getObjectFields(obj: object) {
     let result: string[] = []
@@ -21,12 +23,12 @@ export default class ResourceService extends ReactiveService {
   }
 
   get isOneElementSelected() {
-    return Instance.variables.selectedObjectsIds.size == 1
+    return RuntimeRepository.selectedObjectsIds.size == 1
   }
 
   get selectedElement() {
     let vs = new VisualisationService()
-    for (const entry of Instance.variables.selectedObjectsIds) {
+    for (const entry of RuntimeRepository.selectedObjectsIds) {
       return vs.elementById(entry)
     }
     return {}
@@ -34,11 +36,7 @@ export default class ResourceService extends ReactiveService {
 
   changeSelectedObjectProperty(propertyName: string, newVal: any) {
     let service = new ConstructorService()
-    service.changeObjectProperty(
-      service.selectedObjectId ?? '',
-      propertyName,
-      newVal
-    )
+    service.changeObjectProperty(service.selectedObjectId ?? '', propertyName, newVal)
   }
 
   getEditableProperties(elementType: string) {

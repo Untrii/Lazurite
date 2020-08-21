@@ -1,20 +1,20 @@
-import { Instance } from '@/repositories/CommonRepository'
+import CommonRepository from '@/repositories/CommonRepository'
 import { getBlankPresentation } from '@/entities/Presentation'
 import ReactiveService from '@/services/ReactiveService'
 
 export default class MainMenuService extends ReactiveService {
   constructor() {
     super()
-    Instance.addOnChangeListener(() => this.onChange())
+    CommonRepository.addOnChangeListener(() => this.onChange())
   }
   async createPresentation(fileName: string) {
-    await Instance.openPresentation(fileName)
-    Instance.openedPresentation = getBlankPresentation()
+    await CommonRepository.openPresentation(fileName)
+    CommonRepository.openedPresentation = getBlankPresentation()
   }
   async openPresentation(fileName: string) {
-    await Instance.openPresentation(fileName)
-    if (!Instance.openedPresentation) {
-      Instance.openedPresentation = getBlankPresentation()
+    await CommonRepository.openPresentation(fileName)
+    if (!CommonRepository.openedPresentation) {
+      CommonRepository.openedPresentation = getBlankPresentation()
     }
   }
 }
