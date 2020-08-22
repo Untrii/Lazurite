@@ -17,7 +17,14 @@
       <history-tab v-if="selectedTab == 'history'"></history-tab>
       <slide-settings-tab v-if="selectedTab == 'editorSettings'"></slide-settings-tab>
     </div>
-    <div class="bottom-buttons"></div>
+    <div class="bottom-buttons">
+      <lz-button :blockLevel="true" image="logo" size="medium" variant="secondary" image-position="right">
+        Launch from the start
+      </lz-button>
+      <lz-button :blockLevel="true" image="logo" size="medium" variant="primary" image-position="right">
+        Launch from this slide
+      </lz-button>
+    </div>
   </div>
 </template>
 
@@ -79,7 +86,7 @@ export default class Instruments extends Vue {
   height: 100%;
   overflow-y: hidden;
   display: grid;
-  grid-template-rows: 40px 1fr 100px;
+  grid-template-rows: 40px 1fr 104px;
   background-color: #f5f5fa;
 }
 .tab-buttons {

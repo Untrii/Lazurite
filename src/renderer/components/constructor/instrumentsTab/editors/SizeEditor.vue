@@ -1,14 +1,23 @@
 <template>
-  <div class="editor-root">
-    <h5 class="header">Size and position</h5>
-    <div v-for="form in forms" :key="form.propertyName" class="editor-input">
-      <b-input-group size="sm" :prepend="form.displayName">
+  <div>
+    <lz-group-caption>Size and position</lz-group-caption>
+    <div class="input-wrap">
+      <div v-for="form in forms" :key="form.propertyName" class="editor-input">
+        <!-- <b-input-group size="sm" :prepend="form.displayName">
         <b-form-input
           :value="element[form.propertyName]"
           @input="onInput(form.propertyName, $event)"
           type="number"
         ></b-form-input>
-      </b-input-group>
+      </b-input-group> -->
+        <lz-number-input
+          size="small"
+          :prepend="form.displayName"
+          :value="element[form.propertyName]"
+          @valueChanged="onInput(form.propertyName, $event)"
+        >
+        </lz-number-input>
+      </div>
     </div>
   </div>
 </template>
@@ -58,8 +67,8 @@ export default class SizeEditor extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.editor-root {
-  padding: 20px 3px 0 15px;
+.input-wrap {
+  padding: 0 3px 0 15px;
 }
 
 .editor-input {

@@ -1,20 +1,22 @@
 <template>
   <div class="editor-root">
-    <h5 class="header">Color correction</h5>
-    <div v-for="form in forms" :key="form.propertyName" class="editor-input">
-      {{ form.displayName }}
-      <small class="reset-button" @click="onInput(form.propertyName, form.default)">
-        reset
-      </small>
-      <b-form-input
+    <lz-group-caption>Color correction</lz-group-caption>
+    <div class="editors">
+      <lz-range-input
+        v-for="form in forms"
+        :key="form.propertyName"
         :value="element[form.propertyName]"
-        @input="onInput(form.propertyName, $event)"
-        type="range"
+        @valueChanged="onInput(form.propertyName, $event)"
         :min="form.min"
         :max="form.max"
         :step="0.01"
-        @change="registerHistory(form.propertyName, $event)"
-      ></b-form-input>
+        @inputEnded="registerHistory(form.propertyName, $event)"
+        @reset="onInput(form.propertyName, form.default)"
+        size="small"
+        :prepend="form.displayName"
+        class="range-input"
+      >
+      </lz-range-input>
     </div>
   </div>
 </template>
@@ -124,8 +126,16 @@ export default class ColorCorrectionEditor extends Vue {
 
 <style lang="scss" scoped>
 @import '@/css/variables.scss';
-.editor-root {
-  padding: 20px 3px 0 15px;
+.editors {
+  margin-left: 20px;
+  margin-right: 8px;
+  margin-top: -2px;
+}
+.range-input:not(:last-child) {
+  margin-bottom: 8px;
+}
+.range-input {
+  margin-top: 2px;
 }
 
 .reset-button {

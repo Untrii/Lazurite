@@ -1,19 +1,21 @@
 <template>
   <div>
     <div v-for="name in groupNames" :key="name" class="element-group">
-      <h6 class="element-group__header">
+      <lz-group-caption>
         {{ name }}
-      </h6>
-      <div
-        class="element-group__item"
+      </lz-group-caption>
+      <lz-button
         v-for="preset in elementGroups.get(name)"
         :key="preset.name"
+        :image="preset.image"
+        variant="transparent"
+        :image-border="true"
         @click="createElement(preset)"
       >
-        <img :src="preset.image" alt height="40" width="40" />
         {{ preset.name }}
-      </div>
+      </lz-button>
     </div>
+    <lz-range-input prepend="prepend" size="small"></lz-range-input>
   </div>
 </template>
 
