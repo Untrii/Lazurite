@@ -14,7 +14,8 @@
         @reset="onInput(form.propertyName, form.default)"
         size="small"
         :prepend="form.displayName"
-        class="range-input"
+        :minPrependWidth="120"
+        class="range"
       >
       </lz-range-input>
     </div>
@@ -131,10 +132,10 @@ export default class ColorCorrectionEditor extends Vue {
   margin-right: 8px;
   margin-top: -2px;
 }
-.range-input:not(:last-child) {
+.range:not(:last-child) {
   margin-bottom: 8px;
 }
-.range-input {
+.range {
   margin-top: 2px;
 }
 

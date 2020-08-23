@@ -1,14 +1,34 @@
 <template>
-  <div class="range-input" :size="size" :style="rootStyle">
-    <lz-prepend :size="size" class="range-input__prepend">
-      {{ prepend }}
-    </lz-prepend>
-
-    <div class="range-input__range" @mousedown="onMouseDown($event)" @mousemove="onMouseMove($event)">
-      <div class="range_filled" :style="filledRangeStyle"></div>
+  <div class="input-root">
+    <div class="prompt" v-show="isHovered" :style="popperStyle">
+      <div class="prompt__body">{{ prepend }}: {{ flooredValue }}</div>
+      <div class="prompt__anchor">
+        <svg>
+          <polygon points="0,0 16,0 8,8" fill="#61778e"></polygon>
+        </svg>
+      </div>
     </div>
-    <div class="range-input__reset-button" @click="$emit('reset')">
-      reset
+    <div
+      class="range-input"
+      :size="size"
+      :style="rootStyle"
+      @mousemove="onMouseMove($event)"
+      @mouseenter="onMouseEnter"
+      @mouseleave="onMouseLeave"
+      @mousedown="onMouseDown($event)"
+    >
+      <lz-prepend :size="size" class="range-input__prepend" :min-width="isHovered ? 0 : minPrependWidth">
+        {{ prepend }}
+      </lz-prepend>
+
+      <div class="range-input__range">
+        <div class="range_filled" :style="filledRangeStyle"></div>
+      </div>
+
+      <!-- <input type="number" :min="min" :max="max" :step="step" class="range-input__input" /> -->
+      <div class="range-input__reset-button" @mousedown.stop="$emit('reset')">
+        reset
+      </div>
     </div>
   </div>
 </template>
@@ -30,12 +50,28 @@ export default class LzRangeInput extends Vue {
   @Prop({ default: 0.1 }) step!: number
   @Prop({ default: 0 }) min!: number
   @Prop({ default: 10 }) max!: number
+  @Prop({ default: 0 }) minPrependWidth!: number
 
   localValue = this.value
 
   @Watch('value')
   onValueChange(newVal) {
     this.localValue = newVal
+  }
+
+  get flooredValue() {
+    let valParts = this.localValue.toString().split('.')
+    let intPart = valParts[0]
+    let fractPart = valParts[1] ?? ''
+    let fractCharArr: string[] = []
+    for (let i = 0; i < fractPart.length && i < 2; i++) {
+      const char = fractPart[i]
+      fractCharArr.push(char)
+    }
+    if (fractCharArr[fractCharArr.length - 1] == '0') fractCharArr.pop()
+    if (fractCharArr.length == 0) fractCharArr.push('0')
+
+    return intPart + '.' + fractCharArr.join('')
   }
 
   isPressed = false
@@ -47,23 +83,32 @@ export default class LzRangeInput extends Vue {
       document.removeEventListener('mouseup', onMouseUp)
     }
     document.addEventListener('mouseup', onMouseUp)
+    this.onMouseMove(event)
   }
 
   onMouseMove(event: MouseEvent) {
     if (!this.isPressed) return
-    let width = this.$el.children[1].clientWidth
-    let offset = event.offsetX
-    let progress = (offset / width) * (this.max - this.min)
+    let range = this.$el.children[1]
+    let width = (range.clientWidth - 45) * 0.95 //minus reset button
+    let offset = event.pageX - range.getBoundingClientRect().x - width / 19
+    let progress = this.min + (offset / width) * (this.max - this.min)
     let flooredProgress = Math.round(progress / this.step) * this.step
     flooredProgress = Math.min(this.max, flooredProgress)
+    flooredProgress = Math.max(this.min, flooredProgress)
     this.localValue = flooredProgress
     this.$emit('valueChanged', flooredProgress)
   }
 
   get filledRangeStyle() {
-    return {
-      width: (100 * this.localValue) / (this.max - this.min) + '%',
-    }
+    if (this.isHovered) {
+      return {
+        width: (95 * this.localValue) / (this.max - this.min) + 5 + '%',
+        borderRight: '12px solid #61778e',
+      }
+    } else
+      return {
+        width: (100 * this.localValue) / (this.max - this.min) + '%',
+      }
   }
 
   get rootStyle() {
@@ -77,32 +122,77 @@ export default class LzRangeInput extends Vue {
     }
     return {}
   }
+
+  isHovered = false
+  popperOpacity = 0
+  get popperStyle() {
+    return {
+      opacity: this.popperOpacity,
+    }
+  }
+  onMouseEnter() {
+    this.isHovered = true
+    this.animatePopper()
+  }
+  onMouseLeave() {
+    this.isHovered = false
+    this.animatePopper()
+  }
+  animatePopper() {
+    if (this.isHovered) {
+      if (this.popperOpacity >= 1) return
+      this.popperOpacity += 0.2
+      requestAnimationFrame(() => this.animatePopper())
+    } else {
+      if (this.popperOpacity <= 0) return
+      this.popperOpacity -= 0.2
+      requestAnimationFrame(() => this.animatePopper())
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '@/css/variables.scss';
 .range-input {
+  position: relative;
+  top: 0;
   display: inline-grid;
   grid-template-columns: max-content 1fr max-content;
   width: 100%;
   background-color: white;
 
   &:hover &__prepend {
-    font-size: 0;
+    width: 0;
     opacity: 0;
     padding-left: 0;
     padding-right: 0;
-    transition: 0.5s;
+    transition: 0.1s;
   }
   &:not(:hover) &__prepend {
     //width: 100%;
-    transition: 0.5s;
+    transition: 0.1s;
   }
 
-  &__range {
-    height: 100%;
+  &__inner-prepend {
+    user-select: none;
   }
+  &:hover &__inner-prepend {
+    opacity: 1;
+    transition: 0.1s;
+  }
+  &:not(:hover) &__inner-prepend {
+    opacity: 0;
+    transition: 0.1s;
+  }
+
+  &__input {
+    height: 100%;
+    &:focus {
+      outline: none;
+    }
+  }
+
   &__reset-button {
     user-select: none;
     width: 0px;
@@ -126,6 +216,47 @@ export default class LzRangeInput extends Vue {
 
 .range_filled {
   height: 100%;
-  background-color: $blue-lighter;
+  background-color: $blue-normal;
+}
+
+.prompt {
+  position: relative;
+  z-index: 100;
+  top: -40px;
+  margin-bottom: -40px;
+  left: 50%;
+  width: 50%;
+  margin-left: -25%;
+  height: 40px;
+  opacity: 0;
+
+  &__body {
+    background-color: $blue-lighter;
+    text-align: center;
+    line-height: 32px;
+    height: 32px;
+    font-size: 14px;
+    color: white;
+  }
+  &__anchor {
+    margin: auto;
+    width: 16px;
+    height: 8px;
+    svg {
+      width: 16px;
+      height: 8px;
+      margin-top: -20px;
+    }
+  }
+}
+.input-root {
+  &:hover .prompt {
+    opacity: 1;
+    transition: 0.3s;
+  }
+  &:not(:hover) .prompt {
+    opacity: 0;
+    transition: 0.1s;
+  }
 }
 </style>
