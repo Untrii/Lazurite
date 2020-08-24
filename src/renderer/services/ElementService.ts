@@ -23,6 +23,16 @@ export default class ElementService extends ReactiveService {
       new ElementPreset(assets.logo, 'image', 'ImageBlock', this.generateImageProps),
       new ElementPreset(assets.logo, 'video', 'VideoBlock', this.generateVideoProps),
     ])
+    this.setGroup('figures', [
+      new ElementPreset(assets.logo, 'rectangle', 'Rectangle', {
+        top: 270,
+        left: 480,
+        width: 960,
+        height: 540,
+        fontSize: 44,
+        color: { r: 100, g: 100, b: 100 },
+      }),
+    ])
     this.setGroup('datavis', [
       new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', {
         rowCount: 5,

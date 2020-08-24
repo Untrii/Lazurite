@@ -6,7 +6,9 @@
     <color-correction-editor v-if="isColorCorrectionEditorShown"></color-correction-editor>
   </div>
   <div v-else>
-    Please select one element.
+    <lz-group-caption>
+      Please select one element
+    </lz-group-caption>
   </div>
 </template>
 

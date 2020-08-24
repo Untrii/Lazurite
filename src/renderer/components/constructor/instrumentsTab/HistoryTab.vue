@@ -14,7 +14,7 @@
     <lz-button
       v-for="item in history.redo"
       @click="onRedoClick(item.index)"
-      :key="'redo' + k + item.index"
+      :key="'redo' + item.index"
       :disabled="true"
       :image="item.icon"
       variant="transparent"
@@ -24,7 +24,7 @@
     <lz-button
       v-for="item in history.undo"
       @click="onUndoClick(item.index)"
-      :key="'undo' + k + item.index"
+      :key="'undo' + item.index"
       :image="item.icon"
       variant="transparent"
       size="small"

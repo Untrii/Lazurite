@@ -5,7 +5,6 @@ import ConstructorService from './ConstructorService'
 import WaybackProperties from '@/entities/history/WaybackProperties'
 import HistoryDeclarationInfo from '@/entities/history/HistoryDeclarationInfo'
 import HistoryRecordInfo from '@/entities/history/HistoryRecordInfo'
-import assets from '@/assets'
 import SlideObject from '@/entities/SlideObject'
 import CommonRepository from '@/repositories/CommonRepository'
 

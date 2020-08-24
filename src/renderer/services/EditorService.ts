@@ -5,6 +5,7 @@ import { getBlankObject as getBlankTextBlock } from '@/entities/SlideObjects/Tex
 import { getBlankObject as getBlankImageBlock } from '@/entities/SlideObjects/ImageBlock'
 import { getBlankObject as getBlankVideoBlock } from '@/entities/SlideObjects/VideoBlock'
 import { getBlankObject as getBlankSpreadsheet } from '@/entities/SlideObjects/Spreadsheet'
+import { getBlankObject as getBlankRectangle } from '@/entities/SlideObjects/Rectangle'
 import ConstructorService from './ConstructorService'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
 
@@ -73,6 +74,8 @@ export default class ResourceService extends ReactiveService {
         return this.getObjectFields(getBlankVideoBlock())
       case 'Spreadsheet':
         return this.getObjectFields(getBlankSpreadsheet())
+      case 'Rectangle':
+        return this.getObjectFields(getBlankRectangle())
     }
     return []
   }

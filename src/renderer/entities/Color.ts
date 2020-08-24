@@ -38,16 +38,11 @@ export default class Color {
     this.r = color.r
     this.g = color.g
     this.b = color.b
-    this.a = color.a
+    this.a = color.a ?? 1
   }
 
   public toHex(): string {
-    return (
-      '#' +
-      ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b)
-        .toString(16)
-        .slice(1)
-    )
+    return '#' + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16).slice(1)
   }
 
   public toCssColor(): string {
