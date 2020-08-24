@@ -1,3 +1,4 @@
 export default interface WaybackProperties {
-  id: string
+  id?: string
+  index?: number
 }

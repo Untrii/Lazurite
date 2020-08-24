@@ -1,21 +1,35 @@
 <template>
   <div class="history">
-    <div
+    <!-- <div
       class="history__item history__item_disabled"
-      v-for="(item, index) in history.redo"
-      @click="onRedoClick(index)"
-      :key="'redo' + k + index"
+      v-for="item in history.redo"
+      @click="onRedoClick(item.index)"
+      :key="item.index"
     >
       {{ item.actionType }}
     </div>
-    <div
-      class="history__item"
-      v-for="(item, index) in history.undo"
-      @click="onUndoClick(index)"
-      :key="'undo' + k + index"
-    >
+    <div class="history__item" v-for="item in history.undo" @click="onUndoClick(item.index)" :key="item.index">
       {{ item.actionType }}
-    </div>
+    </div> -->
+    <lz-button
+      v-for="item in history.redo"
+      @click="onRedoClick(item.index)"
+      :key="'redo' + k + item.index"
+      :disabled="true"
+      :image="item.icon"
+      variant="transparent"
+      size="small"
+      >{{ item.actionType }}</lz-button
+    >
+    <lz-button
+      v-for="item in history.undo"
+      @click="onUndoClick(item.index)"
+      :key="'undo' + k + item.index"
+      :image="item.icon"
+      variant="transparent"
+      size="small"
+      >{{ item.actionType }}</lz-button
+    >
   </div>
 </template>
 
@@ -25,6 +39,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import HistoryService from '@/services/HistoryService'
 import HistoryDeclarationInfo from '@/entities/history/HistoryDeclarationInfo'
+import HistoryRecordInfo from '@/entities/history/HistoryRecordInfo'
 
 let service = new HistoryService()
 
@@ -42,6 +57,13 @@ export default class HistoryTab extends Vue {
     console.log('HistoryTab')
     this.getState()
     service.addOnChangeListener(() => this.getState())
+  }
+
+  getImageFor(index: number, arrayName: string) {
+    let arr: HistoryRecordInfo[] = []
+    if (arrayName == 'undo') arr = this.history.undo
+    else arr = this.history.redo
+    return arr[index].icon
   }
 
   async onUndoClick(index: number | string) {

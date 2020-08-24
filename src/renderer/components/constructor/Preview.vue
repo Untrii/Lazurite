@@ -1,18 +1,9 @@
 <template>
   <div class="preview" :style="rootStyle">
     <div class="preview__content">
-      <div
-        v-for="(s, index) in slides"
-        :key="index"
-        :class="itemClasses(index)"
-        @click="selectSlide(index)"
-      >
+      <div v-for="(s, index) in slides" :key="index" :class="itemClasses(index)" @click="selectSlide(index)">
         <div :style="itemStyle" class="preview__item">
-          <slide
-            :index="parseInt(index)"
-            :height="previewHeight"
-            :width="previewWidth"
-          ></slide>
+          <slide :index="parseInt(index)" :height="previewHeight" :width="previewWidth"></slide>
         </div>
         <div class="preview__delete-button" @click.stop="deleteSlide(index)">
           <img :src="assets.delete" alt="" />
@@ -31,8 +22,10 @@ import { Vue, Component } from 'vue-property-decorator'
 import ConstructorService from '@/services/ConstructorService'
 import SlideObject from '@/entities/SlideObject'
 import Slide from './Slide.vue'
+import HistoryService from '@/services/HistoryService'
 
 let service = new ConstructorService()
+let historyService = new HistoryService()
 
 @Component({
   components: {
@@ -75,14 +68,12 @@ export default class Preview extends Vue {
     return this.previewSize - 40
   }
   itemClasses(index: number): string[] {
-    return [
-      'preview__item-wrap',
-      this.selectedSlideIndex == index ? 'preview__item-wrap_selected' : '',
-    ]
+    return ['preview__item-wrap', this.selectedSlideIndex == index ? 'preview__item-wrap_selected' : '']
   }
 
   createSlide() {
     service.createSlide()
+    historyService.registerSlideCreate()
     this.getState()
   }
   selectSlide(index: number | string) {
@@ -91,7 +82,11 @@ export default class Preview extends Vue {
     service.selectSlide(index)
   }
   deleteSlide(index: number) {
-    service.deleteSlide(index)
+    console.log('here')
+    let slide = service.deleteSlide(index)
+    if (slide) {
+      historyService.registerSlideDelete(index, slide)
+    }
   }
 }
 </script>

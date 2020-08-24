@@ -1,6 +1,6 @@
 import CommonRepository from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
-import { getBlankObject } from '@/entities/SlideObject'
+import SlideObject, { getBlankObject } from '@/entities/SlideObject'
 import Presentation from '@/entities/Presentation'
 import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
@@ -24,16 +24,18 @@ export default class ConstructorService extends ReactiveService {
     presentation?.slides.push(new Map())
     CommonRepository.commitPresentationChanges()
   }
-  deleteSlide(index: number) {
+  deleteSlide(index: number): Map<string, SlideObject> | undefined {
     if (!CommonRepository.isPresentationOpened) return
-    let slides = CommonRepository.openedPresentation?.slides
+    let slides = CommonRepository.openedPresentation?.slides ?? []
+    let deletedSlide = slides[index]
     slides = slides?.splice(index, 1)
     CommonRepository.commitPresentationChanges()
+    return deletedSlide
   }
 
-  async createObject(preset: ElementPreset) {
+  async createObject(preset: ElementPreset): Promise<SlideObject | undefined> {
     console.log('Creating ' + preset.type + '...')
-    if (!CommonRepository.openedPresentation || this.selectedSlideIndex == undefined) return
+    if (!CommonRepository.openedPresentation || this.selectedSlideIndex == undefined) return undefined
     let slideObject: any = getBlankObject()
     slideObject.id = randomString(12)
     slideObject.type = preset.type
@@ -44,6 +46,7 @@ export default class ConstructorService extends ReactiveService {
     }
     CommonRepository.openedPresentation.slides[this.selectedSlideIndex].set(slideObject.id, slideObject)
     CommonRepository.commitPresentationChanges()
+    return slideObject
   }
   selectObject(id: string) {
     RuntimeRepository.selectedObjectsIds.add(id)
@@ -61,11 +64,17 @@ export default class ConstructorService extends ReactiveService {
     if (!CommonRepository.openedPresentation) return
     let slides = CommonRepository.openedPresentation.slides
 
-    for (let objectId of objectIds)
-      if (slides[RuntimeRepository.selectedSlideIndex].has(objectId)) {
+    let deletedObjects: SlideObject[] = []
+
+    for (let objectId of objectIds) {
+      let object = slides[RuntimeRepository.selectedSlideIndex].get(objectId)
+      if (object) {
+        deletedObjects.push(object)
         slides[RuntimeRepository.selectedSlideIndex].delete(objectId)
       }
+    }
     CommonRepository.commitPresentationChanges()
+    return deletedObjects
   }
   copyObjects(objectIds: Set<string>) {
     RuntimeRepository.clipboard.clear()

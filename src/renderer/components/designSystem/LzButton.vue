@@ -1,7 +1,7 @@
 <template>
   <div :class="rootClasses" @click="$emit('click')">
     <img :src="assets[image]" alt="" v-if="assets[image]" :class="imageClasses" />
-    <img :src="image" alt="" v-if="image.trim().length > 0" :class="imageClasses" />
+    <img :src="image" alt="" v-else-if="image.trim().length > 0" :class="imageClasses" />
     <div :class="textClasses">
       <slot></slot>
     </div>
@@ -21,6 +21,7 @@ export default class LzButton extends Vue {
   @Prop({ default: 'left' }) imagePosition!: string
   @Prop({ default: false }) imageBorder!: boolean
   @Prop({ default: 'primary' }) variant!: string
+  @Prop({ default: false }) disabled!: boolean
 
   get assets() {
     return assets
@@ -34,7 +35,7 @@ export default class LzButton extends Vue {
   get rootClasses() {
     let result: string[] = ['button']
     result.push('button_' + this.size)
-    result.push('button_' + this.variant)
+    result.push('button_' + this.variant + (this.disabled ? '_disabled' : ''))
     if (this.blockLevel) result.push('button_block-level')
 
     return result
@@ -120,6 +121,10 @@ export default class LzButton extends Vue {
     &:not(:hover) {
       background-color: rgba($color: #000000, $alpha: 0);
       transition: 0.2s;
+    }
+    &_disabled {
+      color: gray;
+      background-color: rgba($color: #000000, $alpha: 0);
     }
   }
 

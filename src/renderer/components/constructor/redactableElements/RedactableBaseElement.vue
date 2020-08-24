@@ -155,7 +155,10 @@ export default class RedactableBaseElement extends Vue {
             constructorService.selectObject(this.id)
             Hotkeys.unbind('delete')
             Hotkeys.bind('delete', () => {
-              constructorService.deleteObjects(constructorService.selectedObjectIds)
+              let deletedElements = constructorService.deleteObjects(constructorService.selectedObjectIds)
+              if (deletedElements) {
+                historyService.registerElementDelete(deletedElements, constructorService.selectedSlideIndex ?? 0)
+              }
             })
           },
           deactivated: () => {

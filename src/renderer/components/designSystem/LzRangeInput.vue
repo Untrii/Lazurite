@@ -167,11 +167,10 @@ export default class LzRangeInput extends Vue {
     opacity: 0;
     padding-left: 0;
     padding-right: 0;
-    transition: 0.1s;
+    transform: translateX(-120px) scaleX(0);
   }
   &:not(:hover) &__prepend {
     //width: 100%;
-    transition: 0.1s;
   }
 
   &__inner-prepend {
