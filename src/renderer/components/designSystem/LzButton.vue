@@ -43,8 +43,10 @@ export default class LzButton extends Vue {
 
   get textClasses() {
     let result: string[] = []
-    if (this.isImageCorrect) result.push('button__text_align-image')
-    else result.push('button__text_centered')
+    if (this.isImageCorrect) {
+      result.push('button__text_align-image')
+      result.push('button__text_with-' + this.size + '-image')
+    } else result.push('button__text_centered')
 
     return result
   }
@@ -81,7 +83,16 @@ export default class LzButton extends Vue {
     }
     &_align-image {
       display: inline-block;
-      margin: 8px 0;
+    }
+
+    &_with-small-image {
+      line-height: 32px;
+    }
+    &_with-medium-image {
+      line-height: 40px;
+    }
+    &_with-large-image {
+      line-height: 48px;
     }
   }
 
