@@ -1,11 +1,6 @@
 <template>
   <div class="workspace" v-if="selectedSlideIndex >= 0" :style="rootStyle">
-    <slide
-      :index="selectedSlideIndex"
-      :width="workspaceWidth"
-      :height="workspaceHeight"
-      :isRedactable="true"
-    ></slide>
+    <slide :index="selectedSlideIndex" :width="workspaceWidth" :height="workspaceHeight" :isRedactable="true"></slide>
   </div>
 </template>
 
@@ -33,9 +28,14 @@ export default class Workspace extends Vue {
     this.selectedSlideIndex = service.selectedSlideIndex ?? -1
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
+    window.removeEventListener('resize', this.recalcWidth)
   }
 
   mounted() {
@@ -43,31 +43,13 @@ export default class Workspace extends Vue {
     this.recalcWidth()
   }
 
-  beforeDestroy() {
-    window.removeEventListener('resize', this.recalcWidth)
-  }
-
   recalcWidth() {
     console.log('recalc')
     let result = 1
-    if (
-      !(
-        service.timelineModuleSize &&
-        service.previewModuleSize &&
-        service.instrumentsModuleSize
-      )
-    )
-      return
+    if (!(service.timelineModuleSize && service.previewModuleSize && service.instrumentsModuleSize)) return
 
-    result =
-      window.innerWidth -
-      service.previewModuleSize -
-      service.instrumentsModuleSize -
-      40
-    if (
-      window.innerHeight <
-      (result / 16) * 9 + 75 + service.timelineModuleSize
-    )
+    result = window.innerWidth - service.previewModuleSize - service.instrumentsModuleSize - 40
+    if (window.innerHeight < (result / 16) * 9 + 75 + service.timelineModuleSize)
       result = ((window.innerHeight - service.timelineModuleSize - 75) / 9) * 16
     this.workspaceWidth = result
   }

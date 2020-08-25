@@ -86,13 +86,6 @@ export default class DraggableResizable extends Vue {
   pressedStick = 'none'
   isEventsRegistered = false
 
-  getState() {}
-
-  // beforeMount() {
-  //   this.getState()
-  //   service.addOnChangeListener(() => this.getState())
-  // }
-
   computeStickStyle(stick) {
     let stickSize = realStickSize / this.parentScale
     let stickStyle: any = {

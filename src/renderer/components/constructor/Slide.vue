@@ -41,9 +41,13 @@ export default class Slide extends Vue {
     this.theme = { ...service.theme }
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   get rootStyle() {

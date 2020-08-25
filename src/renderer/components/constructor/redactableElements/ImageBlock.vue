@@ -17,13 +17,6 @@ export default class RedactableImageBlock extends Vue {
   @Prop() src!: string
   @Prop() width!: number
   @Prop() height!: number
-
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    //service.addOnChangeListener(() => this.getState())
-  }
 }
 </script>
 

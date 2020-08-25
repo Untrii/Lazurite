@@ -12,8 +12,8 @@ let constructorService = new ConstructorService()
 
 export default class HistoryService extends ReactiveService {
   constructor() {
-    super()
-    HistoryRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('HistoryService', [HistoryRepository])
+    return currentObj
   }
   async getHistory(): Promise<HistoryDeclarationInfo> {
     console.log('here')

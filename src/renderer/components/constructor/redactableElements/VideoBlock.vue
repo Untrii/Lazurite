@@ -14,13 +14,6 @@ import VideoBlock from '@/components/elements/VideoBlock.vue'
 export default class RedactableVideoBlock extends Vue {
   @Prop() id!: string
   @Prop() scale!: number
-
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    //service.addOnChangeListener(() => this.getState())
-  }
 }
 </script>
 

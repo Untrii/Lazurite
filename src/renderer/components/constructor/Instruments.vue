@@ -71,12 +71,6 @@ export default class Instruments extends Vue {
       icon: assets.spark,
     },
   ]
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(() => this.getState())
-  }
 }
 </script>
 

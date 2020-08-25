@@ -4,9 +4,8 @@ import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 export default class DialogService extends ReactiveService {
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
-    RuntimeRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('DialogService', [CommonRepository, RuntimeRepository])
+    return currentObj
   }
 
   private handleChooseFileDialog(resolve, reject) {

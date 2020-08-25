@@ -1,8 +1,20 @@
-export default class ReactiveService {
-  private onChangeListeners: Function[]
+import ReactiveRepository from '@/repositories/ReactiveRepository'
 
-  constructor() {
-    this.onChangeListeners = []
+export default class ReactiveService {
+  private onChangeListeners!: Set<Function>
+
+  constructor(className: string, dependsOn: ReactiveRepository[]) {
+    let win: any = window
+    if (!win.__serviceSingletones) win.__serviceSingletones = {}
+    let __serviceSingletones: any = win.__serviceSingletones
+    if (!__serviceSingletones[className]) {
+      __serviceSingletones[className] = this
+      this.onChangeListeners = new Set()
+      for (const item of dependsOn) {
+        item.addOnChangeListener(() => this.onChange(), className)
+      }
+    }
+    return __serviceSingletones[className]
   }
 
   protected onChange() {
@@ -12,6 +24,10 @@ export default class ReactiveService {
   }
   addOnChangeListener(callback: Function) {
     if (callback == undefined) throw new Error('callback is undefined')
-    this.onChangeListeners.push(callback)
+    this.onChangeListeners.add(callback)
+  }
+  removeOnChangeListener(callback: Function) {
+    if (callback == undefined) throw new Error('callback is undefined')
+    this.onChangeListeners.delete(callback)
   }
 }

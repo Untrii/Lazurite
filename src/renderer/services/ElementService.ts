@@ -10,20 +10,21 @@ import { getBlankObject as getBlankVideo } from '@/entities/SlideObjects/VideoBl
 import generateString from '@/utils/StringGenerator'
 
 export default class ElementService extends ReactiveService {
-  private _groups: Map<string, ElementPreset[]> = new Map()
+  private _groups!: Map<string, ElementPreset[]>
 
   constructor() {
-    super()
+    let currentObj: any = super('ElementService', [CommonRepository])
 
-    CommonRepository.addOnChangeListener(() => this.onChange())
+    currentObj._groups = currentObj._groups ?? new Map()
+
     let designService = new DesignService()
-    designService.addOnChangeListener(() => this.reloadFontPresets())
-    this.reloadFontPresets()
-    this.setGroup('media', [
-      new ElementPreset(assets.logo, 'image', 'ImageBlock', this.generateImageProps),
-      new ElementPreset(assets.logo, 'video', 'VideoBlock', this.generateVideoProps),
+    designService.addOnChangeListener(() => currentObj.reloadFontPresets())
+    currentObj.reloadFontPresets()
+    currentObj.setGroup('media', [
+      new ElementPreset(assets.logo, 'image', 'ImageBlock', currentObj.generateImageProps),
+      new ElementPreset(assets.logo, 'video', 'VideoBlock', currentObj.generateVideoProps),
     ])
-    this.setGroup('figures', [
+    currentObj.setGroup('figures', [
       new ElementPreset(assets.logo, 'rectangle', 'Rectangle', {
         top: 270,
         left: 480,
@@ -33,7 +34,7 @@ export default class ElementService extends ReactiveService {
         color: { r: 100, g: 100, b: 100 },
       }),
     ])
-    this.setGroup('datavis', [
+    currentObj.setGroup('datavis', [
       new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', {
         rowCount: 5,
         columnCount: 5,
@@ -47,7 +48,7 @@ export default class ElementService extends ReactiveService {
         stripVertically: false,
         darkStyle: false,
         borderRadius: 10,
-        content: this.genetate2DMap('', 5),
+        content: currentObj.genetate2DMap('', 5),
 
         top: 270,
         left: 480,
@@ -57,9 +58,10 @@ export default class ElementService extends ReactiveService {
         showBorders: true,
       }),
     ])
+    return currentObj
   }
 
-  private genetate2DMap(value: string, size: number): Map<number, Map<number, string>> {
+  genetate2DMap(value: string, size: number): Map<number, Map<number, string>> {
     let result = new Map<number, Map<number, string>>()
     let sampleMap = new Map<number, string>()
     for (let i = 0; i < size; i++) {
@@ -71,7 +73,7 @@ export default class ElementService extends ReactiveService {
     return result
   }
 
-  private async generateImageProps() {
+  async generateImageProps() {
     let dialogService = new DialogService()
     let resourceService = new ResourceService()
     let fileName = await dialogService.openChooseFileDialog('image')
@@ -94,7 +96,7 @@ export default class ElementService extends ReactiveService {
     return result
   }
 
-  private async generateVideoProps() {
+  async generateVideoProps() {
     let dialogService = new DialogService()
     let resourceService = new ResourceService()
     let fileName = await dialogService.openChooseFileDialog('video')
@@ -118,7 +120,7 @@ export default class ElementService extends ReactiveService {
     return result
   }
 
-  private reloadFontPresets() {
+  reloadFontPresets() {
     if (!CommonRepository.openedPresentation) return
     let fontPresets = CommonRepository.openedPresentation.theme.fontPresets
     let elementPresets: ElementPreset[] = []

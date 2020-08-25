@@ -1,5 +1,5 @@
 <template>
-  <svg :width="width" :height="height">
+  <svg :width="width * scale" :height="height * scale">
     <rect
       x="0"
       y="0"

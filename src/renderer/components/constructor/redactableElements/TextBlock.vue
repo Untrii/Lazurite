@@ -111,10 +111,13 @@ export default class RedactableTextBlock extends Vue {
     this.x = element.top
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
-    console.log('text block')
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   onEditClick() {

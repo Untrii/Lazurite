@@ -33,15 +33,18 @@ export default class ConstructorTab extends Vue {
     this.timelineSize = service.timelineModuleSize ?? 0
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   get tabStyle() {
     return {
-      gridTemplateColumns:
-        this.previewSize + 'px 1fr ' + this.instrumentsSize + 'px',
+      gridTemplateColumns: this.previewSize + 'px 1fr ' + this.instrumentsSize + 'px',
     }
   }
 }

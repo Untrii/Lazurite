@@ -105,9 +105,13 @@ export default class ColorCorrectionEditor extends Vue {
     this.element = service.selectedElement
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   onInput(propertyName, newVal) {

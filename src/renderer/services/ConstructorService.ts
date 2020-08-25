@@ -8,9 +8,8 @@ import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 export default class ConstructorService extends ReactiveService {
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
-    RuntimeRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('ConstructorService', [CommonRepository, RuntimeRepository])
+    return currentObj
   }
 
   selectSlide(index: number) {

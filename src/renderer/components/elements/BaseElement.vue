@@ -14,8 +14,12 @@ export default class BaseElement extends Vue {
   @Prop(String) id
   @Prop(Number) scale
 
+  onChangeListener: Function = () => this.$forceUpdate()
   beforeMount() {
-    service.addOnChangeListener(() => this.$forceUpdate())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   get element(): SlideObject {

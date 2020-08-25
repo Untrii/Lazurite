@@ -50,19 +50,22 @@ export default class ChooseFileDialog extends Vue {
 
   async getState() {
     if (dialogService.isChooseFileDialogOpened && !isDialogShown) {
+      this.files = await resourceService.getResourceFiles(dialogService.chooseFileDialogType)
       this.$bvModal.show('choseFileDialog')
       isDialogShown = true
     } else if (!dialogService.isChooseFileDialogOpened && isDialogShown) {
       this.$bvModal.hide('choseFileDialog')
       isDialogShown = false
     }
-    this.files = await resourceService.getResourceFiles(dialogService.chooseFileDialogType)
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    dialogService.addOnChangeListener(() => this.getState())
-    resourceService.addOnChangeListener(() => this.getState())
+    dialogService.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    dialogService.removeOnChangeListener(this.onChangeListener)
   }
 
   getFullPath(fileName: string) {

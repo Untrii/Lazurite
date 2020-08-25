@@ -9,11 +9,10 @@ import { getBlankObject as getBlankRectangle } from '@/entities/SlideObjects/Rec
 import ConstructorService from './ConstructorService'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
 
-export default class ResourceService extends ReactiveService {
+export default class EditorService extends ReactiveService {
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
-    RuntimeRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('EditorService', [CommonRepository, RuntimeRepository])
+    return currentObj
   }
   private getObjectFields(obj: object) {
     let result: string[] = []

@@ -13,13 +13,6 @@ import Spreadsheet from '@/components/elements/Spreadsheet.vue'
 export default class RedactableSpreadsheet extends Vue {
   @Prop() id!: number
   @Prop() scale!: number
-
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    //service.addOnChangeListener(() => this.getState())
-  }
 }
 </script>
 

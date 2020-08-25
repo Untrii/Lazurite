@@ -18,11 +18,7 @@
           </div>
         </div>
 
-        <div
-          class="preset-card__close"
-          :class="getCrossClasses(preset.name)"
-          @click.stop="removePreset(preset.name)"
-        >
+        <div class="preset-card__close" :class="getCrossClasses(preset.name)" @click.stop="removePreset(preset.name)">
           ×
         </div>
       </div>
@@ -43,13 +39,11 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
-import ElementService from '@/services/ElementService'
 import Theme, { getBlankTheme } from '@/entities/Theme'
 import { getBlankPreset } from '@/entities/FontPreset'
 //import localize from '@/utils/locales'
 
 const service = new DesignService()
-const elementService = new ElementService()
 
 @Component
 export default class FontPreview extends Vue {
@@ -63,14 +57,14 @@ export default class FontPreview extends Vue {
       this.selectedPreset = service.theme.fontPresets[0].name
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
-    elementService.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
     window.addEventListener('resize', this.updateScale)
   }
-
   beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
     window.removeEventListener('resize', this.updateScale)
   }
 
@@ -96,8 +90,7 @@ export default class FontPreview extends Vue {
         style: {
           fontFamily: font.family,
           fontWeight: font.weight,
-          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size *
-            (1 / 10.8)}vh)`,
+          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size * (1 / 10.8)}vh)`,
         },
       })
     }
@@ -134,8 +127,7 @@ export default class FontPreview extends Vue {
   removePreset(name) {
     service.removeFontPreset(name)
     if (this.selectedPreset == name) {
-      if (service.theme.fontPresets.length > 0)
-        this.selectedPreset = service.theme.fontPresets[0].name
+      if (service.theme.fontPresets.length > 0) this.selectedPreset = service.theme.fontPresets[0].name
     }
   }
 

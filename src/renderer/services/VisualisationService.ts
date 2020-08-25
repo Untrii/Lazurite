@@ -5,8 +5,8 @@ import Theme, { getBlankTheme } from '@/entities/Theme'
 
 export default class VisualisationService extends ReactiveService {
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('VisualisationService', [CommonRepository])
+    return currentObj
   }
 
   slideByIndex(index: number): Map<string, SlideObject> {

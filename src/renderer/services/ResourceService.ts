@@ -4,8 +4,8 @@ import { promises as fs } from 'fs'
 
 export default class ResourceService extends ReactiveService {
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('ResourceService', [CommonRepository])
+    return currentObj
   }
   async getResourceFiles(type: 'image' | 'video'): Promise<string[]> {
     if (!CommonRepository.workspaceDataFolder) return []

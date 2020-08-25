@@ -10,11 +10,12 @@ const { ImageProcessing } = remote.require('./main')
 let colorPalettes: Color[][] = []
 
 export default class DesignService extends ReactiveService {
-  openedTab: string = 'background'
+  openedTab!: string
 
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('DesignService', [CommonRepository])
+    currentObj.openedTab = currentObj.openedTab ?? 'background'
+    return currentObj
   }
 
   getBackgroundCollection(): BackgroundCollection {

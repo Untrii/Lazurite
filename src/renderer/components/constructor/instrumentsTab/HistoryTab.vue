@@ -53,10 +53,13 @@ export default class HistoryTab extends Vue {
     this.history = await service.getHistory()
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
-    console.log('HistoryTab')
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   getImageFor(index: number, arrayName: string) {

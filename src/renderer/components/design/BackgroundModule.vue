@@ -93,21 +93,24 @@ export default class BackgroundModule extends Vue {
     this.pickedTileVal = visService.theme.backgroundValue
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
+    console.log('background module')
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
+
+    let element = document.querySelector('.bg-module-tiles')
+    if (!element) return
+    element.removeEventListener('scroll', this.startScrollTracking)
   }
 
   mounted() {
     let element = document.querySelector('.bg-module-tiles')
     if (!element) return
     element.addEventListener('scroll', this.startScrollTracking)
-  }
-
-  beforeDestroy() {
-    let element = document.querySelector('.bg-module-tiles')
-    if (!element) return
-    element.removeEventListener('scroll', this.startScrollTracking)
   }
 
   startScrollTracking() {

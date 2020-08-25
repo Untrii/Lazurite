@@ -39,10 +39,13 @@ export default class AddTab extends Vue {
     this.groupNames = Array.from(elementService.getGroups().keys())
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    elementService.addOnChangeListener(() => this.getState())
-    constructorService.addOnChangeListener(() => this.getState())
+    constructorService.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    constructorService.removeOnChangeListener(this.onChangeListener)
   }
 
   async createElement(preset) {

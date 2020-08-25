@@ -42,9 +42,13 @@ export default class EditTab extends Vue {
     this.editableProps = service.getEditableProperties(this.element.type ?? '')
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   getEditorType(propertyName) {

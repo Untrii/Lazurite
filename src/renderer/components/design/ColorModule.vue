@@ -4,11 +4,7 @@
       Recomended palletes:
     </h2>
     <div class="palettes">
-      <div
-        v-for="(palette, index) in recomendedPalettes"
-        :key="index"
-        class="palette"
-      >
+      <div v-for="(palette, index) in recomendedPalettes" :key="index" class="palette">
         <div class="palette__brick-wrap" @click="selectedPaletteIndex = index">
           <div
             class="palette__brick"
@@ -42,9 +38,13 @@ export default class ColorModule extends Vue {
     this.selectedPalette = service.theme.palette || []
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   get recomendedPalettes(): Color[][] {
@@ -53,11 +53,7 @@ export default class ColorModule extends Vue {
 
   get selectedPaletteIndex() {
     let result = -1
-    for (
-      let paletteIndex = 0;
-      paletteIndex < this.recomendedPalettes.length;
-      paletteIndex++
-    ) {
+    for (let paletteIndex = 0; paletteIndex < this.recomendedPalettes.length; paletteIndex++) {
       let palette = this.recomendedPalettes[paletteIndex]
       if (palette.length == this.selectedPalette.length) {
         let isPaletteEquals = true

@@ -4,8 +4,8 @@ import ReactiveService from '@/services/ReactiveService'
 
 export default class MainMenuService extends ReactiveService {
   constructor() {
-    super()
-    CommonRepository.addOnChangeListener(() => this.onChange())
+    let currentObj: any = super('MainMenuService', [CommonRepository])
+    return currentObj
   }
   async createPresentation(fileName: string) {
     await CommonRepository.openPresentation(fileName)

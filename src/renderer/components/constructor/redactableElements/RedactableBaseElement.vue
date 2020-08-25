@@ -28,7 +28,6 @@ export default class RedactableBaseElement extends Vue {
   isActive = true
 
   beforeMount() {
-    //visualisationService.addOnChangeListener(() => this.$forceUpdate())
     constructorService.addOnChangeListener(() => this.$forceUpdate())
   }
 

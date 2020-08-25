@@ -25,31 +25,18 @@
           <span style="color: #ea4335;">e</span>
         </span>
       </div>
-      <div
-        class="browser-navbar__button browser-navbar__button_wide"
-        @click="currentURL = availableURLs[1]"
-      >
+      <div class="browser-navbar__button browser-navbar__button_wide" @click="currentURL = availableURLs[1]">
         <span style="display:inline-flex;">
           <span style="color: red;">Y</span>
           <span style="color: black;">andex</span>
         </span>
       </div>
 
-      <div
-        class="browser-navbar__lettering"
-        style="margin-left: 40px; cursor: auto;"
-      >
-        <span>
-          Files downloaded: {{ savedFilesCount }}
-          <span style="color: gray;">(click RMB to download)</span></span
-        >
+      <div class="browser-navbar__lettering" style="margin-left: 40px; cursor: auto;">
+        <span> Files downloaded: {{ savedFilesCount }} <span style="color: gray;">(click RMB to download)</span></span>
       </div>
 
-      <div
-        class="browser-navbar__button"
-        id="close-button"
-        @click="$emit('closed', savedData)"
-      >
+      <div class="browser-navbar__button" id="close-button" @click="$emit('closed', savedData)">
         Close browser
       </div>
     </div>
@@ -77,12 +64,6 @@ export default class Browser extends Vue {
     'https://www.bing.com/?scope=images',
     'https://images.search.yahoo.com/',
   ]
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    //service.addOnChangeListener(() => this.getState())
-  }
 
   async mounted() {
     let windowID = remote.getCurrentWindow().id
@@ -117,9 +98,7 @@ export default class Browser extends Vue {
     view.webContents.loadURL(this.currentURL)
     view.webContents.on('dom-ready', async () => {
       if (justCreated) {
-        await view.webContents.executeJavaScript(
-          'lzsubcode(' + win.webContents.id + ')'
-        )
+        await view.webContents.executeJavaScript('lzsubcode(' + win.webContents.id + ')')
       }
     })
 

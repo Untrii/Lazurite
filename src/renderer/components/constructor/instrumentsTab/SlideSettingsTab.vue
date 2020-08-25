@@ -22,9 +22,13 @@ export default class SlideSettingsTab extends Vue {
     this.isGridEnabled = service.isGridEnabled
   }
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   onGridEnabledChange(newVal: boolean) {

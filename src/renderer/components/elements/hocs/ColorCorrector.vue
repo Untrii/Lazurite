@@ -7,9 +7,7 @@
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import VisualisationService from '@/services/VisualisationService'
 
-let service = new VisualisationService()
 let defaultProps = {
   blur: 0,
   brightness: 1,
@@ -36,21 +34,13 @@ export default class ColorCorrector extends Vue {
 
   @Prop() scale!: number
 
-  getState() {}
-
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(() => this.getState())
-  }
-
   get style() {
     let filters = {
       blur: `blur(${this.blur * this.scale}px)`,
       brightness: `brightness(${this.brightness})`,
       contrast: `contrast(${this.contrast})`,
       grayscale: `grayscale(${this.grayscale})`,
-      dropShadow: `drop-shadow(0px 0px ${this.dropShadow *
-        this.scale}px black)`,
+      dropShadow: `drop-shadow(0px 0px ${this.dropShadow * this.scale}px black)`,
       hueRotate: `hue-rotate(${this.hueRotate}deg)`,
       opacity: `opacity(${this.opacity})`,
       saturate: `saturate(${this.saturate})`,

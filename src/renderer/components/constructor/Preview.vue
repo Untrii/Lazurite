@@ -37,9 +37,13 @@ export default class Preview extends Vue {
   selectedSlideIndex = 0
   slides: Map<string, SlideObject>[] = []
 
+  onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    service.addOnChangeListener(() => this.getState())
+    service.addOnChangeListener(this.onChangeListener)
+  }
+  beforeDestroy() {
+    service.removeOnChangeListener(this.onChangeListener)
   }
 
   getState() {
