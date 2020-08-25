@@ -55,7 +55,7 @@ import BackgroundCollection, { getBlankCollection } from '@/entities/BackgroundC
 import DesignService from '@/services/DesignService'
 import VisualisationService from '@/services/VisualisationService'
 import ColorTile from './ColorTile.vue'
-import ColorPalette from './ColorPalette.vue'
+import ColorPalette from '@/components/dialogs/ColorPalette.vue'
 import { stringFromType } from '@/entities/Theme'
 import { remote } from 'electron'
 import { promises as fs } from 'fs'

@@ -15,7 +15,7 @@
         {{ preset.name }}
       </lz-button>
     </div>
-    <lz-range-input prepend="prepend" size="small"></lz-range-input>
+    <lz-color-input prepend="prepend" size="small"></lz-color-input>
   </div>
 </template>
 
@@ -42,10 +42,10 @@ export default class AddTab extends Vue {
   onChangeListener: Function = () => this.getState()
   beforeMount() {
     this.getState()
-    constructorService.addOnChangeListener(this.onChangeListener)
+    elementService.addOnChangeListener(this.onChangeListener)
   }
   beforeDestroy() {
-    constructorService.removeOnChangeListener(this.onChangeListener)
+    elementService.removeOnChangeListener(this.onChangeListener)
   }
 
   async createElement(preset) {

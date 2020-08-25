@@ -47,7 +47,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import Hotkeys from '@/utils/Hotkeys'
-import LzPrepend from './LzPreprend.vue'
+import LzPrepend from './LzPrepend.vue'
 
 @Component({
   components: {
