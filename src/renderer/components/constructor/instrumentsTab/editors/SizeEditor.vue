@@ -14,7 +14,7 @@
           size="small"
           :prepend="form.displayName"
           :value="element[form.propertyName]"
-          @valueChanged="onInput(form.propertyName, $event)"
+          @input="onInput(form.propertyName, $event)"
         >
         </lz-number-input>
       </div>

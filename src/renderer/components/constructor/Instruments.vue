@@ -30,14 +30,11 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '@/services/ConstructorService'
 import assets from '@/assets/index'
 import AddTab from './instrumentsTab/AddTab.vue'
 import EditTab from './instrumentsTab/EditTab.vue'
 import HistoryTab from './instrumentsTab/HistoryTab.vue'
 import SlideSettingsTab from './instrumentsTab/SlideSettingsTab.vue'
-
-let service = new ConstructorService()
 
 @Component({
   components: {
@@ -52,23 +49,23 @@ export default class Instruments extends Vue {
   availableTabs = [
     {
       name: 'add',
-      icon: assets.plusblue,
+      icon: assets.add,
     },
     {
       name: 'edit',
-      icon: assets.spark,
+      icon: assets.switch,
     },
     {
       name: 'history',
-      icon: assets.refresh,
+      icon: assets.history,
     },
     {
       name: 'layers',
-      icon: assets.spark,
+      icon: assets.layers,
     },
     {
       name: 'editorSettings',
-      icon: assets.spark,
+      icon: assets.gear,
     },
   ]
 }

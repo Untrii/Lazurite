@@ -79,7 +79,7 @@ export default class LzRangeInput extends Vue {
     this.isPressed = true
     let onMouseUp = () => {
       this.isPressed = false
-      this.$emit('inputEnded', this.localValue)
+      this.$emit('change', this.localValue)
       document.removeEventListener('mouseup', onMouseUp)
     }
     document.addEventListener('mouseup', onMouseUp)
@@ -96,7 +96,7 @@ export default class LzRangeInput extends Vue {
     flooredProgress = Math.min(this.max, flooredProgress)
     flooredProgress = Math.max(this.min, flooredProgress)
     this.localValue = flooredProgress
-    this.$emit('valueChanged', flooredProgress)
+    this.$emit('input', flooredProgress)
   }
 
   get filledRangeStyle() {

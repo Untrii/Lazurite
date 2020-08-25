@@ -75,7 +75,7 @@ export default class LzNumberInput extends Vue {
   changeValue(value) {
     console.log('changing value: ' + value)
     this.localValue = this.acceptFloat ? parseFloat(value) : parseInt(value)
-    this.$emit('valueChanged', value)
+    this.$emit('input', value)
   }
 
   visualisableValue = this.localValue
@@ -143,7 +143,7 @@ export default class LzNumberInput extends Vue {
   onInput(event: InputEvent) {
     let src: any = event.srcElement
     this.changeValue(src.innerText)
-    this.$emit('inputEnd', this.localValue)
+    this.$emit('change', this.localValue)
   }
 
   recalculateModifier() {
@@ -180,7 +180,7 @@ export default class LzNumberInput extends Vue {
       this.changeValue(this.incrementStartValue + incrementAmount * this.modifier)
       this.visualisableValue = this.localValue
       setTimeout(() => this.increment(), 100)
-    } else this.$emit('inputEnd', this.localValue)
+    } else this.$emit('change', this.localValue)
   }
   decrementStart() {
     this.recalculateModifier()
@@ -203,7 +203,7 @@ export default class LzNumberInput extends Vue {
       this.changeValue(this.decrementStartValue - decrementAmount * this.modifier)
       this.visualisableValue = this.localValue
       setTimeout(() => this.decrement(), 100)
-    } else this.$emit('inputEnd', this.localValue)
+    } else this.$emit('change', this.localValue)
   }
 }
 </script>
