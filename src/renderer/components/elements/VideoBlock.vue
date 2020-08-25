@@ -1,6 +1,6 @@
 <template>
-  <color-corrector v-bind="$props">
-    <video :src="src" alt="" :style="style" class="video-block" />
+  <color-corrector v-bind="$attrs">
+    <video :src="src" alt="" class="video-block" />
   </color-corrector>
 </template>
 

@@ -98,6 +98,11 @@ export default class LzColorInput extends Vue {
   &__tile {
     width: 100%;
     height: 100%;
+    cursor: pointer;
+    &:hover {
+      outline: 2px solid $blue-lighter;
+      z-index: 100;
+    }
   }
   &__select-custom {
     background: $gray-light;

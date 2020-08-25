@@ -27,8 +27,15 @@ export default class RedactableBaseElement extends Vue {
   isResizable = true
   isActive = true
 
+  onChangeListener!: Function
   beforeMount() {
-    constructorService.addOnChangeListener(() => this.$forceUpdate())
+    this.onChangeListener = () => this.$forceUpdate()
+
+    constructorService.addOnChangeListener(this.onChangeListener)
+  }
+
+  beforeDestroy() {
+    constructorService.removeOnChangeListener(this.onChangeListener)
   }
 
   get element(): SlideObject {
