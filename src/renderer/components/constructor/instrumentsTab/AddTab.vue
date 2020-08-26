@@ -15,7 +15,6 @@
         {{ preset.name }}
       </lz-button>
     </div>
-    <lz-color-input prepend="prepend" size="small"></lz-color-input>
   </div>
 </template>
 

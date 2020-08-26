@@ -9,6 +9,8 @@ import LzPrepend from '@/components/designSystem/LzPrepend'
 import LzNumberInput from '@/components/designSystem/LzNumberInput'
 import LzRangeInput from '@/components/designSystem/LzRangeInput'
 import LzColorInput from '@/components/designSystem/LzColorInput'
+import LzPressSwitch from '@/components/designSystem/LzPressSwitch'
+import LzSwitch from '@/components/designSystem/LzSwitch'
 
 let presentationPath = 'D:\\Программирование 2020\\present.js\\testproj_v3\\project.json'
 
@@ -20,6 +22,8 @@ async function main() {
   Vue.component('LzRangeInput', LzRangeInput)
   Vue.component('LzColorInput', LzColorInput)
   Vue.component('LzPrepend', LzPrepend)
+  Vue.component('LzPressSwitch', LzPressSwitch)
+  Vue.component('LzSwitch', LzSwitch)
 
   await CommonRepository.load()
   //await new MainMenuService().createPresentation(presentationPath)
