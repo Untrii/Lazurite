@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import EditorService from '@/services/EditorService'
 import SizeEditor from './editors/SizeEditor.vue'
 import SpreadsheetEditor from './editors/SpreadsheetEditor.vue'
@@ -42,6 +42,10 @@ export default class EditTab extends Vue {
     this.isOneElementSelected = service.isOneElementSelected
     this.element = service.selectedElement
     this.elementType = this.element.type ?? ''
+  }
+
+  @Watch('elementType')
+  onElementTypeChange() {
     this.editableProps = service.getEditableProperties(this.element.type ?? '')
   }
 

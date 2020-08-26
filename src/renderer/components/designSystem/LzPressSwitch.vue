@@ -45,7 +45,7 @@ export default class LzPressSwitch extends Vue {
 
 .press-switch {
   width: 100%;
-  background-color: $gray-light;
+  background-color: white;
   display: grid;
   grid-template-columns: 1fr max-content 1fr;
   &:hover {
@@ -62,35 +62,35 @@ export default class LzPressSwitch extends Vue {
 
   &_small {
     height: 32px;
-    padding: 4px 8px;
+    padding: 6px 8px;
     font-size: 14px;
     img {
-      height: 24px;
+      height: 20px;
     }
   }
 
   &_medium {
     height: 40px;
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-size: 16px;
     img {
-      height: 28px;
+      height: 24px;
     }
   }
 
   &_large {
     height: 48px;
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 20px;
     img {
-      height: 32px;
+      height: 28px;
     }
   }
 
   &_pressed {
-    background-color: $gray-normal !important;
+    background-color: $gray-bright !important;
     &:hover {
-      background-color: $gray-bright !important;
+      background-color: $gray-lighter !important;
       transition: 0.3s;
     }
     &:not(:hover) {

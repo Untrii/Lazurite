@@ -45,7 +45,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import EditorService from '@/services/EditorService'
-import TextBlock from '@/entities/SlideObjects/TextBlock'
+import TextBlock from '@/entities/slideObjects/TextBlock'
 import Color from '@/entities/Color'
 
 let service = new EditorService()

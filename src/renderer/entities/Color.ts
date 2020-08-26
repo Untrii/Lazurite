@@ -5,15 +5,12 @@ export default class Color {
   public g: number
   public b: number
   public a: number
-  public isTransparet = false
 
   public constructor(isTransparent?: boolean) {
-    if (isTransparent) this.isTransparet = true
-    else isTransparent = false
     this.r = 0
     this.g = 0
     this.b = 0
-    this.a = 1
+    this.a = isTransparent ? 0 : 1
   }
 
   public fromHex(hex: string) {
@@ -40,7 +37,7 @@ export default class Color {
     this.r = color.r
     this.g = color.g
     this.b = color.b
-    this.a = color.a ?? 1
+    this.a = color.a ?? 0
   }
 
   public toHex(): string {
@@ -48,7 +45,7 @@ export default class Color {
   }
 
   public toCssColor(): string {
-    if (this.isTransparet) return 'transparent'
+    if (this.a == 0) return 'transparent'
     return `rgba(${this.r},${this.g},${this.b},${this.a})`
   }
 

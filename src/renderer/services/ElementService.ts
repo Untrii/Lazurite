@@ -5,10 +5,10 @@ import CommonRepository from '@/repositories/CommonRepository'
 import assets from '@/assets'
 import DialogService from './DialogService'
 import ResourceService from './ResourceService'
-import { getBlankObject as getBlankImage } from '@/entities/SlideObjects/ImageBlock'
-import { getBlankObject as getBlankVideo } from '@/entities/SlideObjects/VideoBlock'
+import { getBlankObject as getBlankImage } from '@/entities/slideObjects/ImageBlock'
+import { getBlankObject as getBlankVideo } from '@/entities/slideObjects/VideoBlock'
 import generateString from '@/utils/StringGenerator'
-import { getBlankObject as getBlankTextBlock } from '@/entities/SlideObjects/TextBlock'
+import { getBlankObject as getBlankTextBlock } from '@/entities/slideObjects/TextBlock'
 
 export default class ElementService extends ReactiveService {
   private _groups!: Map<string, ElementPreset[]>

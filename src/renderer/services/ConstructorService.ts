@@ -36,13 +36,13 @@ export default class ConstructorService extends ReactiveService {
     console.log('Creating ' + preset.type + '...')
     if (!CommonRepository.openedPresentation || this.selectedSlideIndex == undefined) return undefined
     let slideObject: any = getBlankObject()
-    slideObject.id = randomString(12)
-    slideObject.type = preset.type
 
     let parameters = await preset.getParameters()
     for (const key of parameters.keys()) {
       slideObject[key] = parameters.get(key)
     }
+    slideObject.id = randomString(12)
+
     CommonRepository.openedPresentation.slides[this.selectedSlideIndex].set(slideObject.id, slideObject)
     CommonRepository.commitPresentationChanges()
     return slideObject

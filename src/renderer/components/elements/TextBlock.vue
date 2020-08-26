@@ -28,8 +28,8 @@ export default class TextBlock extends Vue {
       fontFamily: "'" + this.fontFamily + "'",
       fontSize: this.fontSize * this.scale + 'px',
       fontWeight: this.fontWeight,
-      color: this.color.toCssColor(),
-      backgroundColor: this.backgroundColor.toCssColor(),
+      color: color.toCssColor(),
+      backgroundColor: backgroundColor.toCssColor(),
     }
   }
 }

@@ -14,8 +14,9 @@ export default class BaseElement extends Vue {
   @Prop(String) id
   @Prop(Number) scale
 
-  onChangeListener: Function = () => this.$forceUpdate()
+  onChangeListener!: Function
   beforeMount() {
+    this.onChangeListener = () => this.$forceUpdate()
     service.addOnChangeListener(this.onChangeListener)
   }
   beforeDestroy() {
