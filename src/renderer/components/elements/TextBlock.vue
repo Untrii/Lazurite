@@ -20,6 +20,10 @@ export default class TextBlock extends Vue {
   @Prop() scale!: number
 
   get blockStyle() {
+    let color = new Color()
+    color.fromOther(this.color)
+    let backgroundColor = new Color()
+    backgroundColor.fromOther(this.backgroundColor)
     return {
       fontFamily: "'" + this.fontFamily + "'",
       fontSize: this.fontSize * this.scale + 'px',

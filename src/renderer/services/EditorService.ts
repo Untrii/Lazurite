@@ -8,6 +8,7 @@ import { getBlankObject as getBlankSpreadsheet } from '@/entities/SlideObjects/S
 import { getBlankObject as getBlankRectangle } from '@/entities/SlideObjects/Rectangle'
 import ConstructorService from './ConstructorService'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
+import SlideObject from '@/entities/SlideObject'
 
 export default class EditorService extends ReactiveService {
   constructor() {
@@ -26,7 +27,7 @@ export default class EditorService extends ReactiveService {
     return RuntimeRepository.selectedObjectsIds.size == 1
   }
 
-  get selectedElement() {
+  get selectedElement(): SlideObject | any {
     let vs = new VisualisationService()
     for (const entry of RuntimeRepository.selectedObjectsIds) {
       return vs.elementById(entry)

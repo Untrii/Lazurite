@@ -20,7 +20,7 @@ export default interface TextBlock extends SlideObject {
 export function getBlankObject(): TextBlock {
   return {
     id: '',
-    type: 'textBlock/plasceholder',
+    type: 'TextBlock',
     top: 450,
     left: 750,
     width: 420,

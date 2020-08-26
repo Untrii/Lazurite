@@ -8,6 +8,7 @@ import ResourceService from './ResourceService'
 import { getBlankObject as getBlankImage } from '@/entities/SlideObjects/ImageBlock'
 import { getBlankObject as getBlankVideo } from '@/entities/SlideObjects/VideoBlock'
 import generateString from '@/utils/StringGenerator'
+import { getBlankObject as getBlankTextBlock } from '@/entities/SlideObjects/TextBlock'
 
 export default class ElementService extends ReactiveService {
   private _groups!: Map<string, ElementPreset[]>
@@ -124,17 +125,20 @@ export default class ElementService extends ReactiveService {
     if (!CommonRepository.openedPresentation) return
     let fontPresets = CommonRepository.openedPresentation.theme.fontPresets
     let elementPresets: ElementPreset[] = []
+
     for (const entry of fontPresets) {
-      elementPresets.push(
-        new ElementPreset(assets.text, entry.name, 'TextBlock', {
+      let sampleTextBlock = {
+        ...getBlankTextBlock(),
+        ...{
           height: entry.size * 1.75,
           width: entry.size * 10.5,
           fontWeight: entry.weight,
           fontSize: entry.size,
           fontFamily: entry.family,
           content: 'Type here',
-        })
-      )
+        },
+      }
+      elementPresets.push(new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock))
     }
     this.setGroup('Text', elementPresets)
   }

@@ -11,20 +11,20 @@ import assets from '@/assets'
 
 @Component
 export default class LzPressSwitch extends Vue {
-  @Prop({ default: false }) value!: boolean
+  @Prop({ default: false }) checked!: boolean
   @Prop({ default: 'medium' }) size!: string
   @Prop({ default: '' }) image!: string
 
-  localValue = this.value
+  localValue = this.checked
 
-  @Watch('value')
-  onValueChange() {
-    this.localValue = this.value
+  @Watch('checked')
+  onValueChange(newVal) {
+    this.localValue = newVal
   }
 
   onClick() {
     this.localValue = !this.localValue
-    this.$emit('input', this.localValue)
+    this.$emit('change', this.localValue)
   }
 
   get assets() {

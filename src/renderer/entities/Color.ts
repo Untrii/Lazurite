@@ -1,3 +1,5 @@
+import IColor from './IColor'
+
 export default class Color {
   public r: number
   public g: number
@@ -34,7 +36,7 @@ export default class Color {
     return this
   }
 
-  public fromOther(color: Color) {
+  public fromOther(color: IColor) {
     this.r = color.r
     this.g = color.g
     this.b = color.b
@@ -50,7 +52,7 @@ export default class Color {
     return `rgba(${this.r},${this.g},${this.b},${this.a})`
   }
 
-  public equals(color: Color): boolean {
+  public equals(color: IColor): boolean {
     if (this.r == color.r && this.g == color.g && this.b == color.b) return true
     return false
   }

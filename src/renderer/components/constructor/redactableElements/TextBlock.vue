@@ -39,6 +39,7 @@ import assets from '@/assets'
 import VisualisationService from '@/services/VisualisationService'
 import Color from '@/entities/Color'
 import HistoryService from '@/services/HistoryService'
+import IColor from '@/entities/IColor'
 
 let service = new ConstructorService()
 let visualisationService = new VisualisationService()
@@ -52,8 +53,8 @@ export default class RedactableTextBlock extends Vue {
   @Prop() fontSize!: number
   @Prop() fontWeight!: number
   @Prop() content!: string
-  @Prop({ default: () => new Color(false) }) color!: Color
-  @Prop({ default: () => new Color(true) }) backgroundColor!: Color
+  @Prop({ default: () => new Color(false) }) color!: IColor
+  @Prop({ default: () => new Color(true) }) backgroundColor!: IColor
 
   @Prop() id!: string
   @Prop() scale!: number
@@ -271,12 +272,16 @@ export default class RedactableTextBlock extends Vue {
   }
 
   get blockStyle() {
+    let color = new Color()
+    color.fromOther(this.color)
+    let backgroundColor = new Color()
+    backgroundColor.fromOther(this.backgroundColor)
     return {
       fontFamily: "'" + this.fontFamily + "'",
       fontSize: this.fontSize * this.scale + 'px',
       fontWeight: this.fontWeight,
-      color: this.color.toCssColor(),
-      backgroundColor: this.backgroundColor.toCssColor(),
+      color: color.toCssColor(),
+      backgroundColor: backgroundColor.toCssColor(),
     }
   }
 }
