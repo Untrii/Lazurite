@@ -1,11 +1,14 @@
 <template>
-  <div class="text-block" :style="blockStyle" v-html="content"></div>
+  <div class="wrap" :style="wrapStyle">
+    <div class="text-block" :style="blockStyle" v-html="content"></div>
+  </div>
 </template>
 
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import Color from '@/entities/Color'
+import IColor from '@/entities/IColor'
 
 @Component
 export default class TextBlock extends Vue {
@@ -13,8 +16,10 @@ export default class TextBlock extends Vue {
   @Prop() fontSize!: number
   @Prop() fontWeight!: number
   @Prop() content!: string
-  @Prop({ default: () => new Color(false) }) color!: Color
-  @Prop({ default: () => new Color(true) }) backgroundColor!: Color
+  @Prop() horizontalAlign!: string
+  @Prop() verticalAlign!: string
+  @Prop({ default: () => new Color(false) }) color!: IColor
+  @Prop({ default: () => new Color(true) }) backgroundColor!: IColor
 
   @Prop() id!: string
   @Prop() scale!: number
@@ -24,23 +29,39 @@ export default class TextBlock extends Vue {
     color.fromOther(this.color)
     let backgroundColor = new Color()
     backgroundColor.fromOther(this.backgroundColor)
+
     return {
       fontFamily: "'" + this.fontFamily + "'",
       fontSize: this.fontSize * this.scale + 'px',
       fontWeight: this.fontWeight,
       color: color.toCssColor(),
       backgroundColor: backgroundColor.toCssColor(),
+      textAlign: this.horizontalAlign,
+    }
+  }
+
+  get wrapStyle() {
+    let verticalAlign = 'center'
+    if (this.verticalAlign == 'top') verticalAlign = 'flex-start'
+    if (this.verticalAlign == 'bottom') verticalAlign = 'flex-end'
+    return {
+      alignItems: verticalAlign,
     }
   }
 }
 </script>
 
 <style lang="css" scoped>
+.wrap {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
 .text-block {
   outline: none;
-  width: 100%;
-  height: 100%;
   word-wrap: none;
+  height: fit-content;
+  width: 100%;
   word-break: break-word;
 }
 .text-block:active,

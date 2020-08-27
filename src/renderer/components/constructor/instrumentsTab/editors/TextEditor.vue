@@ -56,8 +56,8 @@ export default class TextEditor extends Vue {
   selectedHorizontalAlign = 'left'
   fontSize = 0
 
-  verticalAlignVariants = ['top', 'middle', 'bottom']
-  horizontalAlignVariants = ['left', 'middle', 'right']
+  verticalAlignVariants = ['top', 'center', 'bottom']
+  horizontalAlignVariants = ['left', 'center', 'right']
 
   getState() {
     console.log('here')

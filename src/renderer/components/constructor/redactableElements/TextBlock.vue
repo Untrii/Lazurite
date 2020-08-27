@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width:100%;height:100%">
     <div class="control-buttons" :style="controlDockStyle" v-show="isSelected">
       <div
         class="control-buttons__item"
@@ -18,7 +18,7 @@
       </div>
     </div>
     <text-block v-bind="$attrs" class="content" v-if="!isRedacting"></text-block>
-    <div v-else>
+    <div v-else class="wrap" :style="wrapStyle">
       <div
         @click.stop
         class="text-block text-block_editable"
@@ -53,6 +53,8 @@ export default class RedactableTextBlock extends Vue {
   @Prop() fontSize!: number
   @Prop() fontWeight!: number
   @Prop() content!: string
+  @Prop() horizontalAlign!: string
+  @Prop() verticalAlign!: string
   @Prop({ default: () => new Color(false) }) color!: IColor
   @Prop({ default: () => new Color(true) }) backgroundColor!: IColor
 
@@ -282,6 +284,16 @@ export default class RedactableTextBlock extends Vue {
       fontWeight: this.fontWeight,
       color: color.toCssColor(),
       backgroundColor: backgroundColor.toCssColor(),
+      textAlign: this.horizontalAlign,
+    }
+  }
+
+  get wrapStyle() {
+    let verticalAlign = 'center'
+    if (this.verticalAlign == 'top') verticalAlign = 'flex-start'
+    if (this.verticalAlign == 'bottom') verticalAlign = 'flex-end'
+    return {
+      alignItems: verticalAlign,
     }
   }
 }
@@ -346,10 +358,16 @@ export default class RedactableTextBlock extends Vue {
   height: 100%;
 }
 
+.wrap {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
 .text-block {
   outline: none;
   width: 100%;
-  height: 100%;
+  height: fit-content;
   word-wrap: none;
   word-break: break-word;
 }
