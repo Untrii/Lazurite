@@ -17,7 +17,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import BaseElement from '@/components/elements/BaseElement.vue'
 import RedactableBaseElement from './redactableElements/RedactableBaseElement.vue'
 import VisualisationService from '@/services/VisualisationService'
-import Theme, { getBlankTheme, BackgroundType } from '@/entities/Theme'
+import ITheme, { getBlankTheme, BackgroundType } from '@/entities/ITheme'
 
 let service = new VisualisationService()
 
@@ -29,7 +29,7 @@ let service = new VisualisationService()
 })
 export default class Slide extends Vue {
   elementIds: string[] = []
-  theme: Theme = getBlankTheme()
+  theme: ITheme = getBlankTheme()
   @Prop(Number) index
   @Prop(Number) width
   @Prop(Number) height

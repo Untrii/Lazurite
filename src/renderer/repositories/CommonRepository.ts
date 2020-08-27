@@ -1,12 +1,12 @@
 import FileObject from './FileObject'
-import Presentation, { getBlankPresentation } from '@/entities/Presentation'
+import Presentation, { getBlankPresentation } from '@/entities/IPresentation'
 import LocalFileSystem from './LocalFileSystem'
-import AppSettings, { defaultSettings } from '@/entities/AppSettings'
-import SlideObject from '@/entities/SlideObject'
+import IAppSettings, { defaultSettings } from '@/entities/IAppSettings'
+import SlideObject from '@/entities/ISlideObject'
 import { promises as fs } from 'fs'
 import fsSync from 'fs'
 
-import BackgroundCollection, { getBlankCollection } from '@/entities/BackgroundCollection'
+import IBackgroundCollection, { getBlankCollection } from '@/entities/IBackgroundCollection'
 import track from '@/utils/ReactiveTrack'
 import ReactiveRepository from './ReactiveRepository'
 import HistoryRepository from './HistoryRepository'
@@ -30,10 +30,10 @@ export class CommonRepository extends ReactiveRepository {
   private _fontsList: any[] = []
 
   private _settingsFileHandle: FileObject | undefined
-  private _settingsFile: AppSettings | undefined
+  private _settingsFile: IAppSettings | undefined
 
   private _backgroundCollectionFileHandle: FileObject | undefined
-  private _backgroundCollectionFile: BackgroundCollection | undefined
+  private _backgroundCollectionFile: IBackgroundCollection | undefined
 
   private _paletteCollectionFileHandle: FileObject | undefined
   private _paletteCollectionFile: string[][] | undefined
@@ -139,12 +139,12 @@ export class CommonRepository extends ReactiveRepository {
     this.paletteCollection = sfile
   }
 
-  get settings(): AppSettings | undefined {
+  get settings(): IAppSettings | undefined {
     let p = this._settingsFile
     if (p == undefined) return undefined
-    return track<AppSettings>({ ...p }, () => (this.settings = p))
+    return track<IAppSettings>({ ...p }, () => (this.settings = p))
   }
-  set settings(settings: AppSettings | undefined) {
+  set settings(settings: IAppSettings | undefined) {
     if (!this._settingsFileHandle) {
       this._settingsFileHandle = new FileObject(new LocalFileSystem(), settingsFileName)
     }
@@ -153,11 +153,11 @@ export class CommonRepository extends ReactiveRepository {
     this.onChange()
   }
 
-  get backgroundCollection(): BackgroundCollection | undefined {
+  get backgroundCollection(): IBackgroundCollection | undefined {
     let p = this._backgroundCollectionFile
     return p
   }
-  set backgroundCollection(collection: BackgroundCollection | undefined) {
+  set backgroundCollection(collection: IBackgroundCollection | undefined) {
     if (!this._backgroundCollectionFileHandle) {
       this._backgroundCollectionFileHandle = new FileObject(new LocalFileSystem(), backgroundCollectionFileName)
     }

@@ -1,5 +1,5 @@
 import CommonRepository from '@/repositories/CommonRepository'
-import { getBlankPresentation } from '@/entities/Presentation'
+import { getBlankPresentation } from '@/entities/IPresentation'
 import ReactiveService from '@/services/ReactiveService'
 
 export default class MainMenuService extends ReactiveService {

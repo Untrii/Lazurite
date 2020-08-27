@@ -51,12 +51,12 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import BackgroundCollection, { getBlankCollection } from '@/entities/BackgroundCollection'
+import IBackgroundCollection, { getBlankCollection } from '@/entities/IBackgroundCollection'
 import DesignService from '@/services/DesignService'
 import VisualisationService from '@/services/VisualisationService'
 import ColorTile from './ColorTile.vue'
 import ColorPalette from '@/components/dialogs/ColorPalette.vue'
-import { stringFromType } from '@/entities/Theme'
+import { stringFromType } from '@/entities/ITheme'
 import { remote } from 'electron'
 import { promises as fs } from 'fs'
 
@@ -75,7 +75,7 @@ let addBackgroundReject: Function
   },
 })
 export default class BackgroundModule extends Vue {
-  availableBackgrounds: BackgroundCollection = getBlankCollection()
+  availableBackgrounds: IBackgroundCollection = getBlankCollection()
   pickedType = 'color'
   pickedTileVal = '#FFFFFF'
   pickedTileType = 'color'

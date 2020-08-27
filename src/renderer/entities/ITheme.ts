@@ -1,7 +1,7 @@
 import Color from './Color'
-import FontPreset from './FontPreset'
+import FontPreset from './IFontPreset'
 
-export default interface Theme {
+export default interface ITheme {
   backgroundColor: Color
   backgroundType: BackgroundType
   backgroundValue: string
@@ -18,7 +18,7 @@ export enum BackgroundType {
   Unknown,
 }
 
-export function getBlankTheme(): Theme {
+export function getBlankTheme(): ITheme {
   return {
     backgroundColor: new Color().fromRgb(255, 255, 255),
     backgroundType: BackgroundType.Color,

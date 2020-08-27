@@ -1,7 +1,7 @@
-import SlideObject, { getBlankObject as getBlankSlideObject } from '../SlideObject'
+import ISlideObject, { getBlankObject as getBlankSlideObject } from '../ISlideObject'
 import Color from '@/entities/Color'
 
-export default interface Rectangle extends SlideObject {
+export default interface Rectangle extends ISlideObject {
   color: Color
 }
 

@@ -1,4 +1,4 @@
-export default interface FileSystem {
+export default interface IFileSystem {
   readFile: ReadFunction
   writeFile: WriteFunction
 }

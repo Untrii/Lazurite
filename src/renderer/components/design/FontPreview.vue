@@ -39,8 +39,8 @@
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
-import Theme, { getBlankTheme } from '@/entities/Theme'
-import { getBlankPreset } from '@/entities/FontPreset'
+import ITheme, { getBlankTheme } from '@/entities/ITheme'
+import { getBlankPreset } from '@/entities/IFontPreset'
 //import localize from '@/utils/locales'
 
 const service = new DesignService()
@@ -48,7 +48,7 @@ const service = new DesignService()
 @Component
 export default class FontPreview extends Vue {
   selectedPreset = ''
-  theme: Theme = getBlankTheme()
+  theme: ITheme = getBlankTheme()
   scale: number = 1
 
   getState() {

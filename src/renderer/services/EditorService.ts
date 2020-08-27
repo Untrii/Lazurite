@@ -4,7 +4,7 @@ import VisualisationService from './VisualisationService'
 import BlankObjects from '@/entities/slideObjects/BlankObjects'
 import ConstructorService from './ConstructorService'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
-import SlideObject from '@/entities/SlideObject'
+import SlideObject from '@/entities/ISlideObject'
 
 export default class EditorService extends ReactiveService {
   constructor() {

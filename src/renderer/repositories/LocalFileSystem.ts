@@ -1,4 +1,4 @@
-import FileSystem from '@/entities/FileSystem'
+import FileSystem from '@/entities/IFileSystem'
 import fs from 'fs'
 
 export default class LocalFileSystem implements FileSystem {

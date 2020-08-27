@@ -20,7 +20,7 @@
 import assets from '@/assets/index'
 import { Vue, Component } from 'vue-property-decorator'
 import ConstructorService from '@/services/ConstructorService'
-import SlideObject from '@/entities/SlideObject'
+import ISlideObject from '@/entities/ISlideObject'
 import Slide from './Slide.vue'
 import HistoryService from '@/services/HistoryService'
 
@@ -35,7 +35,7 @@ let historyService = new HistoryService()
 export default class Preview extends Vue {
   previewSize = 0
   selectedSlideIndex = 0
-  slides: Map<string, SlideObject>[] = []
+  slides: Map<string, ISlideObject>[] = []
 
   onChangeListener: Function = () => this.getState()
   beforeMount() {

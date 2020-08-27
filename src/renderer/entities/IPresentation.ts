@@ -1,8 +1,8 @@
-import Theme, { getBlankTheme } from './Theme'
-import SlideObject from './SlideObject'
-import Scenary from './Scenary'
+import Theme, { getBlankTheme } from './ITheme'
+import SlideObject from './ISlideObject'
+import Scenary from './IScenary'
 
-export default interface Presentation {
+export default interface IPresentation {
   theme: Theme
   slides: Map<string, SlideObject>[]
   scenaries: Scenary[]

@@ -1,7 +1,7 @@
 import CommonRepository from '@/repositories/CommonRepository'
 import ReactiveService from './ReactiveService'
-import SlideObject, { getBlankObject } from '@/entities/SlideObject'
-import Theme, { getBlankTheme } from '@/entities/Theme'
+import SlideObject, { getBlankObject } from '@/entities/ISlideObject'
+import Theme, { getBlankTheme } from '@/entities/ITheme'
 
 export default class VisualisationService extends ReactiveService {
   constructor() {

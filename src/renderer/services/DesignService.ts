@@ -1,8 +1,8 @@
 import CommonRepository from '@/repositories/CommonRepository'
-import Font from '@/entities/FontPreset'
+import Font from '@/entities/IFontPreset'
 import ReactiveService from './ReactiveService'
-import BackgroundCollection, { getBlankCollection } from '@/entities/BackgroundCollection'
-import Theme, { BackgroundType, typeFromString, stringFromType, getBlankTheme } from '@/entities/Theme'
+import IBackgroundCollection, { getBlankCollection } from '@/entities/IBackgroundCollection'
+import Theme, { BackgroundType, typeFromString, stringFromType, getBlankTheme } from '@/entities/ITheme'
 import { remote } from 'electron'
 import Color from '@/entities/Color'
 const { ImageProcessing } = remote.require('./main')
@@ -18,7 +18,7 @@ export default class DesignService extends ReactiveService {
     return currentObj
   }
 
-  getBackgroundCollection(): BackgroundCollection {
+  getBackgroundCollection(): IBackgroundCollection {
     if (CommonRepository.backgroundCollection) return { ...CommonRepository.backgroundCollection }
     return getBlankCollection()
   }

@@ -1,4 +1,4 @@
-export default interface SlideObject {
+export default interface ISlideObject {
   id: string
   width: number
   height: number
@@ -7,7 +7,7 @@ export default interface SlideObject {
   type: string
 }
 
-export function getBlankObject(): SlideObject {
+export function getBlankObject(): ISlideObject {
   return {
     id: 'null',
     type: 'placeholder',

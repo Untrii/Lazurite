@@ -48,7 +48,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import localize from '@/utils/locales'
-import FontPreset, { getBlankPreset } from '@/entities/FontPreset'
+import IFontPreset, { getBlankPreset } from '@/entities/IFontPreset'
 import FontPreview from './FontPreview.vue'
 
 const service = new DesignService()
@@ -102,7 +102,7 @@ export default class TypographyModule extends Vue {
     service.changePresetFontFamily(this.selectedPreset, family)
   }
 
-  getPresetFont(presetName): FontPreset {
+  getPresetFont(presetName): IFontPreset {
     let presets = service.theme.fontPresets
     for (const entry of presets) {
       if (entry.name == this.selectedPreset) return entry

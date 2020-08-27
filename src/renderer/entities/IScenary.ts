@@ -1,4 +1,4 @@
-export default interface Scenary {
+export default interface IScenary {
   targetEvent: string
   handler: Function
 }

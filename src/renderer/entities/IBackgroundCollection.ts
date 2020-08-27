@@ -1,9 +1,9 @@
-export default interface BackgroundCollection {
+export default interface IBackgroundCollection {
   default: Map<string, string[]>
   custom: Map<string, string[]>
 }
 
-export function getBlankCollection(): BackgroundCollection {
+export function getBlankCollection(): IBackgroundCollection {
   let res = {
     default: new Map(),
     custom: new Map(),

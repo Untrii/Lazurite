@@ -1,4 +1,4 @@
-import SlideObject, { getBlankObject } from '@/entities/slideObject'
+import SlideObject, { getBlankObject } from '@/entities/ISlideObject'
 export default interface ColorCorrector extends SlideObject {
   blur: number
   brightness: number

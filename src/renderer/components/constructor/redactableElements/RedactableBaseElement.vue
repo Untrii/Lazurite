@@ -2,7 +2,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import elements from './index'
 import VisualisationService from '@/services/VisualisationService'
-import SlideObject from '@/entities/SlideObject'
+import ISlideObject from '@/entities/ISlideObject'
 import DraggableResizable from './DraggableResizable.vue'
 import ConstructorService from '@/services/ConstructorService'
 import Hotkeys from '@/utils/Hotkeys'
@@ -38,11 +38,11 @@ export default class RedactableBaseElement extends Vue {
     constructorService.removeOnChangeListener(this.onChangeListener)
   }
 
-  get element(): SlideObject {
+  get element(): ISlideObject {
     return visualisationService.elementById(this.id)
   }
 
-  getScaledElement(): SlideObject {
+  getScaledElement(): ISlideObject {
     let el = { ...this.element }
     el.width *= this.scale
     el.height *= this.scale
@@ -51,7 +51,7 @@ export default class RedactableBaseElement extends Vue {
     return el
   }
 
-  unscaleElement(element: SlideObject) {
+  unscaleElement(element: ISlideObject) {
     element = { ...element }
     element.width /= this.scale
     element.height /= this.scale

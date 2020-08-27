@@ -1,7 +1,7 @@
-import SlideObject from '@/entities/slideObject'
+import ISlideObject from '@/entities/ISlideObject'
 import Color from '@/entities/color'
 
-export default interface Spreadsheet extends SlideObject {
+export default interface Spreadsheet extends ISlideObject {
   rowCount: number
   columnCount: number
   fontSize: number

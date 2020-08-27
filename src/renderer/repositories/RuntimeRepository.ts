@@ -1,5 +1,5 @@
 import ReactiveRepository from './ReactiveRepository'
-import SlideObject from '@/entities/SlideObject'
+import SlideObject from '@/entities/ISlideObject'
 
 export class RuntimeRepository extends ReactiveRepository {
   selectedSlideIndex = 0

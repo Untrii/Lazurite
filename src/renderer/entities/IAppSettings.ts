@@ -1,4 +1,4 @@
-export default interface AppSettings {
+export default interface IAppSettings {
   selectedLoacale: Locale
   previewModuleSize: number
   instrumentsModuleSize: number
@@ -11,7 +11,7 @@ export enum Locale {
   Russian,
 }
 
-export let defaultSettings: AppSettings = {
+export let defaultSettings: IAppSettings = {
   selectedLoacale: Locale.English,
   previewModuleSize: 280,
   instrumentsModuleSize: 320,

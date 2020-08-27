@@ -1,4 +1,4 @@
-import SlideObject from '@/entities/slideObject'
+import SlideObject from '@/entities/ISlideObject'
 import Color from '@/entities/color'
 
 export default interface TextBlock extends SlideObject {

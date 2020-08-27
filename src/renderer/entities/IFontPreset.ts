@@ -1,11 +1,11 @@
-export default interface FontPreset {
+export default interface IFontPreset {
   name: string
   family: string
   size: number
   weight: number
 }
 
-export function getBlankPreset(): FontPreset {
+export function getBlankPreset(): IFontPreset {
   return {
     name: 'New preset',
     family: 'Alegreya',

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Vue, Prop, Component } from 'vue-property-decorator'
 import VisualisationService from '@/services/VisualisationService'
-import SlideObject from '@/entities/SlideObject'
+import ISlideObject from '@/entities/ISlideObject'
 
 import elements from './index'
 
@@ -23,7 +23,7 @@ export default class BaseElement extends Vue {
     service.removeOnChangeListener(this.onChangeListener)
   }
 
-  get element(): SlideObject {
+  get element(): ISlideObject {
     return service.elementById(this.id)
   }
 
