@@ -124,6 +124,17 @@ export default class LzButton extends Vue {
       transition: 0.2s;
     }
   }
+  &_light-gray {
+    background-color: $gray-light;
+    &:hover {
+      transition: 0.2s;
+      background-color: $gray-extralight;
+    }
+    &:not(:hover) {
+      background-color: $gray-light;
+      transition: 0.2s;
+    }
+  }
   &_transparent {
     background-color: rgba($color: #000000, $alpha: 0);
     &:hover {
@@ -141,7 +152,7 @@ export default class LzButton extends Vue {
 
   &_small {
     min-height: 28px;
-    padding: 4px 8px;
+    padding: 6.5px 8px;
     font-size: 14px;
 
     img {

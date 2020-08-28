@@ -5,10 +5,8 @@ import CommonRepository from '@/repositories/CommonRepository'
 import assets from '@/assets'
 import DialogService from './DialogService'
 import ResourceService from './ResourceService'
-import { getBlankObject as getBlankImage } from '@/entities/slideObjects/ImageBlock'
-import { getBlankObject as getBlankVideo } from '@/entities/slideObjects/VideoBlock'
 import generateString from '@/utils/StringGenerator'
-import { getBlankObject as getBlankTextBlock } from '@/entities/slideObjects/TextBlock'
+import BlankObjects from '@/entities/slideObjects/BlankObjects'
 
 export default class ElementService extends ReactiveService {
   private _groups!: Map<string, ElementPreset[]>
@@ -88,7 +86,7 @@ export default class ElementService extends ReactiveService {
       imageSize.height /= imageSize.width / 960
       imageSize.width = 960
     }
-    let result = getBlankImage()
+    let result = BlankObjects.ImageBlock
     result.height = imageSize.height
     result.width = imageSize.width
     result.src = CommonRepository.workspaceDataFolder + '/' + fileName
@@ -112,7 +110,7 @@ export default class ElementService extends ReactiveService {
       videoSize.width = 960
     }
 
-    let result = getBlankVideo()
+    let result = BlankObjects.VideoBlock
     result.height = videoSize.height
     result.width = videoSize.width
     result.src = CommonRepository.workspaceDataFolder + '/' + fileName
@@ -128,7 +126,7 @@ export default class ElementService extends ReactiveService {
 
     for (const entry of fontPresets) {
       let sampleTextBlock = {
-        ...getBlankTextBlock(),
+        ...BlankObjects.TextBlock,
         ...{
           height: entry.size * 1.75,
           width: entry.size * 10.5,
@@ -140,7 +138,7 @@ export default class ElementService extends ReactiveService {
       }
       elementPresets.push(new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock))
     }
-    this.setGroup('Text', elementPresets)
+    this.setGroup('text', elementPresets)
   }
   setGroup(name: string, entries: ElementPreset[]) {
     this._groups.set(name, entries)

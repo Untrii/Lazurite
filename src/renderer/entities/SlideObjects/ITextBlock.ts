@@ -1,7 +1,7 @@
 import SlideObject from '@/entities/ISlideObject'
 import Color from '@/entities/color'
 
-export default interface TextBlock extends SlideObject {
+export default interface ITextBlock extends SlideObject {
   fontFamily: string
   fontSize: number
   fontWeight: number
@@ -17,7 +17,7 @@ export default interface TextBlock extends SlideObject {
   horizontalAlign: string
 }
 
-export function getBlankObject(): TextBlock {
+export function getBlankObject(): ITextBlock {
   return {
     id: '',
     type: 'TextBlock',
