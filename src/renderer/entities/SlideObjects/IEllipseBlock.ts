@@ -6,6 +6,6 @@ export function getBlankObject(): IRectangle {
   let result = {
     ...getBlankFigure(),
   }
-  result.type = 'Rectangle'
+  result.type = 'EllipseBlock'
   return result
 }

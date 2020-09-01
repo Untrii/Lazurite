@@ -1,14 +1,6 @@
 <template>
   <svg :width="width * scale" :height="height * scale">
-    <rect
-      x="0"
-      y="0"
-      :rx="cornerRadius * scale"
-      :ry="cornerRadius * scale"
-      :width="width * scale"
-      :height="height * scale"
-      :fill="fillColor"
-    />
+    <ellipse :cx="halfWidth" :cy="halfHeight" :rx="halfWidth" :ry="halfHeight" :fill="fillColor" />
   </svg>
 </template>
 
@@ -19,7 +11,7 @@ import IColor from '@/entities/IColor'
 import Color from '@/entities/Color'
 
 @Component
-export default class extends Vue {
+export default class EllipseBlock extends Vue {
   @Prop() scale!: number
   @Prop() width!: number
   @Prop() height!: number
@@ -27,9 +19,18 @@ export default class extends Vue {
   @Prop() cornerRadius!: number
 
   get fillColor() {
+    console.log('Ellipse')
     let col = new Color()
     col.fromOther(this.color)
     return col.toCssColor()
+  }
+
+  get halfWidth() {
+    return this.width * this.scale * 0.5
+  }
+
+  get halfHeight() {
+    return this.height * this.scale * 0.5
   }
 }
 </script>

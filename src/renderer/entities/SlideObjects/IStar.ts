@@ -6,6 +6,6 @@ export function getBlankObject(): IRectangle {
   let result = {
     ...getBlankFigure(),
   }
-  result.type = 'Rectangle'
+  result.type = 'Star'
   return result
 }

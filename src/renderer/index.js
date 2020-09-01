@@ -3,27 +3,15 @@ import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
 import CommonRepository from '@/repositories/CommonRepository'
 import MainMenuService from '@/services/MainMenuService'
-import LzButton from '@/components/designSystem/LzButton'
-import LzGroupCaption from '@/components/designSystem/LzGroupCaption'
-import LzPrepend from '@/components/designSystem/LzPrepend'
-import LzNumberInput from '@/components/designSystem/LzNumberInput'
-import LzRangeInput from '@/components/designSystem/LzRangeInput'
-import LzColorInput from '@/components/designSystem/LzColorInput'
-import LzPressSwitch from '@/components/designSystem/LzPressSwitch'
-import LzSwitch from '@/components/designSystem/LzSwitch'
+import LzDesignSystem from '@/components/designSystem'
 
 let presentationPath = 'D:\\Программирование 2020\\present.js\\testproj_v3\\project.json'
 
 async function main() {
   Vue.use(BootstrapVue)
-  Vue.component('LzButton', LzButton)
-  Vue.component('LzGroupCaption', LzGroupCaption)
-  Vue.component('LzNumberInput', LzNumberInput)
-  Vue.component('LzRangeInput', LzRangeInput)
-  Vue.component('LzColorInput', LzColorInput)
-  Vue.component('LzPrepend', LzPrepend)
-  Vue.component('LzPressSwitch', LzPressSwitch)
-  Vue.component('LzSwitch', LzSwitch)
+  for (const element in LzDesignSystem) {
+    Vue.component(element, LzDesignSystem[element])
+  }
 
   await CommonRepository.load()
   //await new MainMenuService().createPresentation(presentationPath)

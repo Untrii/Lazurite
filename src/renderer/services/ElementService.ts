@@ -22,43 +22,21 @@ export default class ElementService extends ReactiveService {
     currentObj.setGroup('media', [
       new ElementPreset(assets.logo, 'image', 'ImageBlock', currentObj.generateImageProps),
       new ElementPreset(assets.logo, 'video', 'VideoBlock', currentObj.generateVideoProps),
+      new ElementPreset(assets.logo, 'youtubeVideo', 'EmbeddedVideoBlock', BlankObjects.EmbeddedVideoBlock),
     ])
     currentObj.setGroup('figures', [
-      new ElementPreset(assets.logo, 'rectangle', 'Rectangle', {
-        top: 270,
-        left: 480,
-        width: 960,
-        height: 540,
-        fontSize: 44,
-        color: { r: 100, g: 100, b: 100 },
-      }),
+      new ElementPreset(assets.logo, 'rectangle', 'Rectangle', BlankObjects.Rectangle),
+      new ElementPreset(assets.logo, 'ellipse', 'EllipseBlock', BlankObjects.EllipseBlock),
+      new ElementPreset(assets.logo, 'star', 'Star', BlankObjects.Star),
+      //new ElementPreset(assets.logo, 'triangle', 'Triangle', BlankObjects.Triangle),
     ])
     currentObj.setGroup('datavis', [
-      new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', {
-        rowCount: 5,
-        columnCount: 5,
-        rowSizes: [0.2, 0.2, 0.2, 0.2, 0.2],
-        columnSizes: [0.2, 0.2, 0.2, 0.2, 0.2],
-        highlightTop: true,
-        highlightBottom: false,
-        highlightLeft: false,
-        highlightRight: false,
-        stripHorizontally: true,
-        stripVertically: false,
-        darkStyle: false,
-        borderRadius: 10,
-        content: currentObj.genetate2DMap('', 5),
-
-        top: 270,
-        left: 480,
-        width: 960,
-        height: 540,
-        fontSize: 44,
-        showBorders: true,
-      }),
+      new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', BlankObjects.Spreadsheet),
     ])
     return currentObj
   }
+
+  getStandartFigure() {}
 
   genetate2DMap(value: string, size: number): Map<number, Map<number, string>> {
     let result = new Map<number, Map<number, string>>()
