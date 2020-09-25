@@ -11,26 +11,29 @@ import LzRangeInput from '@/components/designSystem/LzRangeInput'
 import LzColorInput from '@/components/designSystem/LzColorInput'
 import LzPressSwitch from '@/components/designSystem/LzPressSwitch'
 import LzSwitch from '@/components/designSystem/LzSwitch'
-
-let presentationPath = 'D:\\Программирование 2020\\present.js\\testproj_v3\\project.json'
+import LzDesignSystem from '@/components/designSystem'
+import { promises as fs } from 'fs'
+import { existsSync } from 'fs'
 
 async function main() {
+  let presentationPath = await fs.readFile('testProjectPath.txt', {
+    encoding: 'utf-8',
+  })
   Vue.use(BootstrapVue)
-  Vue.component('LzButton', LzButton)
-  Vue.component('LzGroupCaption', LzGroupCaption)
-  Vue.component('LzNumberInput', LzNumberInput)
-  Vue.component('LzRangeInput', LzRangeInput)
-  Vue.component('LzColorInput', LzColorInput)
-  Vue.component('LzPrepend', LzPrepend)
-  Vue.component('LzPressSwitch', LzPressSwitch)
-  Vue.component('LzSwitch', LzSwitch)
+  for (const element in LzDesignSystem) {
+    Vue.component(element, LzDesignSystem[element])
+  }
 
   await CommonRepository.load()
-  //await new MainMenuService().createPresentation(presentationPath)
+  if (!existsSync(presentationPath)) {
+    await new MainMenuService().createPresentation(presentationPath)
+  }
   window.__bench = function() {
     let startTime = new Date()
     for (let i = 0; i < 1000; i++) __repoInstance.onChange()
-    console.log('1000 updates has completed in ' + (new Date() - startTime) + 'ms')
+    console.log(
+      '1000 updates has completed in ' + (new Date() - startTime) + 'ms'
+    )
   }
   new MainMenuService().openPresentation(presentationPath)
   console.log('instance loaded')
