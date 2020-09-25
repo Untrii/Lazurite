@@ -4,10 +4,8 @@ import BootstrapVue from 'bootstrap-vue'
 import CommonRepository from '@/repositories/CommonRepository'
 import MainMenuService from '@/services/MainMenuService'
 import LzDesignSystem from '@/components/designSystem'
-
-let presentationPath =
-  'D:\\Программирование 2020\\present.js\\testproj_v3\\project.json'
-
+import { promises as fs } from 'fs'
+import { existsSync } from 'fs'
 async function main() {
   let presentationPath = await fs.readFile('testProjectPath.txt', {
     encoding: 'utf-8',

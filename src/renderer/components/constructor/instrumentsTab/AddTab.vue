@@ -15,6 +15,8 @@
         {{ preset.name }}
       </lz-button>
     </div>
+    <lz-checkbox size="small">Penis</lz-checkbox>
+    <lz-switch size="small">Penis</lz-switch>
   </div>
 </template>
 
@@ -49,7 +51,11 @@ export default class AddTab extends Vue {
 
   async createElement(preset) {
     let element = await constructorService.createObject(preset)
-    if (element) historyService.registerElementCreate(element, constructorService.selectedSlideIndex ?? 0)
+    if (element)
+      historyService.registerElementCreate(
+        element,
+        constructorService.selectedSlideIndex ?? 0
+      )
   }
 }
 </script>

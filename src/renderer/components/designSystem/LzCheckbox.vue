@@ -1,9 +1,9 @@
 <template>
   <div class="checkbox" :class="rootClasses" @click="onClick">
+    <div type="checkbox" class="checkbox-input" :class="checkboxClasses"></div>
     <div class="text">
       <slot></slot>
     </div>
-    <div class="checkbox-input" :class="switchClasses"></div>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ import assets from '@/assets'
 @Component
 export default class LzCheckbox extends Vue {
   @Prop({ default: false }) checked!: boolean
-  @Prop({ default: 'medium' }) size!: string
+  @Prop({ default: 'small' }) size!: string
 
   localValue = this.checked
 
@@ -34,15 +34,15 @@ export default class LzCheckbox extends Vue {
 
   get rootClasses() {
     let result: string[] = []
-    result.push('press-switch_' + this.size)
+    result.push('checkbox_' + this.size)
     return result
   }
 
-  get switchClasses() {
+  get checkboxClasses() {
     let result: string[] = []
-    result.push('switch-input_' + this.size)
-    if (this.localValue) result.push('switch-input_pressed')
-    else result.push('switch-input_not-pressed')
+    result.push('checkbox-input_' + this.size)
+    if (this.localValue) result.push('checkbox-input_pressed')
+    else result.push('checkbox-input_not-pressed')
     return result
   }
 }
@@ -54,7 +54,7 @@ export default class LzCheckbox extends Vue {
 .checkbox {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr max-content;
+  grid-template-columns: max-content 1fr;
 
   img {
     grid-column: 2;
@@ -84,57 +84,35 @@ export default class LzCheckbox extends Vue {
   display: inline-grid;
   grid-template-columns: max-content max-content max-content;
 
-  &__brick {
-    height: 100%;
+  border: 2px solid $blue-normal;
+
+  &_not-pressed {
+    background: white;
   }
 
-  &__brick-small {
-    height: 80% !important;
-    margin-top: 10%;
+  &_pressed {
+    background: $blue-normal;
   }
 
-  &_pressed &__brick:first-child {
-    margin-left: 0 !important;
-    transition: 0.3s;
-  }
-  &_not-pressed &__brick:first-child {
-    height: 100% !important;
-    transition: 0.3s;
-  }
   &_small {
-    height: 24px;
-    width: 48px;
-    margin: 4px 0;
-  }
-  &_small &__brick {
-    width: 24px;
-    &:first-child {
-      margin-left: -24px;
-    }
+    height: 20px;
+    width: 20px;
+    margin: 6px 0;
   }
 
   &_medium {
-    height: 28px;
-    width: 56px;
-    margin: 6px 0;
-  }
-  &_medium &__brick {
-    width: 28px;
-    &:first-child {
-      margin-left: -28px;
-    }
+    height: 24px;
+    width: 24px;
+    margin: 8px 0;
   }
 
   &_large {
-    height: 32px;
-    width: 64px;
-    margin: 8px 0;
+    height: 28px;
+    width: 28px;
+    margin: 10px 0;
   }
-  &_large &__brick {
-    width: 32px;
-    &:first-child {
-      margin-left: -32px;
-    }
-  }
+}
+.text {
+  margin-left: 10px;
 }
 </style>
