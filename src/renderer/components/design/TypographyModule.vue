@@ -2,16 +2,23 @@
   <div class="root">
     <div class="content">
       <div class="presets">
-        <font-preview class="preview" @presetChanged="onPresetChanged"></font-preview>
+        <font-preview
+          class="preview"
+          @presetChanged="onPresetChanged"
+        ></font-preview>
       </div>
       <div class="preset-redactor">
         <div class="preset-redactor__font-settings">
           <b-input-group prepend="Font size" class="preset-redactor__input">
-            <b-input type="number" :value="getPresetFont(selectedPreset).size" @input="onSizeChange"></b-input>
+            <b-input
+              type="number"
+              :value="getPresetFont(selectedPresetId).size"
+              @input="onSizeChange"
+            ></b-input>
           </b-input-group>
           <b-input-group prepend="Font weight" class="preset-redactor__input">
             <b-form-select
-              :value="getPresetFont(selectedPreset).weight"
+              :value="getPresetFont(selectedPresetId).weight"
               :options="presetFontVariants"
               @change="onWeightChange"
             ></b-form-select>
@@ -22,17 +29,25 @@
             <li
               class="list-group-item font-list__item"
               :class="{
-                'list-group-item-info': getPresetFont(selectedPreset).family == font.name,
+                'list-group-item-info':
+                  getPresetFont(selectedPresetId).family == font.name,
               }"
               @click="selectFont(font.name)"
               v-for="font in fontList"
               :key="font.name"
             >
-              <div :style="'font-family:' + font.name" class="font-list__item-label">
+              <div
+                :style="'font-family:' + font.name"
+                class="font-list__item-label"
+              >
                 {{ font.name }}
               </div>
               <span class="badge badge-pill">
-                <div v-for="size in font.variants" :key="size" class="badge-entry">
+                <div
+                  v-for="size in font.variants"
+                  :key="size"
+                  class="badge-entry"
+                >
                   {{ size + ' ' }}
                 </div>
               </span>
@@ -60,7 +75,7 @@ const service = new DesignService()
 })
 export default class TypographyModule extends Vue {
   pickedType = 'text'
-  selectedPreset = ''
+  selectedPresetId = ''
   fontList: any[] = []
 
   localize(str) {
@@ -83,35 +98,36 @@ export default class TypographyModule extends Vue {
   }
 
   onPresetChanged(selectedPreset) {
-    this.selectedPreset = selectedPreset
+    this.selectedPresetId = selectedPreset
   }
 
   onSizeChange(newSize) {
     if (newSize == '') return
     if (typeof newSize != 'number') newSize = parseInt(newSize)
     if (newSize > 200) newSize = 200
-    service.changePresetFontSize(this.selectedPreset, newSize)
+    service.changePresetFontSize(this.selectedPresetId, newSize)
   }
 
   onWeightChange(newWeight) {
     if (typeof newWeight != 'number') newWeight = parseInt(newWeight)
-    service.changePresetFontWeight(this.selectedPreset, newWeight)
+    service.changePresetFontWeight(this.selectedPresetId, newWeight)
   }
 
   selectFont(family) {
-    service.changePresetFontFamily(this.selectedPreset, family)
+    service.changePresetFontFamily(this.selectedPresetId, family)
   }
 
-  getPresetFont(presetName): IFontPreset {
+  getPresetFont(presetId): IFontPreset {
     let presets = service.theme.fontPresets
     for (const entry of presets) {
-      if (entry.name == this.selectedPreset) return entry
+      if (entry.id == presetId) return entry
     }
     return getBlankPreset()
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == this.getPresetFont(this.selectedPreset).family) return entry.variants
+      if (entry.name == this.getPresetFont(this.selectedPresetId).family)
+        return entry.variants
     }
     return [400]
   }

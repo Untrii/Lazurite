@@ -1,16 +1,22 @@
 <template>
   <div>
     <div
-      :class="getCardClasses(preset.name)"
+      :class="getCardClasses(preset.id)"
       class="card preset-card"
       v-for="preset in presets"
-      :key="preset.name"
-      @click="selectedPreset = preset.name"
+      :key="preset.id"
+      @click="selectedPresetId = preset.id"
     >
       <div class="card-body">
         <div class="preset-card__content">
           <div :style="preset.style">
-            {{ preset.name }}
+            <div
+              contenteditable="true"
+              @input="onPresetNameChange(preset, $event)"
+              v-once
+            >
+              {{ preset.name }}
+            </div>
           </div>
           <div>
             {{ preset.family }} - {{ preset.size }}px,
@@ -18,7 +24,11 @@
           </div>
         </div>
 
-        <div class="preset-card__close" :class="getCrossClasses(preset.name)" @click.stop="removePreset(preset.name)">
+        <div
+          class="preset-card__close"
+          :class="getCrossClasses(preset.id)"
+          @click.stop="removePreset(preset.id)"
+        >
           ×
         </div>
       </div>
@@ -40,25 +50,26 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import ITheme, { getBlankTheme } from '@/entities/ITheme'
-import { getBlankPreset } from '@/entities/IFontPreset'
+import IFontPreset, { getBlankPreset } from '@/entities/IFontPreset'
 //import localize from '@/utils/locales'
 
 const service = new DesignService()
 
 @Component
 export default class FontPreview extends Vue {
-  selectedPreset = ''
+  selectedPresetId = ''
   theme: ITheme = getBlankTheme()
   scale: number = 1
 
   getState() {
     this.theme = service.theme
-    if (this.selectedPreset == '' && service.theme.fontPresets.length > 0)
-      this.selectedPreset = service.theme.fontPresets[0].name
+    if (this.selectedPresetId == '' && service.theme.fontPresets.length > 0)
+      this.selectedPresetId = service.theme.fontPresets[0].id
   }
 
   onChangeListener: Function = () => this.getState()
   beforeMount() {
+    console.log('there')
     this.getState()
     service.addOnChangeListener(this.onChangeListener)
     window.addEventListener('resize', this.updateScale)
@@ -76,7 +87,7 @@ export default class FontPreview extends Vue {
     this.scale = scale
   }
 
-  get presets() {
+  get presets(): IFontPreset[] {
     let result: any[] = []
 
     let fonts = this.theme.fontPresets
@@ -87,10 +98,12 @@ export default class FontPreview extends Vue {
         weight: font.weight,
         name: font.name,
         family: font.family,
+        id: font.id,
         style: {
           fontFamily: font.family,
           fontWeight: font.weight,
-          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size * (1 / 10.8)}vh)`,
+          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size *
+            (1 / 10.8)}vh)`,
         },
       })
     }
@@ -114,20 +127,21 @@ export default class FontPreview extends Vue {
     return `font-family:Arial;font-weight:400;font-size:${48 * this.scale}px;`
   }
 
-  getCardClasses(name) {
-    if (name == this.selectedPreset) return ['text-white', 'bg-blue']
+  getCardClasses(id) {
+    if (id == this.selectedPresetId) return ['text-white', 'bg-blue']
     else return []
   }
 
-  getCrossClasses(name) {
-    if (name == this.selectedPreset) return ['preset-card__close_white']
+  getCrossClasses(id) {
+    if (id == this.selectedPresetId) return ['preset-card__close_white']
     else return []
   }
 
-  removePreset(name) {
-    service.removeFontPreset(name)
-    if (this.selectedPreset == name) {
-      if (service.theme.fontPresets.length > 0) this.selectedPreset = service.theme.fontPresets[0].name
+  removePreset(id) {
+    service.removeFontPreset(id)
+    if (this.selectedPresetId == id) {
+      if (service.theme.fontPresets.length > 0)
+        this.selectedPresetId = service.theme.fontPresets[0].id
     }
   }
 
@@ -145,7 +159,7 @@ export default class FontPreview extends Vue {
     while (isPresetExists(i)) i++
     preset.name = 'New preset ' + i
 
-    this.selectedPreset = preset.name
+    this.selectedPresetId = preset.name
     service.addFontPreset(preset)
   }
 
@@ -169,9 +183,14 @@ export default class FontPreview extends Vue {
     return 'regular'
   }
 
-  @Watch('selectedPreset')
+  @Watch('selectedPresetId')
   onPresetChanged() {
-    this.$emit('presetChanged', this.selectedPreset)
+    this.$emit('presetChanged', this.selectedPresetId)
+  }
+
+  onPresetNameChange(preset: IFontPreset, event) {
+    let text = event.target.innerText
+    service.changePresetName(preset.id, text)
   }
 }
 </script>

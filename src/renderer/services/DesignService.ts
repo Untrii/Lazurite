@@ -1,8 +1,15 @@
 import CommonRepository from '@/repositories/CommonRepository'
 import Font from '@/entities/IFontPreset'
 import ReactiveService from './ReactiveService'
-import IBackgroundCollection, { getBlankCollection } from '@/entities/IBackgroundCollection'
-import Theme, { BackgroundType, typeFromString, stringFromType, getBlankTheme } from '@/entities/ITheme'
+import IBackgroundCollection, {
+  getBlankCollection,
+} from '@/entities/IBackgroundCollection'
+import Theme, {
+  BackgroundType,
+  typeFromString,
+  stringFromType,
+  getBlankTheme,
+} from '@/entities/ITheme'
 import { remote } from 'electron'
 import Color from '@/entities/Color'
 const { ImageProcessing } = remote.require('./main')
@@ -19,7 +26,8 @@ export default class DesignService extends ReactiveService {
   }
 
   getBackgroundCollection(): IBackgroundCollection {
-    if (CommonRepository.backgroundCollection) return { ...CommonRepository.backgroundCollection }
+    if (CommonRepository.backgroundCollection)
+      return { ...CommonRepository.backgroundCollection }
     return getBlankCollection()
   }
   addBackground(type: BackgroundType | string, value: string) {
@@ -31,7 +39,8 @@ export default class DesignService extends ReactiveService {
       if (arr.indexOf(value) != -1) return
       else {
         CommonRepository.backgroundCollection.custom.get(type)?.push(value)
-        CommonRepository.backgroundCollection = CommonRepository.backgroundCollection
+        CommonRepository.backgroundCollection =
+          CommonRepository.backgroundCollection
       }
     }
   }
@@ -41,11 +50,11 @@ export default class DesignService extends ReactiveService {
     CommonRepository.commitPresentationChanges()
   }
 
-  removeFontPreset(presetName: string) {
+  removeFontPreset(presetId: string) {
     if (!CommonRepository.openedPresentation) return
 
     let filteredPresets = CommonRepository.openedPresentation.theme.fontPresets.filter(
-      (entry) => entry.name != presetName
+      (entry) => entry.id != presetId
     )
     CommonRepository.openedPresentation.theme.fontPresets = filteredPresets
     CommonRepository.commitPresentationChanges()
@@ -55,13 +64,16 @@ export default class DesignService extends ReactiveService {
     if (typeof type != 'string') type = stringFromType(type)
 
     if (!CommonRepository.backgroundCollection) return
-    let customCollection = CommonRepository.backgroundCollection.custom.get(type)
+    let customCollection = CommonRepository.backgroundCollection.custom.get(
+      type
+    )
     if (customCollection) {
       CommonRepository.backgroundCollection.custom.set(
         type,
         customCollection.filter((entry) => entry != value)
       )
-      CommonRepository.backgroundCollection = CommonRepository.backgroundCollection
+      CommonRepository.backgroundCollection =
+        CommonRepository.backgroundCollection
     }
   }
 
@@ -76,8 +88,14 @@ export default class DesignService extends ReactiveService {
     let start = new Date()
     let v = await ImageProcessing.getMedianColor(stringFromType(type), value)
 
-    CommonRepository.openedPresentation.theme.backgroundColor = new Color().fromRgb(v.r, v.g, v.b)
-    console.log(`Got median color ${v} in ${new Date().getTime() - start.getTime()}ms`)
+    CommonRepository.openedPresentation.theme.backgroundColor = new Color().fromRgb(
+      v.r,
+      v.g,
+      v.b
+    )
+    console.log(
+      `Got median color ${v} in ${new Date().getTime() - start.getTime()}ms`
+    )
     CommonRepository.commitPresentationChanges()
   }
   selectPalette(palette: Color[]) {
@@ -97,10 +115,15 @@ export default class DesignService extends ReactiveService {
         }
         colorPalettes.push(colors)
       }
-      console.log(`Loaded palettes in ${new Date().getTime() - start.getTime()}ms`)
+      console.log(
+        `Loaded palettes in ${new Date().getTime() - start.getTime()}ms`
+      )
     }
 
-    let sortfn = function(a: { diff: number; val: Color[] }, b: { diff: number; val: Color[] }) {
+    let sortfn = function(
+      a: { diff: number; val: Color[] },
+      b: { diff: number; val: Color[] }
+    ) {
       return a.diff - b.diff
     }
     let palettes: { diff: number; val: Color[] }[] = [
@@ -117,7 +140,10 @@ export default class DesignService extends ReactiveService {
     for (let i = 0; i < colorPalettes.length; i++) {
       for (let j = 0; j < colorPalettes[i].length; j++) {
         let pcol = colorPalettes[i][j]
-        let diff = Math.abs(col.r - pcol.r) + Math.abs(col.g - pcol.g) + Math.abs(col.b - pcol.b)
+        let diff =
+          Math.abs(col.r - pcol.r) +
+          Math.abs(col.g - pcol.g) +
+          Math.abs(col.b - pcol.b)
 
         let val = [...colorPalettes[i]]
         val[j] = new Color().fromRgb(col.r, col.g, col.b)
@@ -144,29 +170,41 @@ export default class DesignService extends ReactiveService {
     return await CommonRepository.getFontList()
   }
 
-  changePresetFontSize(name, newSize) {
+  changePresetFontSize(id, newSize) {
     let presets = CommonRepository.openedPresentation?.theme.fontPresets
     if (!presets) return
     for (let i = 0; i < presets.length; i++) {
-      if (presets[i].name == name) presets[i].size = newSize
+      if (presets[i].id == id) presets[i].size = newSize
     }
     CommonRepository.commitPresentationChanges()
   }
 
-  changePresetFontWeight(name, newWeight) {
+  changePresetFontWeight(id, newWeight) {
     let presets = CommonRepository.openedPresentation?.theme.fontPresets
     if (!presets) return
     for (let i = 0; i < presets.length; i++) {
-      if (presets[i].name == name) presets[i].weight = newWeight
+      if (presets[i].id == id) presets[i].weight = newWeight
     }
     CommonRepository.commitPresentationChanges()
   }
 
-  changePresetFontFamily(name, newFamily) {
+  changePresetFontFamily(id, newFamily) {
     let presets = CommonRepository.openedPresentation?.theme.fontPresets
     if (!presets) return
     for (let i = 0; i < presets.length; i++) {
-      if (presets[i].name == name) presets[i].family = newFamily
+      if (presets[i].id == id) presets[i].family = newFamily
+    }
+    CommonRepository.commitPresentationChanges()
+  }
+
+  changePresetName(id, newName) {
+    let presets = CommonRepository.openedPresentation?.theme.fontPresets
+    if (!presets) return
+    for (let i = 0; i < presets.length; i++) {
+      if (presets[i].id == id) {
+        presets[i].name = newName
+        break
+      }
     }
     CommonRepository.commitPresentationChanges()
   }
