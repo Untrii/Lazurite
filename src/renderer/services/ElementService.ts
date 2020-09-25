@@ -5,10 +5,8 @@ import CommonRepository from '@/repositories/CommonRepository'
 import assets from '@/assets'
 import DialogService from './DialogService'
 import ResourceService from './ResourceService'
-import { getBlankObject as getBlankImage } from '@/entities/slideObjects/ImageBlock'
-import { getBlankObject as getBlankVideo } from '@/entities/slideObjects/VideoBlock'
 import generateString from '@/utils/StringGenerator'
-import { getBlankObject as getBlankTextBlock } from '@/entities/slideObjects/TextBlock'
+import BlankObjects from '@/entities/slideObjects/BlankObjects'
 
 export default class ElementService extends ReactiveService {
   private _groups!: Map<string, ElementPreset[]>
@@ -24,43 +22,21 @@ export default class ElementService extends ReactiveService {
     currentObj.setGroup('media', [
       new ElementPreset(assets.logo, 'image', 'ImageBlock', currentObj.generateImageProps),
       new ElementPreset(assets.logo, 'video', 'VideoBlock', currentObj.generateVideoProps),
+      new ElementPreset(assets.logo, 'youtubeVideo', 'EmbeddedVideoBlock', BlankObjects.EmbeddedVideoBlock),
     ])
     currentObj.setGroup('figures', [
-      new ElementPreset(assets.logo, 'rectangle', 'Rectangle', {
-        top: 270,
-        left: 480,
-        width: 960,
-        height: 540,
-        fontSize: 44,
-        color: { r: 100, g: 100, b: 100 },
-      }),
+      new ElementPreset(assets.logo, 'rectangle', 'Rectangle', BlankObjects.Rectangle),
+      new ElementPreset(assets.logo, 'ellipse', 'EllipseBlock', BlankObjects.EllipseBlock),
+      new ElementPreset(assets.logo, 'star', 'Star', BlankObjects.Star),
+      //new ElementPreset(assets.logo, 'triangle', 'Triangle', BlankObjects.Triangle),
     ])
     currentObj.setGroup('datavis', [
-      new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', {
-        rowCount: 5,
-        columnCount: 5,
-        rowSizes: [0.2, 0.2, 0.2, 0.2, 0.2],
-        columnSizes: [0.2, 0.2, 0.2, 0.2, 0.2],
-        highlightTop: true,
-        highlightBottom: false,
-        highlightLeft: false,
-        highlightRight: false,
-        stripHorizontally: true,
-        stripVertically: false,
-        darkStyle: false,
-        borderRadius: 10,
-        content: currentObj.genetate2DMap('', 5),
-
-        top: 270,
-        left: 480,
-        width: 960,
-        height: 540,
-        fontSize: 44,
-        showBorders: true,
-      }),
+      new ElementPreset(assets.logo, 'spreadsheet', 'Spreadsheet', BlankObjects.Spreadsheet),
     ])
     return currentObj
   }
+
+  getStandartFigure() {}
 
   genetate2DMap(value: string, size: number): Map<number, Map<number, string>> {
     let result = new Map<number, Map<number, string>>()
@@ -88,7 +64,7 @@ export default class ElementService extends ReactiveService {
       imageSize.height /= imageSize.width / 960
       imageSize.width = 960
     }
-    let result = getBlankImage()
+    let result = BlankObjects.ImageBlock
     result.height = imageSize.height
     result.width = imageSize.width
     result.src = CommonRepository.workspaceDataFolder + '/' + fileName
@@ -112,7 +88,7 @@ export default class ElementService extends ReactiveService {
       videoSize.width = 960
     }
 
-    let result = getBlankVideo()
+    let result = BlankObjects.VideoBlock
     result.height = videoSize.height
     result.width = videoSize.width
     result.src = CommonRepository.workspaceDataFolder + '/' + fileName
@@ -128,7 +104,7 @@ export default class ElementService extends ReactiveService {
 
     for (const entry of fontPresets) {
       let sampleTextBlock = {
-        ...getBlankTextBlock(),
+        ...BlankObjects.TextBlock,
         ...{
           height: entry.size * 1.75,
           width: entry.size * 10.5,
@@ -140,7 +116,7 @@ export default class ElementService extends ReactiveService {
       }
       elementPresets.push(new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock))
     }
-    this.setGroup('Text', elementPresets)
+    this.setGroup('text', elementPresets)
   }
   setGroup(name: string, entries: ElementPreset[]) {
     this._groups.set(name, entries)

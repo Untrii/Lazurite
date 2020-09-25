@@ -39,29 +39,44 @@
         ></lz-press-switch>
       </div>
     </div>
+    <lz-group-caption>
+      Apply preset
+    </lz-group-caption>
+    <div class="text-editor">
+      <lz-button
+        v-for="(name, index) in presetNames"
+        :key="'preset' + index"
+        variant="light-gray"
+        size="small"
+        class="text-editor__input"
+        >{{ name }}</lz-button
+      >
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import EditorService from '@/services/EditorService'
-import TextBlock from '@/entities/slideObjects/TextBlock'
+import ITextBlock from '@/entities/slideObjects/ITextBlock'
 import Color from '@/entities/Color'
+import ElementService from '@/services/ElementService'
 
 let service = new EditorService()
+let elementService = new ElementService()
 
 @Component
 export default class TextEditor extends Vue {
   selectedVerticalAlign = 'top'
   selectedHorizontalAlign = 'left'
   fontSize = 0
+  presetNames: string[] = []
 
   verticalAlignVariants = ['top', 'center', 'bottom']
   horizontalAlignVariants = ['left', 'center', 'right']
 
   getState() {
-    console.log('here')
-    let element: TextBlock = service.selectedElement
+    let element: ITextBlock = service.selectedElement
 
     this.selectedVerticalAlign = element.verticalAlign
     this.selectedHorizontalAlign = element.horizontalAlign
@@ -72,6 +87,15 @@ export default class TextEditor extends Vue {
   beforeMount() {
     this.getState()
     service.addOnChangeListener(this.onChangeListener)
+
+    console.log('here')
+    let groups = elementService.getGroups()
+    let textGroup = groups.get('text')
+    if (textGroup) {
+      for (const item of textGroup) {
+        this.presetNames.push(item.name)
+      }
+    }
   }
 
   beforeDestroy() {

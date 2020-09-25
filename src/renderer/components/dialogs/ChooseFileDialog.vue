@@ -16,10 +16,10 @@
       </div>
     </div>
     <div class="dialog__btn-dock">
-      <b-button block variant="primary" @click="openFile">Add file</b-button>
-      <b-button block variant="primary" @click="showBrowser">Add file from internet</b-button>
-      <b-button block variant="primary" @click="openProjectFolder">Open workspace in explorer</b-button>
-      <b-button block variant="primary" @click="reloadFiles">Reload files</b-button>
+      <lz-button variant="primary" @click="openFile">Add file</lz-button>
+      <lz-button variant="primary" @click="showBrowser">Add file from internet</lz-button>
+      <lz-button variant="primary" @click="openProjectFolder">Open workspace in explorer</lz-button>
+      <lz-button variant="primary" @click="reloadFiles">Reload files</lz-button>
     </div>
     <browser v-if="isBrowserOpened" @closed="onBrowserClosed"></browser>
   </b-modal>
@@ -156,6 +156,9 @@ export default class ChooseFileDialog extends Vue {
     min-width: 200px;
     float: right;
     min-height: 1px;
+    div {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>

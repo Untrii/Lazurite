@@ -37,7 +37,7 @@ export default class Color {
     this.r = color.r
     this.g = color.g
     this.b = color.b
-    this.a = color.a ?? 0
+    this.a = color.a ?? 1
   }
 
   public toHex(): string {

@@ -1,7 +1,7 @@
 import ISlideObject from '@/entities/ISlideObject'
 import Color from '@/entities/color'
 
-export default interface Spreadsheet extends ISlideObject {
+export default interface ISpreadsheet extends ISlideObject {
   rowCount: number
   columnCount: number
   fontSize: number
@@ -20,7 +20,7 @@ export default interface Spreadsheet extends ISlideObject {
   showBorders: boolean
 }
 
-export function getBlankObject(): Spreadsheet {
+export function getBlankObject(): ISpreadsheet {
   return {
     id: '',
     type: 'spreadsheet/placeholder',

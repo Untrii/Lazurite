@@ -1,11 +1,6 @@
 <template>
   <table :style="style" class="table">
-    <tr
-      v-for="(row, rowIndex) in contentAsArray"
-      :key="'row-' + rowIndex"
-      :style="rowStyle(rowIndex)"
-      class="table__row"
-    >
+    <tr v-for="(row, rowIndex) in content" :key="'row-' + rowIndex" :style="rowStyle(rowIndex)" class="table__row">
       <td
         v-for="(cell, cellIndex) in row"
         :key="'cell-' + id + '-' + rowIndex + '-' + cellIndex"
@@ -13,10 +8,7 @@
         :style="cellStyle(cellIndex, rowIndex)"
         class="table__cell"
       >
-        <div
-          class="table__cell-content"
-          v-html="getContent(rowIndex, cellIndex)"
-        ></div>
+        <div class="table__cell-content" v-html="content[rowIndex][cellIndex]"></div>
       </td>
     </tr>
   </table>
@@ -38,7 +30,7 @@ export default class Spreadsheet extends Vue {
   @Prop() columnCount!: number
   @Prop() higlitedLines!: string[]
   @Prop() fontSize!: number
-  @Prop() content!: Map<number, Map<number, string>>
+  @Prop() content!: string[][]
   @Prop() rowSizes!: number[]
   @Prop() columnSizes!: number[]
   @Prop() parentScale!: number
@@ -107,71 +99,58 @@ export default class Spreadsheet extends Vue {
 
     res.backgroundColor = this.rowColor
 
-    if (this.stripHorizontally && rowIndex % 2 == 1)
-      res.backgroundColor = this.stripColor
-    if (this.stripVertically && index % 2 == 1)
-      res.backgroundColor = this.stripColor
+    if (this.stripHorizontally && rowIndex % 2 == 1) res.backgroundColor = this.stripColor
+    if (this.stripVertically && index % 2 == 1) res.backgroundColor = this.stripColor
 
-    if (rowIndex == 0 && this.highlightTop)
-      res.backgroundColor = this.headerColor
-    if (rowIndex == this.rowCount - 1 && this.highlightBottom)
-      res.backgroundColor = this.headerColor
+    if (rowIndex == 0 && this.highlightTop) res.backgroundColor = this.headerColor
+    if (rowIndex == this.rowCount - 1 && this.highlightBottom) res.backgroundColor = this.headerColor
 
     if (index == 0 && this.highlightLeft) res.backgroundColor = this.headerColor
-    if (index == this.columnCount - 1 && this.highlightRight)
-      res.backgroundColor = this.headerColor
+    if (index == this.columnCount - 1 && this.highlightRight) res.backgroundColor = this.headerColor
 
     //Borders
     if (this.borderRadius != 0) {
-      if (index == 0 && rowIndex == 0)
-        res.borderTopLeftRadius =
-          this.parentScale * (this.borderRadius - 1) + 'px'
+      if (index == 0 && rowIndex == 0) res.borderTopLeftRadius = this.parentScale * (this.borderRadius - 1) + 'px'
       if (index == 0 && rowIndex == this.rowCount - 1)
-        res.borderBottomLeftRadius =
-          this.parentScale * (this.borderRadius - 1) + 'px'
+        res.borderBottomLeftRadius = this.parentScale * (this.borderRadius - 1) + 'px'
 
       if (index == this.columnCount - 1 && rowIndex == 0)
-        res.borderTopRightRadius =
-          this.parentScale * (this.borderRadius - 1) + 'px'
+        res.borderTopRightRadius = this.parentScale * (this.borderRadius - 1) + 'px'
       if (index == this.columnCount - 1 && rowIndex == this.rowCount - 1)
-        res.borderBottomRightRadius =
-          this.parentScale * (this.borderRadius - 1) + 'px'
+        res.borderBottomRightRadius = this.parentScale * (this.borderRadius - 1) + 'px'
     }
 
     if (this.showBorders) {
-      res.border =
-        Math.max(1, Math.round(3 * this.parentScale)) +
-        'px solid ' +
-        (this.darkStyle ? '#32383E' : 'white')
+      res.border = Math.max(1, Math.round(3 * this.parentScale)) + 'px solid ' + (this.darkStyle ? '#32383E' : 'white')
     }
 
     return res
   }
 
-  getContent(rowIndex: number, cellIndex: number) {
-    let row = this.content.get(rowIndex)
-    if (row) {
-      let cell = row.get(cellIndex)
-      if (cell) return cell
-    }
-    return ''
-  }
+  // getContent(rowIndex: number, cellIndex: number) {
+  //   let row = this.content.get(rowIndex)
+  //   if (row) {
+  //     let cell = row.get(cellIndex)
+  //     if (cell) return cell
+  //   }
+  //   return ''
+  // }
 
-  get contentAsArray(): string[][] {
-    let result: string[][] = []
-    for (let i = 0; i < this.rowCount; i++) {
-      result.push([])
-      result[i].push('')
-    }
-    for (const key of this.content.keys()) {
-      let row = this.content.get(key)
-      if (row)
-        for (const columnKey of row.keys()) {
-          result[key][columnKey] = this.content?.get(key)?.get(columnKey) ?? ''
-        }
-    }
-    return result
-  }
+  // get contentAsArray(): string[][] {
+  //   let result: string[][] = []
+  //   for (let i = 0; i < this.rowCount; i++) {
+  //     result.push([])
+  //     result[i].push('')
+  //   }
+  //   for (const key of this.content.keys()) {
+  //     let row = this.content.get(key)
+  //     if (row)
+  //       for (const columnKey of row.keys()) {
+  //         result[key][columnKey] = this.content?.get(key)?.get(columnKey) ?? ''
+  //       }
+  //   }
+  //   return result
+  // }
 }
 </script>
 
