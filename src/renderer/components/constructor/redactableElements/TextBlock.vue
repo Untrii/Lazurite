@@ -135,6 +135,11 @@ export default class RedactableTextBlock extends Vue {
       Hotkeys.bind('ctrl+c', () => {
         service.copyObjects(new Set(service.selectedObjectIds))
       })
+      Hotkeys.bind('ctrl+x', () => {
+        service.copyObjects(new Set(service.selectedObjectIds))
+        service.deleteObjects(service.selectedObjectIds)
+      })
+
       let el = document.querySelector('.text-block_editable')
       if (el) {
         historyService.registerTextChange(this.id, this.content, el.innerHTML)
@@ -143,6 +148,7 @@ export default class RedactableTextBlock extends Vue {
     } else {
       Hotkeys.unbind('ctrl+c')
       Hotkeys.unbind('ctrl+v')
+      Hotkeys.unbind('ctrl+x')
     }
     this.isRedacting = newRedactState
     this.buttons[0].image = newRedactState ? assets.tick : assets.edit

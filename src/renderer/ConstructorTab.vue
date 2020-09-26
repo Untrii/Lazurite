@@ -42,11 +42,16 @@ export default class ConstructorTab extends Vue {
     Hotkeys.bind('ctrl+c', () => {
       service.copyObjects(new Set(service.selectedObjectIds))
     })
+    Hotkeys.bind('ctrl+x', () => {
+      service.copyObjects(new Set(service.selectedObjectIds))
+      service.deleteObjects(service.selectedObjectIds)
+    })
   }
   beforeDestroy() {
     service.removeOnChangeListener(this.onChangeListener)
     Hotkeys.unbind('ctrl+v')
     Hotkeys.unbind('ctrl+c')
+    Hotkeys.unbind('ctrl+x')
   }
 
   get tabStyle() {
