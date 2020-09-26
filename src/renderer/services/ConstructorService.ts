@@ -8,7 +8,10 @@ import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 export default class ConstructorService extends ReactiveService {
   constructor() {
-    let currentObj: any = super('ConstructorService', [CommonRepository, RuntimeRepository])
+    let currentObj: any = super('ConstructorService', [
+      CommonRepository,
+      RuntimeRepository,
+    ])
     return currentObj
   }
 
@@ -34,7 +37,11 @@ export default class ConstructorService extends ReactiveService {
 
   async createObject(preset: ElementPreset): Promise<SlideObject | undefined> {
     console.log('Creating ' + preset.type + '...')
-    if (!CommonRepository.openedPresentation || this.selectedSlideIndex == undefined) return undefined
+    if (
+      !CommonRepository.openedPresentation ||
+      this.selectedSlideIndex == undefined
+    )
+      return undefined
     let slideObject: any = getBlankObject()
 
     let parameters = await preset.getParameters()
@@ -43,7 +50,10 @@ export default class ConstructorService extends ReactiveService {
     }
     slideObject.id = randomString(12)
 
-    CommonRepository.openedPresentation.slides[this.selectedSlideIndex].set(slideObject.id, slideObject)
+    CommonRepository.openedPresentation.slides[this.selectedSlideIndex].set(
+      slideObject.id,
+      slideObject
+    )
     CommonRepository.commitPresentationChanges()
     return slideObject
   }
@@ -88,7 +98,19 @@ export default class ConstructorService extends ReactiveService {
     CommonRepository.commitPresentationChanges()
   }
 
-  changeObjectProperty(objectId: string, propertyName: string, newVal: any, notReactive?: boolean) {
+  pasteObjects() {
+    for (const element of RuntimeRepository.clipboard) {
+      let elementPreset = new ElementPreset('', '', element.type, element)
+      this.createObject(elementPreset)
+    }
+  }
+
+  changeObjectProperty(
+    objectId: string,
+    propertyName: string,
+    newVal: any,
+    notReactive?: boolean
+  ) {
     if (!CommonRepository.openedPresentation) return
     let slides = CommonRepository.openedPresentation.slides
 
@@ -117,15 +139,18 @@ export default class ConstructorService extends ReactiveService {
   }
 
   changePreviewModuleSize(newSize: number) {
-    if (CommonRepository.settings) CommonRepository.settings.previewModuleSize = newSize
+    if (CommonRepository.settings)
+      CommonRepository.settings.previewModuleSize = newSize
     this.onChange()
   }
   changeInstrumentsModuleSize(newSize: number) {
-    if (CommonRepository.settings) CommonRepository.settings.instrumentsModuleSize = newSize
+    if (CommonRepository.settings)
+      CommonRepository.settings.instrumentsModuleSize = newSize
     this.onChange()
   }
   changeTimelineModuleSize(newSize: number) {
-    if (CommonRepository.settings) CommonRepository.settings.timelineModuleSize = newSize
+    if (CommonRepository.settings)
+      CommonRepository.settings.timelineModuleSize = newSize
     this.onChange()
   }
 

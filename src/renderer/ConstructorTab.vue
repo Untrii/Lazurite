@@ -12,6 +12,7 @@ import Preview from './components/constructor/Preview.vue'
 import Workspace from './components/constructor/Workspace.vue'
 import Instruments from './components/constructor/Instruments.vue'
 import ConstructorService from './services/ConstructorService'
+import Hotkeys from '@/utils/Hotkeys'
 
 let service = new ConstructorService()
 
@@ -37,14 +38,21 @@ export default class ConstructorTab extends Vue {
   beforeMount() {
     this.getState()
     service.addOnChangeListener(this.onChangeListener)
+    Hotkeys.bind('ctrl+v', () => service.pasteObjects())
+    Hotkeys.bind('ctrl+c', () => {
+      service.copyObjects(new Set(service.selectedObjectIds))
+    })
   }
   beforeDestroy() {
     service.removeOnChangeListener(this.onChangeListener)
+    Hotkeys.unbind('ctrl+v')
+    Hotkeys.unbind('ctrl+c')
   }
 
   get tabStyle() {
     return {
-      gridTemplateColumns: this.previewSize + 'px 1fr ' + this.instrumentsSize + 'px',
+      gridTemplateColumns:
+        this.previewSize + 'px 1fr ' + this.instrumentsSize + 'px',
     }
   }
 }

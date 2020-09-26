@@ -17,7 +17,11 @@
         {{ prompt }}
       </div>
     </div>
-    <text-block v-bind="$attrs" class="content" v-if="!isRedacting"></text-block>
+    <text-block
+      v-bind="$attrs"
+      class="content"
+      v-if="!isRedacting"
+    ></text-block>
     <div v-else class="wrap" :style="wrapStyle">
       <div
         @click.stop
@@ -40,6 +44,7 @@ import VisualisationService from '@/services/VisualisationService'
 import Color from '@/entities/Color'
 import HistoryService from '@/services/HistoryService'
 import IColor from '@/entities/IColor'
+import Hotkeys from '@/utils/Hotkeys'
 
 let service = new ConstructorService()
 let visualisationService = new VisualisationService()
@@ -126,11 +131,18 @@ export default class RedactableTextBlock extends Vue {
   onEditClick() {
     let newRedactState = !this.isRedacting
     if (!newRedactState) {
+      Hotkeys.bind('ctrl+v', () => service.pasteObjects())
+      Hotkeys.bind('ctrl+c', () => {
+        service.copyObjects(new Set(service.selectedObjectIds))
+      })
       let el = document.querySelector('.text-block_editable')
       if (el) {
         historyService.registerTextChange(this.id, this.content, el.innerHTML)
         service.changeObjectProperty(this.id, 'content', el.innerHTML)
       }
+    } else {
+      Hotkeys.unbind('ctrl+c')
+      Hotkeys.unbind('ctrl+v')
     }
     this.isRedacting = newRedactState
     this.buttons[0].image = newRedactState ? assets.tick : assets.edit
@@ -142,12 +154,18 @@ export default class RedactableTextBlock extends Vue {
 
   applyDecoration(name: string) {
     let virtualElement
-    if (this.isRedacting) virtualElement = document.querySelector('#tbr' + this.id) ?? document.createElement('content')
+    if (this.isRedacting)
+      virtualElement =
+        document.querySelector('#tbr' + this.id) ??
+        document.createElement('content')
     else {
       virtualElement = document.createElement('content')
       virtualElement.innerHTML = this.content
     }
-    let getStyledText = function(node: ChildNode, inheritStyle: string[]): { text: string; style: Set<string> }[] {
+    let getStyledText = function(
+      node: ChildNode,
+      inheritStyle: string[]
+    ): { text: string; style: Set<string> }[] {
       let result: { text: string; style: Set<string> }[] = []
       for (let i = 0; i < node.childNodes.length; i++) {
         const element = node.childNodes[i]
@@ -167,7 +185,9 @@ export default class RedactableTextBlock extends Vue {
       return result
     }
 
-    let getHTML = function(styledText: { text: string; style: Set<string> }[]): string {
+    let getHTML = function(
+      styledText: { text: string; style: Set<string> }[]
+    ): string {
       let result: string[] = []
       if (styledText.length == 1) {
         let text = styledText[0]
@@ -189,7 +209,8 @@ export default class RedactableTextBlock extends Vue {
       if (!selection) return false
       if (selection.type != 'Range') return false
       let currentElement = document.querySelector('#tbr' + this.id)
-      let focusedElement: Node | null | undefined = getSelection()?.focusNode ?? document
+      let focusedElement: Node | null | undefined =
+        getSelection()?.focusNode ?? document
       let result = false
       while (focusedElement?.parentNode != document && focusedElement) {
         if (focusedElement == currentElement) result = true
@@ -198,7 +219,9 @@ export default class RedactableTextBlock extends Vue {
       return result
     }
 
-    let applyDecorationInStyle = function(styledText: { text: string; style: Set<string> }[]) {
+    let applyDecorationInStyle = function(
+      styledText: { text: string; style: Set<string> }[]
+    ) {
       let dCount = 0
       for (let i = 0; i < styledText.length; i++) {
         switch (name) {
@@ -247,7 +270,9 @@ export default class RedactableTextBlock extends Vue {
     }
 
     if (!isThisTextBlockSelected()) {
-      let html = getHTML(applyDecorationInStyle(getStyledText(virtualElement, [])))
+      let html = getHTML(
+        applyDecorationInStyle(getStyledText(virtualElement, []))
+      )
       historyService.registerTextChange(this.id, this.content, html)
       service.changeObjectProperty(this.id, 'content', html)
     } else document.execCommand(name)

@@ -97,7 +97,9 @@ export default class RedactableBaseElement extends Vue {
       'DraggableResizable',
       {
         props: {
-          isActive: constructorService.selectedObjectIds.includes(this.id) && this.isActive,
+          isActive:
+            constructorService.selectedObjectIds.includes(this.id) &&
+            this.isActive,
 
           gridX: 30 * this.scale,
           gridY: 30 * this.scale,
@@ -161,9 +163,14 @@ export default class RedactableBaseElement extends Vue {
             constructorService.selectObject(this.id)
             Hotkeys.unbind('delete')
             Hotkeys.bind('delete', () => {
-              let deletedElements = constructorService.deleteObjects(constructorService.selectedObjectIds)
+              let deletedElements = constructorService.deleteObjects(
+                constructorService.selectedObjectIds
+              )
               if (deletedElements) {
-                historyService.registerElementDelete(deletedElements, constructorService.selectedSlideIndex ?? 0)
+                historyService.registerElementDelete(
+                  deletedElements,
+                  constructorService.selectedSlideIndex ?? 0
+                )
               }
             })
           },
