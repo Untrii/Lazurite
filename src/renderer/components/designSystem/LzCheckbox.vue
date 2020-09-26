@@ -18,7 +18,7 @@ export default class LzCheckbox extends Vue {
 
   localValue = this.checked
 
-  @Watch('value')
+  @Watch('checked')
   onValueChange(newVal) {
     this.localValue = newVal
   }
@@ -61,19 +61,16 @@ export default class LzCheckbox extends Vue {
   }
 
   &_small {
-    padding-left: 12px;
     height: 32px;
     line-height: 32px;
     font-size: 14px;
   }
   &_medium {
-    padding-left: 16px;
     height: 40px;
     line-height: 40px;
     font-size: 16px;
   }
   &_large {
-    padding-left: 20px;
     height: 48px;
     line-height: 48px;
     font-size: 20px;

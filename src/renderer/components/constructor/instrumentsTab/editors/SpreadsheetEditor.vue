@@ -1,33 +1,45 @@
 <template>
   <div class="editor-root">
-    <h5 class="header">Spreadsheet</h5>
-
-    <b-form-group label="Highlight:">
-      <b-form-checkbox
-        v-for="option in highlightOptions"
-        :key="option.propertyName"
-        :checked="element[option.propertyName]"
-        @change="onInput(option.propertyName, $event)"
-        size="sm"
+    <lz-group-caption>Spreadsheet</lz-group-caption>
+    <div class="main">
+      <div
+        class="multi-input"
+        v-for="(group, name) in optionGroups"
+        :key="name"
       >
-        {{ option.displayName }}
-      </b-form-checkbox>
-    </b-form-group>
+        <div class="multi-input__caption">{{ name }}</div>
+        <div
+          class="multi-input__wrapper"
+          v-for="option in group"
+          :key="option.propertyName"
+        >
+          <lz-checkbox
+            :checked="element[option.propertyName]"
+            @change="onInput(option.propertyName, $event)"
+            size="small"
+          >
+            {{ option.displayName }}
+          </lz-checkbox>
+        </div>
+      </div>
 
-    <b-form-group>
-      <b-form-checkbox
+      <lz-checkbox
         v-for="checker in checkers"
         :key="checker.propertyName"
         :checked="element[checker.propertyName]"
         @change="onInput(checker.propertyName, $event)"
       >
         {{ checker.displayName }}
-      </b-form-checkbox>
-    </b-form-group>
+      </lz-checkbox>
 
-    <b-input-group size="sm" prepend="Font size">
-      <b-form-input :value="element.fontSize" @input="onInput('fontSize', $event)" type="number"></b-form-input>
-    </b-input-group>
+      <lz-number-input
+        style="margin-top:12px"
+        size="small"
+        prepend="Font size"
+        :value="element.fontSize"
+        @input="onInput('fontSize', $event)"
+      ></lz-number-input>
+    </div>
   </div>
 </template>
 
@@ -41,33 +53,38 @@ let service = new EditorService()
 export default class SizeEditor extends Vue {
   element: any = {}
 
-  highlightOptions = [
-    {
-      displayName: 'Top',
-      propertyName: 'highlightTop',
-    },
-    {
-      displayName: 'Bottom',
-      propertyName: 'highlightBottom',
-    },
-    {
-      displayName: 'Left',
-      propertyName: 'highlightLeft',
-    },
-    {
-      displayName: 'Right',
-      propertyName: 'highlightRight',
-    },
-  ]
+  optionGroups = {
+    highlight: [
+      {
+        displayName: 'Top',
+        propertyName: 'highlightTop',
+      },
+      {
+        displayName: 'Bottom',
+        propertyName: 'highlightBottom',
+      },
+      {
+        displayName: 'Left',
+        propertyName: 'highlightLeft',
+      },
+      {
+        displayName: 'Right',
+        propertyName: 'highlightRight',
+      },
+    ],
+    strip: [
+      {
+        displayName: 'Horizontally',
+        propertyName: 'stripHorizontally',
+      },
+      {
+        displayName: 'Vertically',
+        propertyName: 'stripVertically',
+      },
+    ],
+  }
+
   checkers = [
-    {
-      displayName: 'Strip horizontally',
-      propertyName: 'stripHorizontally',
-    },
-    {
-      displayName: 'Strip vertically',
-      propertyName: 'stripVertically',
-    },
     {
       displayName: 'Dark style',
       propertyName: 'darkStyle',
@@ -99,7 +116,28 @@ export default class SizeEditor extends Vue {
 
 <style lang="scss" scoped>
 .editor-root {
-  padding: 20px 3px 0 20px;
+  // padding: 20px 3px 0 20px;
+}
+.main {
+  margin-left: 20px;
+  margin-right: 8px;
+}
+
+.multi-input {
+  width: 100%;
+  padding-bottom: 12px;
+
+  &__wrapper {
+    min-width: 50%;
+    width: fit-content;
+    display: inline-block;
+  }
+
+  &__caption {
+    padding-bottom: 6px;
+    text-align: center;
+    width: 100%;
+  }
 }
 
 .editor-input {

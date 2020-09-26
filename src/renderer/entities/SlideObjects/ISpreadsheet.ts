@@ -23,7 +23,7 @@ export default interface ISpreadsheet extends ISlideObject {
 export function getBlankObject(): ISpreadsheet {
   return {
     id: '',
-    type: 'spreadsheet/placeholder',
+    type: 'Spreadsheet',
     color: new Color().fromRgb(0, 0, 0),
     rowCount: 5,
     columnCount: 5,
