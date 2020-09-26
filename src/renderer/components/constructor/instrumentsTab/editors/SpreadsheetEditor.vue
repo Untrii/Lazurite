@@ -39,6 +39,14 @@
         :value="element.fontSize"
         @input="onInput('fontSize', $event)"
       ></lz-number-input>
+
+      <lz-number-input
+        style="margin-top:10px"
+        size="small"
+        prepend="Border radius"
+        :value="element.borderRadius"
+        @input="onInput('borderRadius', $event)"
+      ></lz-number-input>
     </div>
   </div>
 </template>

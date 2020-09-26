@@ -1,17 +1,25 @@
 <template>
-  <table :style="style" class="table">
-    <tr v-for="(row, rowIndex) in content" :key="'row-' + rowIndex" :style="rowStyle(rowIndex)" class="table__row">
-      <td
+  <div :style="style" class="table">
+    <div
+      v-for="(row, rowIndex) in content"
+      :key="'row-' + rowIndex"
+      :style="rowStyle(rowIndex)"
+      class="table__row"
+    >
+      <div
         v-for="(cell, cellIndex) in row"
         :key="'cell-' + id + '-' + rowIndex + '-' + cellIndex"
         :id="'cell-' + id + '-' + rowIndex + '-' + cellIndex"
         :style="cellStyle(cellIndex, rowIndex)"
         class="table__cell"
       >
-        <div class="table__cell-content" v-html="content[rowIndex][cellIndex]"></div>
-      </td>
-    </tr>
-  </table>
+        <div
+          class="table__cell-content"
+          v-html="content[rowIndex][cellIndex]"
+        ></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -47,13 +55,13 @@ export default class Spreadsheet extends Vue {
 
   get style() {
     return {
-      fontSize: this.fontSize + 'px',
+      fontSize: this.fontSize * this.scale + 'px',
       backgroundColor: this.darkStyle ? '#32383E' : 'white',
       color: this.darkStyle ? 'white' : '#212529',
-      // border: this.darkStyle
-      //   ? 2 * this.parentScale + 'px solid black'
-      //   : 2 * this.parentScale + 'px solid white',
-      borderRadius: this.parentScale * this.borderRadius + 'px',
+      border: this.darkStyle
+        ? 2 * this.scale + 'px solid #32383E'
+        : 2 * this.scale + 'px solid white',
+      borderRadius: this.scale * this.borderRadius + 'px',
     }
   }
 
@@ -99,29 +107,39 @@ export default class Spreadsheet extends Vue {
 
     res.backgroundColor = this.rowColor
 
-    if (this.stripHorizontally && rowIndex % 2 == 1) res.backgroundColor = this.stripColor
-    if (this.stripVertically && index % 2 == 1) res.backgroundColor = this.stripColor
+    if (this.stripHorizontally && rowIndex % 2 == 1)
+      res.backgroundColor = this.stripColor
+    if (this.stripVertically && index % 2 == 1)
+      res.backgroundColor = this.stripColor
 
-    if (rowIndex == 0 && this.highlightTop) res.backgroundColor = this.headerColor
-    if (rowIndex == this.rowCount - 1 && this.highlightBottom) res.backgroundColor = this.headerColor
+    if (rowIndex == 0 && this.highlightTop)
+      res.backgroundColor = this.headerColor
+    if (rowIndex == this.rowCount - 1 && this.highlightBottom)
+      res.backgroundColor = this.headerColor
 
     if (index == 0 && this.highlightLeft) res.backgroundColor = this.headerColor
-    if (index == this.columnCount - 1 && this.highlightRight) res.backgroundColor = this.headerColor
+    if (index == this.columnCount - 1 && this.highlightRight)
+      res.backgroundColor = this.headerColor
 
     //Borders
     if (this.borderRadius != 0) {
-      if (index == 0 && rowIndex == 0) res.borderTopLeftRadius = this.parentScale * (this.borderRadius - 1) + 'px'
+      if (index == 0 && rowIndex == 0)
+        res.borderTopLeftRadius = this.scale * (this.borderRadius - 1) + 'px'
       if (index == 0 && rowIndex == this.rowCount - 1)
-        res.borderBottomLeftRadius = this.parentScale * (this.borderRadius - 1) + 'px'
+        res.borderBottomLeftRadius = this.scale * (this.borderRadius - 1) + 'px'
 
       if (index == this.columnCount - 1 && rowIndex == 0)
-        res.borderTopRightRadius = this.parentScale * (this.borderRadius - 1) + 'px'
+        res.borderTopRightRadius = this.scale * (this.borderRadius - 1) + 'px'
       if (index == this.columnCount - 1 && rowIndex == this.rowCount - 1)
-        res.borderBottomRightRadius = this.parentScale * (this.borderRadius - 1) + 'px'
+        res.borderBottomRightRadius =
+          this.scale * (this.borderRadius - 1) + 'px'
     }
 
     if (this.showBorders) {
-      res.border = Math.max(1, Math.round(3 * this.parentScale)) + 'px solid ' + (this.darkStyle ? '#32383E' : 'white')
+      res.border =
+        Math.max(1, Math.round(3 * this.scale)) +
+        'px solid ' +
+        (this.darkStyle ? '#32383E' : 'white')
     }
 
     return res
@@ -158,6 +176,7 @@ export default class Spreadsheet extends Vue {
 .table {
   width: 100%;
   height: 100%;
+  margin-bottom: 0;
 
   &__row {
     width: 100%;
@@ -166,6 +185,10 @@ export default class Spreadsheet extends Vue {
   &__cell {
     border-collapse: collapse;
     padding: 0;
+    height: 100%;
+    display: inline-flex;
+    overflow: hidden;
+    vertical-align: top;
   }
   &__cell-content {
     width: 100%;
