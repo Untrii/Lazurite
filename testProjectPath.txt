@@ -1,1 +1,1 @@
-C:\present.js\project.json
+D:\Программирование 2020\present.js\testproj_v3\project.json

@@ -180,7 +180,7 @@ export class CommonRepository extends ReactiveRepository {
   async getFontList() {
     if (this._fontsList.length != 0) return this._fontsList
 
-    let styles: string[] = []
+    let fontPrerendererElementName = 'xfontprerender'
     let fontList: FontRecord[] = []
     let dataDir =
       process
@@ -201,7 +201,26 @@ export class CommonRepository extends ReactiveRepository {
 
       fontWeight = fontWeight.replace('italic', '')
       let styleString = `@font-face { font-family: '${fontFamily}';font-style: ${fontStyle};font-weight: ${fontWeight};font-display: swap;src: url('${dataDir}/fonts/${fileName}');}`
-      styles.push(styleString)
+
+      // let preloadElement = document.createElement('link')
+      // preloadElement.rel = 'preload'
+      // preloadElement.href = `file:///${dataDir}/fonts/${fileName}`
+      // preloadElement.as = 'font'
+      // preloadElement.crossOrigin = 'anonymous'
+
+      let styleElement = document.createElement('style')
+      styleElement.innerHTML = styleString
+
+      let paintElement = document.createElement(fontPrerendererElementName)
+      paintElement.style.position = 'absolute'
+      paintElement.style.left = '-9999px'
+      paintElement.innerHTML = 'a'
+      paintElement.style.fontFamily = fontFamily
+      paintElement.style.fontWeight = fontWeight
+
+      //document.querySelector('head')?.appendChild(preloadElement)
+      document.querySelector('head')?.appendChild(styleElement)
+      document.querySelector('body')?.appendChild(paintElement)
 
       let found = false
       if (fontStyle == 'regular') {
@@ -224,26 +243,8 @@ export class CommonRepository extends ReactiveRepository {
     for (let i = 0; i < fontList.length; i++) {
       fontList[i].variants.sort((a, b) => parseInt(a) - parseInt(b))
     }
-
-    let fontsLoader = {
-      push(item) {
-        let win: any = window
-        if (win.__setupedFontsLoaded) return
-        let styleSheet = document.createElement('style')
-        styleSheet.type = 'text/css'
-        styleSheet.innerText = item
-        document.head.appendChild(styleSheet)
-        win.__setupedFontsLoaded = true
-      },
-    }
-
-    let stylePack: string[] = []
-    for (let i = 0; i < styles.length; i++) {
-      stylePack.push(styles[i])
-    }
-
-    fontsLoader.push(stylePack.join(''))
     this._fontsList = fontList
+    console.log('xhere')
     return fontList
   }
 }

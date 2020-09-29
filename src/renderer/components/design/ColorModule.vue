@@ -5,7 +5,11 @@
     </h2>
     <div class="palettes">
       <div v-for="(palette, index) in recomendedPalettes" :key="index" class="palette">
-        <div class="palette__brick-wrap" @click="selectedPaletteIndex = index">
+        <div
+          class="palette__brick-wrap"
+          @click="selectedPaletteIndex = index"
+          :style="`grid-template-columns: repeat(${palette.length}, 1fr)`"
+        >
           <div
             class="palette__brick"
             v-for="(color, cindex) in palette"
@@ -18,6 +22,27 @@
         </div>
       </div>
     </div>
+    <h2 class="header">
+      Custom palette:
+    </h2>
+    <div class="palette">
+      <div
+        class="palette__brick-wrap"
+        @click="selectedPaletteIndex = 10"
+        :style="`grid-template-columns: repeat(${customPalette.length}, 1fr)`"
+      >
+        <div
+          class="palette__brick"
+          v-for="(color, cindex) in customPalette"
+          :key="cindex"
+          :style="{ background: color.toCssColor() }"
+        ></div>
+      </div>
+      <div class="sel-mark" v-if="selectedPaletteIndex == 10">
+        <h5>selected</h5>
+      </div>
+    </div>
+    <lz-button size="large" style="float:left;" :block-level="false">Edit</lz-button>
   </div>
 </template>
 
@@ -32,6 +57,7 @@ let service = new DesignService()
 export default class ColorModule extends Vue {
   backgroundColor = new Color().fromRgb(0, 0, 1)
   selectedPalette: Color[] = []
+  customPalette = [new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1)]
 
   getState() {
     this.backgroundColor = service.theme.backgroundColor
@@ -51,29 +77,34 @@ export default class ColorModule extends Vue {
     return service.getRecommendedPalettes(this.backgroundColor)
   }
 
+  isPalettesEquals(palette0: Color[], palette1: Color[]) {
+    if (palette0.length != palette1.length) return false
+    let isPaletteEquals = true
+    for (let i = 0; i < palette0.length; i++) {
+      if (palette0[i].equals(palette1[i])) continue
+      else {
+        isPaletteEquals = false
+        break
+      }
+    }
+    return isPaletteEquals
+  }
+
   get selectedPaletteIndex() {
+    if (this.isPalettesEquals(this.selectedPalette, this.customPalette)) return 10
     let result = -1
     for (let paletteIndex = 0; paletteIndex < this.recomendedPalettes.length; paletteIndex++) {
       let palette = this.recomendedPalettes[paletteIndex]
-      if (palette.length == this.selectedPalette.length) {
-        let isPaletteEquals = true
-        for (let i = 0; i < palette.length; i++) {
-          if (palette[i].equals(this.selectedPalette[i])) continue
-          else {
-            isPaletteEquals = false
-            break
-          }
-        }
-        if (isPaletteEquals) {
-          result = paletteIndex
-          break
-        }
+      if (this.isPalettesEquals(palette, this.selectedPalette)) {
+        result = paletteIndex
+        break
       }
     }
     return result
   }
   set selectedPaletteIndex(index: number) {
-    service.selectPalette(this.recomendedPalettes[index])
+    if (index < this.recomendedPalettes.length) service.selectPalette(this.recomendedPalettes[index])
+    else if (index == 10) service.selectPalette(this.customPalette)
   }
 }
 </script>
@@ -103,7 +134,6 @@ export default class ColorModule extends Vue {
   display: inline-block;
   padding: 0 20px 40px 40px;
   border-radius: 8px;
-  max-width: 600px;
   position: relative;
   width: 100%;
 
@@ -113,11 +143,12 @@ export default class ColorModule extends Vue {
     border: 1px solid #596b7d;
     border-radius: 10px;
     cursor: pointer;
+    display: inline-grid;
   }
 
   &__brick {
-    width: 20%;
     height: 80px;
+    width: 100%;
     display: inline-block;
 
     &:first-child {
@@ -142,5 +173,11 @@ export default class ColorModule extends Vue {
   border-bottom-right-radius: 8px;
   border-top: 1px solid #596b7d;
   border-left: 1px solid #596b7d;
+}
+
+@media (min-width: 1000px) {
+  .palette {
+    max-width: calc(50vw - 126px);
+  }
 }
 </style>
