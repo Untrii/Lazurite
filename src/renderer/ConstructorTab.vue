@@ -12,7 +12,6 @@ import Preview from './components/constructor/Preview.vue'
 import Workspace from './components/constructor/Workspace.vue'
 import Instruments from './components/constructor/Instruments.vue'
 import ConstructorService from './services/ConstructorService'
-import Hotkeys from '@/utils/Hotkeys'
 
 let service = new ConstructorService()
 
@@ -38,20 +37,11 @@ export default class ConstructorTab extends Vue {
   beforeMount() {
     this.getState()
     service.addOnChangeListener(this.onChangeListener)
-    Hotkeys.bind('ctrl+v', () => service.pasteObjects())
-    Hotkeys.bind('ctrl+c', () => {
-      service.copyObjects(new Set(service.selectedObjectIds))
-    })
-    Hotkeys.bind('ctrl+x', () => {
-      service.copyObjects(new Set(service.selectedObjectIds))
-      service.deleteObjects(service.selectedObjectIds)
-    })
+    service.bindDefaultConstructorHotkeys()
   }
   beforeDestroy() {
     service.removeOnChangeListener(this.onChangeListener)
-    Hotkeys.unbind('ctrl+v')
-    Hotkeys.unbind('ctrl+c')
-    Hotkeys.unbind('ctrl+x')
+    service.unbindDefaultConstructorHotkeys()
   }
 
   get tabStyle() {

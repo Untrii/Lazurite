@@ -44,7 +44,6 @@ import VisualisationService from '@/services/VisualisationService'
 import Color from '@/entities/Color'
 import HistoryService from '@/services/HistoryService'
 import IColor from '@/entities/IColor'
-import Hotkeys from '@/utils/Hotkeys'
 
 let service = new ConstructorService()
 let visualisationService = new VisualisationService()
@@ -131,24 +130,14 @@ export default class RedactableTextBlock extends Vue {
   onEditClick() {
     let newRedactState = !this.isRedacting
     if (!newRedactState) {
-      Hotkeys.bind('ctrl+v', () => service.pasteObjects())
-      Hotkeys.bind('ctrl+c', () => {
-        service.copyObjects(new Set(service.selectedObjectIds))
-      })
-      Hotkeys.bind('ctrl+x', () => {
-        service.copyObjects(new Set(service.selectedObjectIds))
-        service.deleteObjects(service.selectedObjectIds)
-      })
-
+      service.bindDefaultConstructorHotkeys()
       let el = document.querySelector('.text-block_editable')
       if (el) {
         historyService.registerTextChange(this.id, this.content, el.innerHTML)
         service.changeObjectProperty(this.id, 'content', el.innerHTML)
       }
     } else {
-      Hotkeys.unbind('ctrl+c')
-      Hotkeys.unbind('ctrl+v')
-      Hotkeys.unbind('ctrl+x')
+      service.unbindDefaultConstructorHotkeys()
     }
     this.isRedacting = newRedactState
     this.buttons[0].image = newRedactState ? assets.tick : assets.edit

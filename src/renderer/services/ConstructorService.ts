@@ -5,6 +5,7 @@ import Presentation from '@/entities/IPresentation'
 import ElementPreset from '@/entities/ElementPreset'
 import randomString from '@/utils/StringGenerator'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
+import Hotkeys from '@/utils/Hotkeys'
 
 export default class ConstructorService extends ReactiveService {
   constructor() {
@@ -152,6 +153,23 @@ export default class ConstructorService extends ReactiveService {
     if (CommonRepository.settings)
       CommonRepository.settings.timelineModuleSize = newSize
     this.onChange()
+  }
+
+  bindDefaultConstructorHotkeys() {
+    Hotkeys.bind('ctrl+v', () => this.pasteObjects())
+    Hotkeys.bind('ctrl+c', () => {
+      this.copyObjects(new Set(this.selectedObjectIds))
+    })
+    Hotkeys.bind('ctrl+x', () => {
+      this.copyObjects(new Set(this.selectedObjectIds))
+      this.deleteObjects(this.selectedObjectIds)
+    })
+  }
+
+  unbindDefaultConstructorHotkeys() {
+    Hotkeys.unbind('ctrl+v')
+    Hotkeys.unbind('ctrl+c')
+    Hotkeys.unbind('ctrl+x')
   }
 
   get selectedSlideIndex(): number | undefined {
