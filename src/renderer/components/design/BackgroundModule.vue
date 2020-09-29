@@ -225,13 +225,14 @@ export default class BackgroundModule extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/css/variables.scss';
 .type-picker {
   height: 120px;
   display: flex;
   align-items: center;
   justify-content: space-around;
   width: 100%;
-  border-bottom: 1px solid white !important;
+  border-bottom: 1px solid $gray-extralight !important;
 
   &__item {
     cursor: pointer;
@@ -267,7 +268,7 @@ export default class BackgroundModule extends Vue {
 }
 
 .tiles::-webkit-scrollbar-thumb {
-  border-color: white;
+  border-color: $gray-extralight;
 }
 
 .tiles {

@@ -1,8 +1,9 @@
 <template>
-  <div class="number-input" :class="rootClasses">
-    <lz-prepend :size="size">
+  <div class="number-input" :class="rootClasses" @focus="isFocused = true" @blur="isFocused = false">
+    <lz-prepend :size="size" v-if="prepend.length > 0">
       {{ prepend }}
     </lz-prepend>
+    <div v-else></div>
     <div
       class="number-input__user-input"
       :class="userInputClasses"
@@ -59,8 +60,11 @@ export default class LzNumberInput extends Vue {
   @Prop({ default: 0 }) value!: number
   @Prop({ default: '' }) prepend!: string
   @Prop({ default: 'medium' }) size!: string
+  @Prop({ default: 9999999 }) max!: number
+  @Prop({ default: -9999999 }) min!: number
 
   localValue = this.value
+  isFocused = false
 
   @Watch('value')
   onValueChange(newValue) {
@@ -73,7 +77,8 @@ export default class LzNumberInput extends Vue {
   modifier = 1
 
   changeValue(value) {
-    console.log('changing value: ' + value)
+    if (value > this.max) value = this.max
+    if (value < this.min) value = this.min
     this.localValue = this.acceptFloat ? parseFloat(value) : parseInt(value)
     this.$emit('input', value)
   }
@@ -214,6 +219,7 @@ export default class LzNumberInput extends Vue {
   height: 32px;
   width: 100%;
   display: inline-grid;
+  outline: 2px solid $gray-extralight;
   grid-template-columns: max-content 1fr max-content;
 
   &:hover &__buttons {
@@ -253,12 +259,14 @@ export default class LzNumberInput extends Vue {
 
     &:focus {
       outline: 2px solid $blue-lighter;
+      z-index: 1000;
     }
   }
 
   &__buttons {
     display: none;
     grid-template-rows: 1fr 1fr;
+    z-index: 1001;
   }
   &_small &__buttons {
     width: 16px;

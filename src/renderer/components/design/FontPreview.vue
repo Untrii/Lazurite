@@ -10,11 +10,7 @@
       <div class="card-body">
         <div class="preset-card__content">
           <div :style="preset.style">
-            <div
-              contenteditable="true"
-              @input="onPresetNameChange(preset, $event)"
-              v-once
-            >
+            <div contenteditable="true" @input="onPresetNameChange(preset, $event)" v-once>
               {{ preset.name }}
             </div>
           </div>
@@ -24,11 +20,7 @@
           </div>
         </div>
 
-        <div
-          class="preset-card__close"
-          :class="getCrossClasses(preset.id)"
-          @click.stop="removePreset(preset.id)"
-        >
+        <div class="preset-card__close" :class="getCrossClasses(preset.id)" @click.stop="removePreset(preset.id)">
           ×
         </div>
       </div>
@@ -41,7 +33,7 @@
       </div>
     </div>
     <div class="presets__add-button-wrap">
-      <b-button block @click="addPreset">Add preset</b-button>
+      <lz-button @click="addPreset" size="large" variant="secondary">Add preset</lz-button>
     </div>
   </div>
 </template>
@@ -102,8 +94,7 @@ export default class FontPreview extends Vue {
         style: {
           fontFamily: font.family,
           fontWeight: font.weight,
-          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size *
-            (1 / 10.8)}vh)`,
+          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size * (1 / 10.8)}vh)`,
         },
       })
     }
@@ -140,8 +131,7 @@ export default class FontPreview extends Vue {
   removePreset(id) {
     service.removeFontPreset(id)
     if (this.selectedPresetId == id) {
-      if (service.theme.fontPresets.length > 0)
-        this.selectedPresetId = service.theme.fontPresets[0].id
+      if (service.theme.fontPresets.length > 0) this.selectedPresetId = service.theme.fontPresets[0].id
     }
   }
 

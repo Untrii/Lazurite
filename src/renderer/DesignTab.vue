@@ -74,6 +74,7 @@ export default class DesignTab extends Vue {
   display: inline-grid;
   grid-template-columns: 240px auto;
   grid-template-rows: 100%;
+  background: $gray-extralight;
 }
 
 .menu {
@@ -110,7 +111,7 @@ export default class DesignTab extends Vue {
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  border-color: white;
+  border-color: $gray-extralight;
 }
 
 .section-header {

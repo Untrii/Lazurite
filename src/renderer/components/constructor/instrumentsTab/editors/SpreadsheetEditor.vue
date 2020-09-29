@@ -1,18 +1,10 @@
 <template>
   <div class="editor-root">
     <lz-group-caption>Spreadsheet</lz-group-caption>
-    <div class="main">
-      <div
-        class="multi-input"
-        v-for="(group, name) in optionGroups"
-        :key="name"
-      >
+    <div class="settings-block">
+      <div class="multi-input" v-for="(group, name) in optionGroups" :key="name">
         <div class="multi-input__caption">{{ name }}</div>
-        <div
-          class="multi-input__wrapper"
-          v-for="option in group"
-          :key="option.propertyName"
-        >
+        <div class="multi-input__wrapper" v-for="option in group" :key="option.propertyName">
           <lz-checkbox
             :checked="element[option.propertyName]"
             @change="onInput(option.propertyName, $event)"
@@ -126,7 +118,7 @@ export default class SizeEditor extends Vue {
 .editor-root {
   // padding: 20px 3px 0 20px;
 }
-.main {
+.settings-block {
   margin-left: 20px;
   margin-right: 8px;
 }

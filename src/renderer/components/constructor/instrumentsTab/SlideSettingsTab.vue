@@ -1,10 +1,11 @@
 <template>
   <div>
-    <b-form-group>
-      <b-form-checkbox :checked="isGridEnabled" @change="onGridEnabledChange($event)">
-        Enable grid
-      </b-form-checkbox>
-    </b-form-group>
+    <lz-group-caption>
+      Grid
+    </lz-group-caption>
+    <div class="settings-block">
+      <lz-switch :checked="isGridEnabled" @change="onGridEnabledChange($event)" size="small"> Enable grid</lz-switch>
+    </div>
   </div>
 </template>
 
@@ -37,4 +38,9 @@ export default class SlideSettingsTab extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.settings-block {
+  margin-left: 20px;
+  margin-right: 8px;
+}
+</style>

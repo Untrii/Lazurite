@@ -65,19 +65,16 @@ export default class LzPressSwitch extends Vue {
   }
 
   &_small {
-    padding-left: 12px;
     height: 32px;
     line-height: 32px;
     font-size: 14px;
   }
   &_medium {
-    padding-left: 16px;
     height: 40px;
     line-height: 40px;
     font-size: 16px;
   }
   &_large {
-    padding-left: 20px;
     height: 48px;
     line-height: 48px;
     font-size: 20px;
@@ -86,14 +83,15 @@ export default class LzPressSwitch extends Vue {
 .switch-input {
   overflow: hidden;
   display: inline-grid;
-  grid-template-columns: max-content max-content max-content;
+  grid-template-columns: 4fr 5fr 4fr;
 
   &__brick {
     height: 100%;
   }
 
   &__brick-small {
-    height: 80% !important;
+    height: 80%;
+    transform: scaleX(0.8);
     margin-top: 10%;
   }
 
@@ -102,8 +100,8 @@ export default class LzPressSwitch extends Vue {
     transition: 0.3s;
   }
   &_not-pressed &__brick:first-child {
-    height: 100% !important;
     transition: 0.3s;
+    transform: scaleX(0);
   }
   &_small {
     height: 24px;

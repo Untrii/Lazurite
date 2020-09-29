@@ -18,17 +18,19 @@
       ></div>
     </div>
     <div class="val-block">
-      <b-input-group size="sm" prepend="RGB" style="margin-top: 12px;">
-        <b-input type="number" v-model="pickedColorRGB.r" min="0" max="255"></b-input>
-        <b-input type="number" v-model="pickedColorRGB.g" min="0" max="255"></b-input>
-        <b-input type="number" v-model="pickedColorRGB.b" min="0" max="255"></b-input>
-      </b-input-group>
+      <div class="triple-input" style="margin-top: 12px;">
+        <lz-prepend size="small">RGB</lz-prepend>
+        <lz-number-input size="small" v-model="pickedColorRGB.r" min="0" max="255"></lz-number-input>
+        <lz-number-input size="small" v-model="pickedColorRGB.g" min="0" max="255"></lz-number-input>
+        <lz-number-input size="small" v-model="pickedColorRGB.b" min="0" max="255"></lz-number-input>
+      </div>
 
-      <b-input-group size="sm" prepend="HSL" style="margin-top: 12px;">
-        <b-input type="number" v-model="pickedColorHSL.h" min="0" max="360"></b-input>
-        <b-input type="number" v-model="pickedColorHSL.s" min="0" max="100"></b-input>
-        <b-input type="number" v-model="pickedColorHSL.l" min="0" max="100"></b-input>
-      </b-input-group>
+      <div class="triple-input" style="margin-top: 12px;">
+        <lz-prepend size="small">RGB</lz-prepend>
+        <lz-number-input size="small" v-model="pickedColorHSL.h" min="0" max="360"></lz-number-input>
+        <lz-number-input size="small" v-model="pickedColorHSL.s" min="0" max="100"></lz-number-input>
+        <lz-number-input size="small" v-model="pickedColorHSL.l" min="0" max="100"></lz-number-input>
+      </div>
 
       <b-input-group size="sm" prepend="Hex" style="margin-top: 12px;">
         <b-input type="text" v-model="pickedColor"></b-input>
@@ -211,6 +213,15 @@ export default class ColorPalette extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.triple-input {
+  display: inline-grid;
+  width: 100%;
+  grid-template-columns: min-content 1fr 1fr 1fr;
+
+  & div:not(:first-child) {
+    border-right: gray;
+  }
+}
 #color-palette {
   width: fit-content;
   float: left;

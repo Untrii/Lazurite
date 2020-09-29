@@ -171,13 +171,14 @@ export default class ColorModule extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/css/variables.scss';
 .root {
   width: 100%;
   height: 100%;
   overflow-y: scroll;
 
   &::-webkit-scrollbar-thumb {
-    border-color: white;
+    border-color: $gray-extralight;
   }
 }
 .header {
