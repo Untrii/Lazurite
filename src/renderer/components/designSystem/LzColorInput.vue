@@ -28,6 +28,7 @@
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
+import IColor from '@/entities/IColor'
 import Color from '@/entities/Color'
 import ColorPalette from '@/components/dialogs/ColorPalette.vue'
 
@@ -41,7 +42,7 @@ let service = new DesignService()
 export default class LzColorInput extends Vue {
   @Prop({ default: '' }) prepend!: string
   @Prop({ default: 'small' }) size!: string
-  colors: Color[] = []
+  colors: IColor[] = []
   getState() {
     this.colors = service.theme.palette
   }

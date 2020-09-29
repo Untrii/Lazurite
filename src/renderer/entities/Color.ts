@@ -13,7 +13,7 @@ export default class Color {
     this.a = isTransparent ? 0 : 1
   }
 
-  public fromHex(hex: string) {
+  public fromHex(hex: string): Color {
     hex = hex.replace('#', '')
     let hexNum = parseInt(hex, 16)
 
@@ -24,7 +24,7 @@ export default class Color {
     return this
   }
 
-  public fromRgb(r: number, g: number, b: number, a?: number) {
+  public fromRgb(r: number, g: number, b: number, a?: number): Color {
     this.r = r
     this.g = g
     this.b = b
@@ -33,11 +33,12 @@ export default class Color {
     return this
   }
 
-  public fromOther(color: IColor) {
+  public fromOther(color: IColor): Color {
     this.r = color.r
     this.g = color.g
     this.b = color.b
     this.a = color.a ?? 1
+    return this
   }
 
   public toHex(): string {
@@ -52,5 +53,13 @@ export default class Color {
   public equals(color: IColor): boolean {
     if (this.r == color.r && this.g == color.g && this.b == color.b) return true
     return false
+  }
+
+  public static get random(): Color {
+    return new Color().fromRgb(
+      Math.floor(Math.random() * 256),
+      Math.floor(Math.random() * 256),
+      Math.floor(Math.random() * 256)
+    )
   }
 }

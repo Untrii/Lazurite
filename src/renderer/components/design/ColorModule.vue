@@ -1,10 +1,39 @@
 <template>
   <div class="root">
     <h2 class="header">
+      Selected palette:
+    </h2>
+    <div class="palette" @mouseenter="showPrompt(10)" @mouseleave="hidePrompt(10)" style="max-width: 100vw;">
+      <lz-prompt
+        text="CTRL+Click to delete color, SHIFT+Click to edit color"
+        :is-visible="hoveredPalette == 10"
+      ></lz-prompt>
+      <div class="palette__brick-wrap" :style="`grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`">
+        <div
+          class="palette__brick"
+          v-for="(color, cindex) in selectedPalette"
+          :key="cindex"
+          :style="{ background: color.toCssColor() }"
+          @click="onPaletteBrickClick(cindex)"
+        ></div>
+        <div @click="onAddColorButtonClick">
+          add
+        </div>
+      </div>
+    </div>
+
+    <h2 class="header">
       Recomended palletes:
     </h2>
     <div class="palettes">
-      <div v-for="(palette, index) in recomendedPalettes" :key="index" class="palette">
+      <div
+        v-for="(palette, index) in recomendedPalettes"
+        :key="index"
+        class="palette"
+        @mouseenter="showPrompt(index)"
+        @mouseleave="hidePrompt(index)"
+      >
+        <lz-prompt text="Click to select" :is-visible="hoveredPalette == index"></lz-prompt>
         <div
           class="palette__brick-wrap"
           @click="selectedPaletteIndex = index"
@@ -17,32 +46,14 @@
             :style="{ background: color.toCssColor() }"
           ></div>
         </div>
-        <div class="sel-mark" v-if="selectedPaletteIndex == index">
-          <h5>selected</h5>
-        </div>
       </div>
     </div>
-    <h2 class="header">
-      Custom palette:
-    </h2>
-    <div class="palette">
-      <div
-        class="palette__brick-wrap"
-        @click="selectedPaletteIndex = 10"
-        :style="`grid-template-columns: repeat(${customPalette.length}, 1fr)`"
-      >
-        <div
-          class="palette__brick"
-          v-for="(color, cindex) in customPalette"
-          :key="cindex"
-          :style="{ background: color.toCssColor() }"
-        ></div>
-      </div>
-      <div class="sel-mark" v-if="selectedPaletteIndex == 10">
-        <h5>selected</h5>
-      </div>
-    </div>
-    <lz-button size="large" style="float:left;" :block-level="false">Edit</lz-button>
+    <color-palette
+      :isColorPaletteOpened="isColorPaletteOpened"
+      mode="color"
+      @picked="onColorPicked"
+      @closed="onPaletteClosed"
+    />
   </div>
 </template>
 
@@ -50,22 +61,41 @@
 import { Vue, Component } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import Color from '@/entities/Color'
+import Hotkeys from '@/utils/Hotkeys'
+import ColorPalette from '@/components/dialogs/ColorPalette.vue'
 
 let service = new DesignService()
 
-@Component
+@Component({
+  components: {
+    ColorPalette,
+  },
+})
 export default class ColorModule extends Vue {
   backgroundColor = new Color().fromRgb(0, 0, 1)
   selectedPalette: Color[] = []
   customPalette = [new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1)]
+  hoveredPalette = -1
+
+  showPrompt(palette: number) {
+    this.hoveredPalette = palette
+  }
+  hidePrompt(palette: number) {
+    if (this.hoveredPalette == palette) this.hoveredPalette = -1
+  }
 
   getState() {
-    this.backgroundColor = service.theme.backgroundColor
-    this.selectedPalette = service.theme.palette || []
+    this.backgroundColor = new Color().fromOther(service.theme.backgroundColor)
+    let selectedPalette: Color[] = []
+    for (let i = 0; i < service.theme.palette.length; i++) {
+      selectedPalette.push(new Color().fromOther(service.theme.palette[i]))
+    }
+    this.selectedPalette = selectedPalette
   }
 
   onChangeListener: Function = () => this.getState()
   beforeMount() {
+    console.log('ColorModule')
     this.getState()
     service.addOnChangeListener(this.onChangeListener)
   }
@@ -103,8 +133,39 @@ export default class ColorModule extends Vue {
     return result
   }
   set selectedPaletteIndex(index: number) {
-    if (index < this.recomendedPalettes.length) service.selectPalette(this.recomendedPalettes[index])
-    else if (index == 10) service.selectPalette(this.customPalette)
+    service.selectPalette(this.recomendedPalettes[index])
+  }
+
+  onPaletteBrickClick(colorIndex: number) {
+    console.log('brick click')
+    if (Hotkeys.control) this.deleteColor(colorIndex)
+    if (Hotkeys.shift) this.changeColor(colorIndex)
+  }
+
+  deleteColor(colorIndex: number) {
+    let newPalette = [...this.selectedPalette]
+    newPalette.splice(colorIndex, 1)
+    this.selectedPalette = newPalette
+    service.selectPalette(newPalette)
+  }
+
+  isColorPaletteOpened = false
+  changingColorIndex = 0
+  changeColor(colorIndex: number) {
+    this.changingColorIndex = colorIndex
+    this.isColorPaletteOpened = true
+  }
+  onColorPicked(pickedColor: string) {
+    this.isColorPaletteOpened = false
+    this.selectedPalette[this.changingColorIndex].fromHex(pickedColor)
+    service.selectPalette(this.selectedPalette)
+  }
+  onPaletteClosed() {
+    this.isColorPaletteOpened = false
+  }
+  onAddColorButtonClick() {
+    this.selectedPalette.push(Color.random)
+    service.selectPalette(this.selectedPalette)
   }
 }
 </script>

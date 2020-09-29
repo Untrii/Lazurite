@@ -1,13 +1,6 @@
 <template>
   <div class="input-root">
-    <div class="prompt" v-show="isHovered" :style="popperStyle">
-      <div class="prompt__body">{{ prepend }}: {{ flooredValue }}</div>
-      <div class="prompt__anchor">
-        <svg>
-          <polygon points="0,0 16,0 8,8" fill="#61778e"></polygon>
-        </svg>
-      </div>
-    </div>
+    <lz-prompt :text="`${prepend}: ${flooredValue}`" :is-visible="isHovered"></lz-prompt>
     <div
       class="range-input"
       :size="size"
@@ -124,30 +117,12 @@ export default class LzRangeInput extends Vue {
   }
 
   isHovered = false
-  popperOpacity = 0
-  get popperStyle() {
-    return {
-      opacity: this.popperOpacity,
-    }
-  }
+
   onMouseEnter() {
     this.isHovered = true
-    this.animatePopper()
   }
   onMouseLeave() {
     this.isHovered = false
-    this.animatePopper()
-  }
-  animatePopper() {
-    if (this.isHovered) {
-      if (this.popperOpacity >= 1) return
-      this.popperOpacity += 0.2
-      requestAnimationFrame(() => this.animatePopper())
-    } else {
-      if (this.popperOpacity <= 0) return
-      this.popperOpacity -= 0.2
-      requestAnimationFrame(() => this.animatePopper())
-    }
   }
 }
 </script>
@@ -218,36 +193,6 @@ export default class LzRangeInput extends Vue {
   background-color: $blue-normal;
 }
 
-.prompt {
-  position: relative;
-  z-index: 100;
-  top: -40px;
-  margin-bottom: -40px;
-  left: 50%;
-  width: 50%;
-  margin-left: -25%;
-  height: 40px;
-  opacity: 0;
-
-  &__body {
-    background-color: $blue-lighter;
-    text-align: center;
-    line-height: 32px;
-    height: 32px;
-    font-size: 14px;
-    color: white;
-  }
-  &__anchor {
-    margin: auto;
-    width: 16px;
-    height: 8px;
-    svg {
-      width: 16px;
-      height: 8px;
-      margin-top: -20px;
-    }
-  }
-}
 .input-root {
   &:hover .prompt {
     opacity: 1;

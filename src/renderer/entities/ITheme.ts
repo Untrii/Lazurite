@@ -1,12 +1,13 @@
 import Color from './Color'
+import IColor from './IColor'
 import FontPreset from './IFontPreset'
 
 export default interface ITheme {
-  backgroundColor: Color
+  backgroundColor: IColor
   backgroundType: BackgroundType
   backgroundValue: string
   fontPresets: FontPreset[]
-  palette: Color[]
+  palette: IColor[]
 }
 
 export enum BackgroundType {

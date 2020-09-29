@@ -24,9 +24,9 @@
       </div>
     </div>
     <div class="main-content">
-      <background-module v-show="selectedTab == 'background'" />
-      <typography-module v-show="selectedTab == 'typography'" />
-      <color-module v-show="selectedTab == 'color'" />
+      <background-module v-if="selectedTab == 'background'" />
+      <typography-module v-if="selectedTab == 'typography'" />
+      <color-module v-if="selectedTab == 'color'" />
     </div>
   </div>
 </template>
