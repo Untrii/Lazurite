@@ -8,9 +8,12 @@
         text="CTRL+Click to delete color, SHIFT+Click to edit color"
         :is-visible="hoveredPalette == 10"
       ></lz-prompt>
-      <div class="palette__brick-wrap" :style="`grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`">
+      <div
+        class="palette__brick-wrap palette__brick-wrap_large"
+        :style="`grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`"
+      >
         <div
-          class="palette__brick"
+          class="palette__brick palette__brick_large"
           v-for="(color, cindex) in selectedPalette"
           :key="cindex"
           :style="{ background: color.toCssColor() }"
@@ -240,6 +243,12 @@ export default class ColorModule extends Vue {
 @media (min-width: 1000px) {
   .palette {
     max-width: calc(50vw - 126px);
+  }
+  .palette__brick-wrap_large {
+    height: 122px !important;
+  }
+  .palette__brick_large {
+    height: 120px !important;
   }
 }
 </style>
