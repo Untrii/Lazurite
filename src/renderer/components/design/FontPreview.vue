@@ -41,13 +41,18 @@
       </div>
     </div>
     <div class="presets__add-button-wrap">
-      <lz-button @click="addPreset" size="large" variant="secondary"
-        >Add preset</lz-button
-      >
+      <lz-button @click="addPreset" size="large" variant="secondary">
+        Add preset
+      </lz-button>
 
-      <lz-button @click="randomizePreset" size="large" variant="secondary"
-        >Random preset</lz-button
+      <lz-button
+        @click="randomizePreset"
+        size="large"
+        variant="secondary"
+        style="margin-top:15px"
       >
+        Random preset
+      </lz-button>
     </div>
   </div>
 </template>
@@ -203,6 +208,10 @@ export default class FontPreview extends Vue {
   }
 
   randomizePreset() {
+    console.log('here')
+    for (const preset of service.theme.fontPresets) {
+      service.removeFontPreset(preset.id)
+    }
     let fontFamily = this.fontFamilies[
       Math.floor(Math.random() * this.fontFamilies.length)
     ]
