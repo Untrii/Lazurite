@@ -1,9 +1,22 @@
 <template>
   <div id="vue">
-    <titlebar @tabChanged="changeTab"></titlebar>
-    <div id="app">
-      <constructor-tab v-if="openedTab == 'constructor'"></constructor-tab>
-      <design-tab v-if="openedTab == 'design'"></design-tab>
+    <titlebar
+      @tab-changed="changeTab"
+      @tab-hovered="onTabHover"
+      @tab-unhovered="onTabUnhover"
+    ></titlebar>
+    <div id="app" :class="appClasses">
+      <design-tab
+        class="tab"
+        v-if="openedTab == 'design' || hoveredTab == 'design' || true"
+      ></design-tab>
+      <div v-else></div>
+      <div class="separator"></div>
+      <constructor-tab
+        class="tab"
+        v-if="openedTab == 'constructor' || hoveredTab == 'constructor' || true"
+      ></constructor-tab>
+      <div v-else></div>
       <dialogs-wrapper></dialogs-wrapper>
     </div>
   </div>
@@ -26,6 +39,8 @@ import DialogsWrapper from '@/components/dialogs/DialogsWrapper.vue'
 })
 export default class App extends Vue {
   openedTab = 'constructor'
+  hoveredTab = ''
+  lastHovered = ''
 
   mounted() {
     console.log('loaded')
@@ -33,6 +48,26 @@ export default class App extends Vue {
 
   changeTab(tabname: string) {
     this.openedTab = tabname
+  }
+
+  onTabHover(tab: string) {
+    console.log('there')
+    this.hoveredTab = tab
+    this.lastHovered = tab
+  }
+  onTabUnhover(tab: string) {
+    this.lastHovered = tab
+    if (this.hoveredTab == tab) this.hoveredTab = ''
+  }
+
+  get appClasses() {
+    let result: string[] = []
+    if (this.hoveredTab != '' && this.openedTab != this.hoveredTab)
+      result.push(`app__${this.openedTab}-to-${this.hoveredTab}`)
+    else if (this.openedTab != this.lastHovered)
+      result.push('app__' + this.openedTab + '-back')
+    else result.push('app__' + this.openedTab)
+    return result
   }
 }
 </script>
@@ -45,20 +80,61 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
   // background: #1e1e1e;
   // color: white;
 }
 #vue {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   display: grid;
   grid-template-rows: min-content auto;
+  overflow: hidden;
 }
 #titlebar {
   height: 31px;
 }
 #app {
   overflow: hidden;
+  position: absolute;
+  top: 31px;
+  min-width: 100vw;
+  height: calc(100vh - 31px);
+  display: inline-grid;
+  grid-template-columns: 100vw 3vw 100vw;
+}
+.app__constructor {
+  left: -103vw;
+  transition: 0.7s;
+}
+.app__constructor-back {
+  left: -103vw;
+  transition: 0.2s;
+}
+.app__design {
+  left: 0vw;
+  transition: 0.7s;
+}
+.app__design-back {
+  left: 0vw;
+  transition: 0.2s;
+}
+.app__design-to-constructor {
+  left: -13vw;
+  transition: 0.2s;
+}
+.app__constructor-to-design {
+  left: -90vw;
+  transition: 0.2s;
+}
+.separator {
+  background-color: #212529;
+  height: 100%;
+  width: 3vw;
+}
+.tab {
+  width: 100vw;
+  height: calc(100vh - 31px) !important;
 }
 ::-webkit-scrollbar {
   width: 12px;

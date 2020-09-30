@@ -1,5 +1,10 @@
 <template>
-  <div class="slide" :style="rootStyle" v-if="isRedactable">
+  <div
+    class="slide"
+    :style="rootStyle"
+    :class="rootClasses"
+    v-if="isRedactable"
+  >
     <redactable-base-element
       v-for="id in elementIds"
       :key="id"
@@ -7,8 +12,13 @@
       :scale="width / 1920"
     ></redactable-base-element>
   </div>
-  <div class="slide" :style="rootStyle" v-else>
-    <base-element v-for="id in elementIds" :key="id" :id="id" :scale="width / 1920"></base-element>
+  <div class="slide" :style="rootStyle" :class="rootClasses" v-else>
+    <base-element
+      v-for="id in elementIds"
+      :key="id"
+      :id="id"
+      :scale="width / 1920"
+    ></base-element>
   </div>
 </template>
 
@@ -49,7 +59,37 @@ export default class Slide extends Vue {
   beforeDestroy() {
     service.removeOnChangeListener(this.onChangeListener)
   }
+  mounted() {
+    requestAnimationFrame(() => this.animateSlideOpacity())
+  }
 
+  isVisible = false
+  animateSlideOpacity() {
+    console.log('anumate slide')
+    let win: any = window
+    if (!win.__enqueueSlideAnimation) {
+      win.__enqueueSlideAnimation = (func) => {
+        if (!win.__slideAnimationQueue) {
+          win.__slideAnimationQueue = []
+        }
+        win.__slideAnimationQueue.push(func)
+        if (!win.__slideAnimationPlanned) {
+          win.__slideAnimationPlanned = true
+          let animateFunction = () => {
+            win.__slideAnimationQueue[0]()
+            win.__slideAnimationQueue.splice(0, 1)
+            if (win.__slideAnimationQueue.length > 0)
+              requestAnimationFrame(animateFunction)
+            else win.__slideAnimationPlanned = false
+          }
+          requestAnimationFrame(animateFunction)
+        }
+      }
+    }
+    win.__enqueueSlideAnimation(() => {
+      this.isVisible = true
+    })
+  }
   get rootStyle() {
     // let scaleX = this.height / 1080
     // let scaleY = this.width / 1920
@@ -109,6 +149,12 @@ export default class Slide extends Vue {
       ...bgStyle,
     }
   }
+  get rootClasses() {
+    let result: string[] = []
+    if (this.isVisible)
+      result.push(this.isRedactable ? 'slide_visible-fast' : 'slide_visible')
+    return result
+  }
 }
 </script>
 
@@ -116,5 +162,13 @@ export default class Slide extends Vue {
 .slide {
   position: relative;
   overflow: hidden;
+  opacity: 0;
+}
+.slide_visible {
+  opacity: 1 !important;
+  transition: 0.7s;
+}
+.slide_visible-fast {
+  opacity: 1 !important;
 }
 </style>

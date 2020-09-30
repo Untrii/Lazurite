@@ -4,9 +4,15 @@
       <img :src="assets.logo" alt="" v-if="isVisible" />
     </div>
     <div class="titlebar__nav">
-      <div class="titlebar__nav-item" @click="selectTab('design')">Design</div>
-      <div class="titlebar__nav-item" @click="selectTab('constructor')">
-        Constructor
+      <div
+        class="titlebar__nav-item"
+        @click="selectTab(tab)"
+        @mouseenter="$emit('tab-hovered', tab)"
+        @mouseleave="$emit('tab-unhovered', tab)"
+        v-for="tab in tabs"
+        :key="tab"
+      >
+        {{ tab }}
       </div>
     </div>
     <div
@@ -38,6 +44,7 @@ export default class Titlebar extends Vue {
   height = 31
   isVisible = true
   isMaximized = false
+  tabs = ['design', 'constructor']
 
   constructor() {
     super()
@@ -61,7 +68,7 @@ export default class Titlebar extends Vue {
   }
 
   selectTab(tabname) {
-    this.$emit('tabChanged', tabname)
+    this.$emit('tab-changed', tabname)
   }
 
   beforeMount() {
@@ -132,6 +139,7 @@ export default class Titlebar extends Vue {
     font-size: 13px;
     user-select: none;
     cursor: pointer;
+    text-transform: capitalize;
 
     &:hover {
       background-color: $blue-bright;

@@ -10,7 +10,11 @@
       <div class="card-body">
         <div class="preset-card__content">
           <div :style="preset.style">
-            <div contenteditable="true" @input="onPresetNameChange(preset, $event)" v-once>
+            <div
+              contenteditable="true"
+              @input="onPresetNameChange(preset, $event)"
+              v-once
+            >
               {{ preset.name }}
             </div>
           </div>
@@ -20,7 +24,11 @@
           </div>
         </div>
 
-        <div class="preset-card__close" :class="getCrossClasses(preset.id)" @click.stop="removePreset(preset.id)">
+        <div
+          class="preset-card__close"
+          :class="getCrossClasses(preset.id)"
+          @click.stop="removePreset(preset.id)"
+        >
           ×
         </div>
       </div>
@@ -33,16 +41,23 @@
       </div>
     </div>
     <div class="presets__add-button-wrap">
-      <lz-button @click="addPreset" size="large" variant="secondary">Add preset</lz-button>
+      <lz-button @click="addPreset" size="large" variant="secondary"
+        >Add preset</lz-button
+      >
+
+      <lz-button @click="randomizePreset" size="large" variant="secondary"
+        >Random preset</lz-button
+      >
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component, Watch, Prop } from 'vue-property-decorator'
 import DesignService from '@/services/DesignService'
 import ITheme, { getBlankTheme } from '@/entities/ITheme'
 import IFontPreset, { getBlankPreset } from '@/entities/IFontPreset'
+import randomString from '@/utils/StringGenerator'
 //import localize from '@/utils/locales'
 
 const service = new DesignService()
@@ -52,6 +67,8 @@ export default class FontPreview extends Vue {
   selectedPresetId = ''
   theme: ITheme = getBlankTheme()
   scale: number = 1
+
+  @Prop() fontFamilies!: string[]
 
   getState() {
     this.theme = service.theme
@@ -94,7 +111,8 @@ export default class FontPreview extends Vue {
         style: {
           fontFamily: font.family,
           fontWeight: font.weight,
-          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size * (1 / 10.8)}vh)`,
+          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size *
+            (1 / 10.8)}vh)`,
         },
       })
     }
@@ -131,7 +149,8 @@ export default class FontPreview extends Vue {
   removePreset(id) {
     service.removeFontPreset(id)
     if (this.selectedPresetId == id) {
-      if (service.theme.fontPresets.length > 0) this.selectedPresetId = service.theme.fontPresets[0].id
+      if (service.theme.fontPresets.length > 0)
+        this.selectedPresetId = service.theme.fontPresets[0].id
     }
   }
 
@@ -181,6 +200,45 @@ export default class FontPreview extends Vue {
   onPresetNameChange(preset: IFontPreset, event) {
     let text = event.target.innerText
     service.changePresetName(preset.id, text)
+  }
+
+  randomizePreset() {
+    let fontFamily = this.fontFamilies[
+      Math.floor(Math.random() * this.fontFamilies.length)
+    ]
+    let fontPresets: IFontPreset[] = [
+      {
+        name: 'Title',
+        family: fontFamily,
+        size: 96,
+        weight: 400,
+        id: randomString(8),
+      },
+      {
+        name: 'Subtitle',
+        family: fontFamily,
+        size: 80,
+        weight: 400,
+        id: randomString(8),
+      },
+      {
+        name: 'Paragraph title',
+        family: fontFamily,
+        size: 56,
+        weight: 400,
+        id: randomString(8),
+      },
+      {
+        name: 'Main text',
+        family: fontFamily,
+        size: 48,
+        weight: 400,
+        id: randomString(8),
+      },
+    ]
+    for (const preset of fontPresets) {
+      service.addFontPreset(preset)
+    }
   }
 }
 </script>
