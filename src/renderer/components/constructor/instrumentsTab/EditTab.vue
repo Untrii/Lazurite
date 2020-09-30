@@ -5,6 +5,7 @@
     <spreadsheet-editor v-if="isSpreadsheetEditorShown"> </spreadsheet-editor>
     <color-correction-editor v-if="isColorCorrectionEditorShown"></color-correction-editor>
     <text-editor v-if="isTextEditorShown"></text-editor>
+    <figure-editor v-if="isFigureEditorShowm"></figure-editor>
   </div>
   <div v-else>
     <lz-group-caption>
@@ -20,6 +21,7 @@ import SizeEditor from './editors/SizeEditor.vue'
 import SpreadsheetEditor from './editors/SpreadsheetEditor.vue'
 import ColorCorrectionEditor from './editors/ColorCorrectionEditor.vue'
 import TextEditor from './editors/TextEditor.vue'
+import FigureEditor from './editors/FigureEditor.vue'
 
 let service = new EditorService()
 
@@ -29,6 +31,7 @@ let service = new EditorService()
     SpreadsheetEditor,
     ColorCorrectionEditor,
     TextEditor,
+    FigureEditor,
   },
 })
 export default class EditTab extends Vue {
@@ -94,6 +97,17 @@ export default class EditTab extends Vue {
 
   get isTextEditorShown() {
     return this.elementType == 'TextBlock'
+  }
+
+  get isFigureEditorShowm() {
+    switch (this.elementType) {
+      case 'Rectangle':
+      case 'EllipseBlock':
+      case 'Star':
+        return true
+      default:
+        return false
+    }
   }
 }
 </script>

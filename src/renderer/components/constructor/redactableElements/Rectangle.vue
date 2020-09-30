@@ -10,7 +10,7 @@ import Rectangle from '@/components/elements/Rectangle.vue'
 @Component({
   components: { Rectangle },
 })
-export default class RedactableImageBlock extends Vue {
+export default class RedactableRectangle extends Vue {
   @Prop(String) id
   @Prop(Number) scale
 
