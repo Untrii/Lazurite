@@ -1,5 +1,10 @@
 <template>
-  <div class="number-input" :class="rootClasses" @focus="isFocused = true" @blur="isFocused = false">
+  <div
+    class="number-input"
+    :class="rootClasses"
+    @focus="isFocused = true"
+    @blur="isFocused = false"
+  >
     <lz-prepend :size="size" v-if="prepend.length > 0">
       {{ prepend }}
     </lz-prepend>
@@ -94,7 +99,8 @@ export default class LzNumberInput extends Vue {
   get prependClasses() {
     let result: string[] = []
     result.push('number-input__prepend_' + this.size)
-    if (this.prepend.trim().length == 0) result.push('number-input__prepend_no-prepend')
+    if (this.prepend.trim().length == 0)
+      result.push('number-input__prepend_no-prepend')
     return result
   }
 
@@ -122,7 +128,8 @@ export default class LzNumberInput extends Vue {
     let resultString: string[] = []
     for (let i = 0; i < pasteData.length; i++) {
       const char = pasteData.charAt(i)
-      if ((char >= '0' && char <= '9') || char == ',' || char == '.') resultString.push(char)
+      if ((char >= '0' && char <= '9') || char == ',' || char == '.')
+        resultString.push(char)
     }
 
     let filteredPasteData = resultString.join('')
@@ -181,8 +188,12 @@ export default class LzNumberInput extends Vue {
   }
   increment() {
     if (this.isIncrementing) {
-      let incrementAmount = Math.floor((new Date().getTime() - this.incrementStartTime.getTime()) / 100)
-      this.changeValue(this.incrementStartValue + incrementAmount * this.modifier)
+      let incrementAmount = Math.floor(
+        (new Date().getTime() - this.incrementStartTime.getTime()) / 100
+      )
+      this.changeValue(
+        this.incrementStartValue + incrementAmount * this.modifier
+      )
       this.visualisableValue = this.localValue
       setTimeout(() => this.increment(), 100)
     } else this.$emit('change', this.localValue)
@@ -204,8 +215,12 @@ export default class LzNumberInput extends Vue {
   }
   decrement() {
     if (this.isDecrementing) {
-      let decrementAmount = Math.floor((new Date().getTime() - this.decrementStartTime.getTime()) / 100)
-      this.changeValue(this.decrementStartValue - decrementAmount * this.modifier)
+      let decrementAmount = Math.floor(
+        (new Date().getTime() - this.decrementStartTime.getTime()) / 100
+      )
+      this.changeValue(
+        this.decrementStartValue - decrementAmount * this.modifier
+      )
       this.visualisableValue = this.localValue
       setTimeout(() => this.decrement(), 100)
     } else this.$emit('change', this.localValue)
@@ -219,7 +234,6 @@ export default class LzNumberInput extends Vue {
   height: 32px;
   width: 100%;
   display: inline-grid;
-  outline: 2px solid $gray-extralight;
   grid-template-columns: max-content 1fr max-content;
 
   &:hover &__buttons {
@@ -256,6 +270,8 @@ export default class LzNumberInput extends Vue {
     &_large {
       padding: 0 20px;
     }
+
+    outline: 2px solid $gray-extralight;
 
     &:focus {
       outline: 2px solid $blue-lighter;
