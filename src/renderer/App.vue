@@ -1,15 +1,8 @@
 <template>
   <div id="vue">
-    <titlebar
-      @tab-changed="changeTab"
-      @tab-hovered="onTabHover"
-      @tab-unhovered="onTabUnhover"
-    ></titlebar>
+    <titlebar @tab-changed="changeTab" @tab-hovered="onTabHover" @tab-unhovered="onTabUnhover"></titlebar>
     <div id="app" :class="appClasses">
-      <design-tab
-        class="tab"
-        v-if="openedTab == 'design' || hoveredTab == 'design' || true"
-      ></design-tab>
+      <design-tab class="tab" v-if="openedTab == 'design' || hoveredTab == 'design' || true"></design-tab>
       <div v-else></div>
       <div class="separator"></div>
       <constructor-tab
@@ -41,6 +34,7 @@ export default class App extends Vue {
   openedTab = 'constructor'
   hoveredTab = ''
   lastHovered = ''
+  isAnimationStopped = true
 
   mounted() {
     console.log('loaded')
@@ -52,6 +46,7 @@ export default class App extends Vue {
 
   onTabHover(tab: string) {
     console.log('there')
+    this.isAnimationStopped = false
     this.hoveredTab = tab
     this.lastHovered = tab
   }
@@ -60,14 +55,25 @@ export default class App extends Vue {
     if (this.hoveredTab == tab) this.hoveredTab = ''
   }
 
+  lastStopRequest = new Date()
   get appClasses() {
     let result: string[] = []
     if (this.hoveredTab != '' && this.openedTab != this.hoveredTab)
       result.push(`app__${this.openedTab}-to-${this.hoveredTab}`)
-    else if (this.openedTab != this.lastHovered)
-      result.push('app__' + this.openedTab + '-back')
-    else result.push('app__' + this.openedTab)
+    else if (this.openedTab != this.lastHovered) result.push('app__' + this.openedTab + '-back')
+    else if (!this.isAnimationStopped) result.push('app__' + this.openedTab)
+    else result.push('app__' + this.openedTab + '-no-anim')
+    this.lastStopRequest = new Date()
+    setTimeout(this.stopAnimation, 1005)
     return result
+  }
+
+  stopAnimation() {
+    if (new Date().getTime() - this.lastStopRequest.getTime() < 1000) {
+      setTimeout(this.stopAnimation, 1005)
+      return
+    }
+    if (this.hoveredTab == '') this.isAnimationStopped = true
   }
 }
 </script>
@@ -111,6 +117,9 @@ body {
   left: -103vw;
   transition: 0.2s;
 }
+.app__constructor-no-anim {
+  left: -103vw;
+}
 .app__design {
   left: 0vw;
   transition: 0.7s;
@@ -118,6 +127,9 @@ body {
 .app__design-back {
   left: 0vw;
   transition: 0.2s;
+}
+.app__design-no-anim {
+  left: 0vw;
 }
 .app__design-to-constructor {
   left: -13vw;
