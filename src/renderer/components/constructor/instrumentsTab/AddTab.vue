@@ -15,8 +15,6 @@
         {{ preset.name }}
       </lz-button>
     </div>
-    <lz-checkbox size="small">Penis</lz-checkbox>
-    <lz-switch size="small">Penis</lz-switch>
   </div>
 </template>
 

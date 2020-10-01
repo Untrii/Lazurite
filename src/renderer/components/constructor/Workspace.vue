@@ -1,6 +1,11 @@
 <template>
   <div class="workspace" v-if="selectedSlideIndex >= 0" :style="rootStyle">
-    <slide :index="selectedSlideIndex" :width="workspaceWidth" :height="workspaceHeight" :isRedactable="true"></slide>
+    <slide
+      :index="selectedSlideIndex"
+      :width="workspaceWidth"
+      :height="workspaceHeight"
+      :isRedactable="true"
+    ></slide>
   </div>
 </template>
 
@@ -44,12 +49,25 @@ export default class Workspace extends Vue {
   }
 
   recalcWidth() {
-    console.log('recalc')
     let result = 1
-    if (!(service.timelineModuleSize && service.previewModuleSize && service.instrumentsModuleSize)) return
+    if (
+      !(
+        service.timelineModuleSize &&
+        service.previewModuleSize &&
+        service.instrumentsModuleSize
+      )
+    )
+      return
 
-    result = window.innerWidth - service.previewModuleSize - service.instrumentsModuleSize - 40
-    if (window.innerHeight < (result / 16) * 9 + 75 + service.timelineModuleSize)
+    result =
+      window.innerWidth -
+      service.previewModuleSize -
+      service.instrumentsModuleSize -
+      40
+    if (
+      window.innerHeight <
+      (result / 16) * 9 + 75 + service.timelineModuleSize
+    )
       result = ((window.innerHeight - service.timelineModuleSize - 75) / 9) * 16
     this.workspaceWidth = result
   }

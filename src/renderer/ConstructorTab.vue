@@ -1,8 +1,16 @@
 <template>
-  <div class="root" :style="tabStyle">
-    <preview></preview>
-    <workspace></workspace>
-    <instruments></instruments>
+  <div>
+    <div class="root" :style="tabStyle">
+      <preview></preview>
+      <workspace></workspace>
+      <instruments
+        @demonstration-started="demonstrationOpened = true"
+      ></instruments>
+    </div>
+    <demonstration
+      v-if="demonstrationOpened"
+      @closed="demonstrationOpened = false"
+    ></demonstration>
   </div>
 </template>
 
@@ -12,6 +20,7 @@ import Preview from './components/constructor/Preview.vue'
 import Workspace from './components/constructor/Workspace.vue'
 import Instruments from './components/constructor/Instruments.vue'
 import ConstructorService from './services/ConstructorService'
+import Demonstration from './components/constructor/Demonstration.vue'
 
 let service = new ConstructorService()
 
@@ -20,12 +29,14 @@ let service = new ConstructorService()
     Preview,
     Workspace,
     Instruments,
+    Demonstration,
   },
 })
 export default class ConstructorTab extends Vue {
   previewSize = 0
   instrumentsSize = 0
   timelineSize = 0
+  demonstrationOpened = false
 
   getState() {
     this.previewSize = service.previewModuleSize ?? 0

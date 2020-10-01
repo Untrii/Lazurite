@@ -15,13 +15,28 @@
       <add-tab v-if="selectedTab == 'add'"></add-tab>
       <edit-tab v-if="selectedTab == 'edit'"></edit-tab>
       <history-tab v-if="selectedTab == 'history'"></history-tab>
-      <slide-settings-tab v-if="selectedTab == 'editorSettings'"></slide-settings-tab>
+      <slide-settings-tab
+        v-if="selectedTab == 'editorSettings'"
+      ></slide-settings-tab>
     </div>
     <div class="bottom-buttons">
-      <lz-button :blockLevel="true" image="logo" size="medium" variant="secondary" image-position="right">
+      <lz-button
+        :blockLevel="true"
+        image="logo"
+        size="medium"
+        variant="secondary"
+        image-position="right"
+      >
         Launch from the start
       </lz-button>
-      <lz-button :blockLevel="true" image="logo" size="medium" variant="primary" image-position="right">
+      <lz-button
+        :blockLevel="true"
+        image="logo"
+        size="medium"
+        variant="primary"
+        image-position="right"
+        @click="$emit('demonstration-started')"
+      >
         Launch from this slide
       </lz-button>
     </div>
