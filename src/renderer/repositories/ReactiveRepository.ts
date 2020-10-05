@@ -1,5 +1,6 @@
 export default class ReactiveRepository {
   private onChangeListeners: { source: string; callback: Function }[]
+  private _reflection = {}
 
   constructor() {
     this.onChangeListeners = []
@@ -20,5 +21,12 @@ export default class ReactiveRepository {
   }
   addOnChangeListener(callback: Function, callbackSource: string) {
     this.onChangeListeners.push({ callback, source: callbackSource })
+  }
+
+  
+
+  updateReflection(path: string) {
+    let parsedPath = path.split('.')
+    let reflection = this._reflection
   }
 }

@@ -101,6 +101,11 @@ export default class Titlebar extends Vue {
   get assets() {
     return assets
   }
+
+  get testHueta() {
+    let win: any = window
+    return win.testGetter * 10
+  }
 }
 </script>
 

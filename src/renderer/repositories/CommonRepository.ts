@@ -6,7 +6,9 @@ import SlideObject from '@/entities/ISlideObject'
 import { promises as fs } from 'fs'
 import fsSync from 'fs'
 
-import IBackgroundCollection, { getBlankCollection } from '@/entities/IBackgroundCollection'
+import IBackgroundCollection, {
+  getBlankCollection,
+} from '@/entities/IBackgroundCollection'
 import track from '@/utils/ReactiveTrack'
 import ReactiveRepository from './ReactiveRepository'
 import HistoryRepository from './HistoryRepository'
@@ -61,7 +63,9 @@ export class CommonRepository extends ReactiveRepository {
       this.openPaletteCollection(),
       this.getFontList(),
     ])
-    console.info(`Program has loaded in ${new Date().getTime() - dt.getTime()}ms`)
+    console.info(
+      `Program has loaded in ${new Date().getTime() - dt.getTime()}ms`
+    )
   }
 
   get workspaceDataFileName() {
@@ -101,7 +105,10 @@ export class CommonRepository extends ReactiveRepository {
     this._openedPresentationFile = fileName.split('\\').join('/')
     await HistoryRepository.openFile(this._openedPresentationFile + '.history')
 
-    this._openedPresentationHandle = new FileObject(new LocalFileSystem(), fileName)
+    this._openedPresentationHandle = new FileObject(
+      new LocalFileSystem(),
+      fileName
+    )
     let pulled: Presentation = await this._openedPresentationHandle.pull()
     this._openedPresentation = pulled
     this._isFileOpened = true
@@ -112,7 +119,10 @@ export class CommonRepository extends ReactiveRepository {
     this.onChange()
   }
   async openSettings() {
-    this._settingsFileHandle = new FileObject(new LocalFileSystem(), settingsFileName)
+    this._settingsFileHandle = new FileObject(
+      new LocalFileSystem(),
+      settingsFileName
+    )
     let sfile: any = { ...defaultSettings }
     let pulled = await this._settingsFileHandle.pull()
     for (let field in pulled) {
@@ -122,7 +132,10 @@ export class CommonRepository extends ReactiveRepository {
     this.onChange()
   }
   async openBackgroundCollection() {
-    this._backgroundCollectionFileHandle = new FileObject(new LocalFileSystem(), backgroundCollectionFileName)
+    this._backgroundCollectionFileHandle = new FileObject(
+      new LocalFileSystem(),
+      backgroundCollectionFileName
+    )
     let sfile: any = { ...getBlankCollection() }
     let pulled = await this._backgroundCollectionFileHandle.pull()
     for (let field in pulled) {
@@ -131,7 +144,10 @@ export class CommonRepository extends ReactiveRepository {
     this.backgroundCollection = sfile
   }
   async openPaletteCollection() {
-    this._paletteCollectionFileHandle = new FileObject(new LocalFileSystem(), paletteCollectionFileName)
+    this._paletteCollectionFileHandle = new FileObject(
+      new LocalFileSystem(),
+      paletteCollectionFileName
+    )
     let sfile: any = []
     let pulled = await this._paletteCollectionFileHandle.pull()
     if (Array.isArray(pulled)) sfile = pulled
@@ -146,7 +162,10 @@ export class CommonRepository extends ReactiveRepository {
   }
   set settings(settings: IAppSettings | undefined) {
     if (!this._settingsFileHandle) {
-      this._settingsFileHandle = new FileObject(new LocalFileSystem(), settingsFileName)
+      this._settingsFileHandle = new FileObject(
+        new LocalFileSystem(),
+        settingsFileName
+      )
     }
     this._settingsFile = settings
     this._settingsFileHandle.push(settings)
@@ -159,7 +178,10 @@ export class CommonRepository extends ReactiveRepository {
   }
   set backgroundCollection(collection: IBackgroundCollection | undefined) {
     if (!this._backgroundCollectionFileHandle) {
-      this._backgroundCollectionFileHandle = new FileObject(new LocalFileSystem(), backgroundCollectionFileName)
+      this._backgroundCollectionFileHandle = new FileObject(
+        new LocalFileSystem(),
+        backgroundCollectionFileName
+      )
     }
     this._backgroundCollectionFile = collection
     this._backgroundCollectionFileHandle.push(collection)
@@ -171,7 +193,8 @@ export class CommonRepository extends ReactiveRepository {
   }
   set paletteCollection(collection: string[][] | undefined) {
     let handle = (this._paletteCollectionFileHandle =
-      this._paletteCollectionFileHandle || new FileObject(new LocalFileSystem(), paletteCollectionFileName))
+      this._paletteCollectionFileHandle ||
+      new FileObject(new LocalFileSystem(), paletteCollectionFileName))
     this._paletteCollectionFile = collection
     handle.push(collection)
     this.onChange()
