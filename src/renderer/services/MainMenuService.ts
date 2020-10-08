@@ -1,12 +1,7 @@
 import CommonRepository from '@/repositories/CommonRepository'
 import { getBlankPresentation } from '@/entities/IPresentation'
-import ReactiveService from '@/services/ReactiveService'
 
-export default class MainMenuService extends ReactiveService {
-  constructor() {
-    let currentObj: any = super('MainMenuService', [CommonRepository])
-    return currentObj
-  }
+export default class MainMenuService {
   async createPresentation(fileName: string) {
     await CommonRepository.openPresentation(fileName)
     CommonRepository.openedPresentation = getBlankPresentation()

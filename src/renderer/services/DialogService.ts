@@ -1,13 +1,7 @@
-import ReactiveService from './ReactiveService'
 import CommonRepository from '@/repositories/CommonRepository'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
 
-export default class DialogService extends ReactiveService {
-  constructor() {
-    let currentObj: any = super('DialogService', [CommonRepository, RuntimeRepository])
-    return currentObj
-  }
-
+export default class DialogService {
   private handleChooseFileDialog(resolve, reject) {
     RuntimeRepository.choseFileDialogResolve = resolve
     RuntimeRepository.choseFileDialogReject = reject
