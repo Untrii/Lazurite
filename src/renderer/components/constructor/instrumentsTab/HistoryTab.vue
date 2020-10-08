@@ -34,9 +34,8 @@ let service = new HistoryService()
 
 @Component
 export default class HistoryTab extends Vue {
-  history: IHistoryDeclarationInfo = service.getHistory()
-  async getState() {
-    this.history = await service.getHistory()
+  get history(): IHistoryDeclarationInfo {
+    return service.getHistory()
   }
 
   getImageFor(index: number, arrayName: string) {

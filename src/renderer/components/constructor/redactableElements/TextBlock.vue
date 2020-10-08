@@ -17,11 +17,7 @@
         {{ prompt }}
       </div>
     </div>
-    <text-block
-      v-bind="$attrs"
-      class="content"
-      v-if="!isRedacting"
-    ></text-block>
+    <text-block v-bind="$attrs" class="content" v-if="!isRedacting"></text-block>
     <div v-else class="wrap" :style="wrapStyle">
       <div
         @click.stop
@@ -37,20 +33,22 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import ConstructorService from '@/services/ConstructorService'
 import TextBlock from '@/components/elements/TextBlock.vue'
 import assets from '@/assets'
-import VisualisationService from '@/services/VisualisationService'
 import Color from '@/entities/Color'
-import HistoryService from '@/services/HistoryService'
 import IColor from '@/entities/IColor'
+import HistoryService from '@/services/constructor/HistoryService'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import HotkeysService from '@/services/constructor/HotkeysService'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
 
-let service = new ConstructorService()
-let visualisationService = new VisualisationService()
+let store = new ConstrctorStore()
 let historyService = new HistoryService()
+let hotkeysService = new HotkeysService()
+let slideObjectService = new SlideObjectService()
 
 @Component({
-  components: { TextBlock },
+  components: { TextBlock }
 })
 export default class RedactableTextBlock extends Vue {
   @Prop() fontFamily!: string
@@ -65,10 +63,18 @@ export default class RedactableTextBlock extends Vue {
   @Prop() id!: string
   @Prop() scale!: number
 
-  blockSize = 0
-  isSelected = false
+  get blockSize() {
+    let element = store.elementById(this.id)
+    return element.height
+  }
+  get isSelected() {
+    return store.selectedObjectId == this.id
+  }
   isRedacting = false
-  x = 0
+  get x() {
+    let element = store.elementById(this.id)
+    return element.top
+  }
 
   prompt = ''
 
@@ -82,62 +88,46 @@ export default class RedactableTextBlock extends Vue {
     {
       image: assets.edit,
       handler: () => this.onEditClick(),
-      prompt: 'Edit element',
+      prompt: 'Edit element'
     },
     {
       image: assets.bold,
       handler: () => this.applyDecoration('bold'),
-      prompt: 'Bold',
+      prompt: 'Bold'
     },
     {
       image: assets.italic,
       handler: () => this.applyDecoration('italic'),
-      prompt: 'Italic',
+      prompt: 'Italic'
     },
     {
       image: assets.strikethrough,
       handler: () => this.applyDecoration('strikeThrough'),
-      prompt: 'Strikethrough',
+      prompt: 'Strikethrough'
     },
     {
       image: assets.underline,
       handler: () => this.applyDecoration('underline'),
-      prompt: 'Underline',
+      prompt: 'Underline'
     },
     {
       image: assets.clear,
       handler: () => this.applyDecoration('removeFormat'),
-      prompt: 'Clear style',
-    },
+      prompt: 'Clear style'
+    }
   ]
-
-  getState() {
-    let element = visualisationService.elementById(this.id)
-    this.isSelected = service.selectedObjectId == this.id
-    this.blockSize = element.height
-    this.x = element.top
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
 
   onEditClick() {
     let newRedactState = !this.isRedacting
     if (!newRedactState) {
-      service.bindDefaultConstructorHotkeys()
+      hotkeysService.bindDefaultConstructorHotkeys()
       let el = document.querySelector('.text-block_editable')
       if (el) {
         historyService.registerTextChange(this.id, this.content, el.innerHTML)
-        service.changeObjectProperty(this.id, 'content', el.innerHTML)
+        slideObjectService.changeObjectProperty(this.id, 'content', el.innerHTML)
       }
     } else {
-      service.unbindDefaultConstructorHotkeys()
+      hotkeysService.unbindDefaultConstructorHotkeys()
     }
     this.isRedacting = newRedactState
     this.buttons[0].image = newRedactState ? assets.tick : assets.edit
@@ -150,9 +140,7 @@ export default class RedactableTextBlock extends Vue {
   applyDecoration(name: string) {
     let virtualElement
     if (this.isRedacting)
-      virtualElement =
-        document.querySelector('#tbr' + this.id) ??
-        document.createElement('content')
+      virtualElement = document.querySelector('#tbr' + this.id) ?? document.createElement('content')
     else {
       virtualElement = document.createElement('content')
       virtualElement.innerHTML = this.content
@@ -180,9 +168,7 @@ export default class RedactableTextBlock extends Vue {
       return result
     }
 
-    let getHTML = function(
-      styledText: { text: string; style: Set<string> }[]
-    ): string {
+    let getHTML = function(styledText: { text: string; style: Set<string> }[]): string {
       let result: string[] = []
       if (styledText.length == 1) {
         let text = styledText[0]
@@ -204,8 +190,7 @@ export default class RedactableTextBlock extends Vue {
       if (!selection) return false
       if (selection.type != 'Range') return false
       let currentElement = document.querySelector('#tbr' + this.id)
-      let focusedElement: Node | null | undefined =
-        getSelection()?.focusNode ?? document
+      let focusedElement: Node | null | undefined = getSelection()?.focusNode ?? document
       let result = false
       while (focusedElement?.parentNode != document && focusedElement) {
         if (focusedElement == currentElement) result = true
@@ -214,9 +199,7 @@ export default class RedactableTextBlock extends Vue {
       return result
     }
 
-    let applyDecorationInStyle = function(
-      styledText: { text: string; style: Set<string> }[]
-    ) {
+    let applyDecorationInStyle = function(styledText: { text: string; style: Set<string> }[]) {
       let dCount = 0
       for (let i = 0; i < styledText.length; i++) {
         switch (name) {
@@ -265,11 +248,9 @@ export default class RedactableTextBlock extends Vue {
     }
 
     if (!isThisTextBlockSelected()) {
-      let html = getHTML(
-        applyDecorationInStyle(getStyledText(virtualElement, []))
-      )
+      let html = getHTML(applyDecorationInStyle(getStyledText(virtualElement, [])))
       historyService.registerTextChange(this.id, this.content, html)
-      service.changeObjectProperty(this.id, 'content', html)
+      slideObjectService.changeObjectProperty(this.id, 'content', html)
     } else document.execCommand(name)
   }
 
@@ -288,7 +269,7 @@ export default class RedactableTextBlock extends Vue {
   get controlDockStyle() {
     if (this.x < 48 / this.scale)
       return {
-        marginTop: this.blockSize * this.scale + 8 + 'px',
+        marginTop: this.blockSize * this.scale + 8 + 'px'
       }
     else return {}
   }
@@ -304,7 +285,7 @@ export default class RedactableTextBlock extends Vue {
       fontWeight: this.fontWeight,
       color: color.toCssColor(),
       backgroundColor: backgroundColor.toCssColor(),
-      textAlign: this.horizontalAlign,
+      textAlign: this.horizontalAlign
     }
   }
 
@@ -313,7 +294,7 @@ export default class RedactableTextBlock extends Vue {
     if (this.verticalAlign == 'top') verticalAlign = 'flex-start'
     if (this.verticalAlign == 'bottom') verticalAlign = 'flex-end'
     return {
-      alignItems: verticalAlign,
+      alignItems: verticalAlign
     }
   }
 }

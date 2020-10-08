@@ -53,8 +53,9 @@ let service = new SlideObjectService()
 
 @Component
 export default class SizeEditor extends Vue {
-  element: any = store.selectedElement
-
+  get element() {
+    return store.selectedElement
+  }
   optionGroups = {
     highlight: [
       {

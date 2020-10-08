@@ -32,9 +32,12 @@ let slideObjectService = new SlideObjectService()
 let store = new ConstrctorStore()
 @Component
 export default class AddTab extends Vue {
-  elementGroups: Map<string, ElementPreset[]> = elementPresetFactory.getGroups()
-  groupNames: string[] = Array.from(elementPresetFactory.getGroups().keys())
-
+  get elementGroups(): Map<string, ElementPreset[]> {
+    return elementPresetFactory.getGroups()
+  }
+  get groupNames(): string[] {
+    return Array.from(elementPresetFactory.getGroups().keys())
+  }
   async createElement(preset) {
     let element = await slideObjectService.createObject(preset)
     if (element) historyService.registerElementCreate(element, store.selectedSlideIndex ?? 0)

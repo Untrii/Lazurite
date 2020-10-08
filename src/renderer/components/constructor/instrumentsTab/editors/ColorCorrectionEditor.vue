@@ -35,8 +35,9 @@ let startVal: null | string = null
 
 @Component
 export default class ColorCorrectionEditor extends Vue {
-  element: any = store.selectedElement
-
+  get element() {
+    return store.selectedElement
+  }
   forms = [
     {
       displayName: 'Blur',

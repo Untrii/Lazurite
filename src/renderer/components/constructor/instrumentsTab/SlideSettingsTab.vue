@@ -20,7 +20,9 @@ let store = new ConstrctorStore()
 let service = new WindowSettingsService()
 @Component
 export default class SlideSettingsTab extends Vue {
-  isGridEnabled = store.isGridEnabled
+  get isGridEnabled() {
+    return store.isGridEnabled
+  }
 
   onGridEnabledChange(newVal: boolean) {
     service.changeGridState(newVal)

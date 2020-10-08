@@ -1,46 +1,31 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import elements from './index'
-import VisualisationService from '@/services/VisualisationService'
 import ISlideObject from '@/entities/ISlideObject'
 import DraggableResizable from './DraggableResizable.vue'
-import ConstructorService from '@/services/ConstructorService'
 import Hotkeys from '@/utils/Hotkeys'
-import HistoryService from '@/services/HistoryService'
-import EditorService from '@/services/EditorService'
+import HistoryService from '@/services/constructor/HistoryService'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
 
-let visualisationService = new VisualisationService()
-let constructorService = new ConstructorService()
 let historyService = new HistoryService()
-let editorSevice = new EditorService()
+let store = new ConstrctorStore()
+let service = new SlideObjectService()
 
 let start
 
 @Component({
-  components: { ...elements, DraggableResizable },
+  components: { ...elements, DraggableResizable }
 })
 export default class RedactableBaseElement extends Vue {
-  @Prop(String) id
-  @Prop(Number) scale
+  @Prop() id!: string
+  @Prop() scale!: number
 
   isDraggable = true
   isResizable = true
   isActive = true
 
-  onChangeListener!: Function
-  beforeMount() {
-    this.onChangeListener = () => this.$forceUpdate()
-
-    constructorService.addOnChangeListener(this.onChangeListener)
-  }
-
-  beforeDestroy() {
-    constructorService.removeOnChangeListener(this.onChangeListener)
-  }
-
-  get element(): ISlideObject {
-    return visualisationService.elementById(this.id)
-  }
+  element = store.elementById(this.id)
 
   getScaledElement(): ISlideObject {
     let el = { ...this.element }
@@ -82,8 +67,8 @@ export default class RedactableBaseElement extends Vue {
           this.isDraggable = true
           this.isResizable = true
           this.isActive = true
-        },
-      },
+        }
+      }
     })
   }
 
@@ -97,14 +82,12 @@ export default class RedactableBaseElement extends Vue {
       'DraggableResizable',
       {
         props: {
-          isActive:
-            constructorService.selectedObjectIds.includes(this.id) &&
-            this.isActive,
+          isActive: store.selectedObjectIds.includes(this.id) && this.isActive,
 
           gridX: 30 * this.scale,
           gridY: 30 * this.scale,
 
-          snapToGrid: editorSevice.isGridEnabled,
+          snapToGrid: store.isGridEnabled,
 
           w: this.getScaledElement().width,
           h: this.getScaledElement().height,
@@ -116,31 +99,31 @@ export default class RedactableBaseElement extends Vue {
 
           parentWidth: 1920 * this.scale,
           parentHeight: 1080 * this.scale,
-          canActivate: true,
+          canActivate: true
         },
         on: {
-          rectangleChanged: (newRect) => {
+          rectangleChanged: newRect => {
             let unscaledElement = this.unscaleElement(newRect)
-            constructorService.changeObjectProperties(this.id, unscaledElement)
+            service.changeObjectProperties(this.id, unscaledElement)
           },
-          rectangleChangeStarted: (startRect) => {
+          rectangleChangeStarted: startRect => {
             start = this.unscaleElement(startRect)
           },
-          moved: (newRect) => {
+          moved: newRect => {
             newRect = this.unscaleElement(newRect)
             historyService.registerElementMove(
               this.id,
               {
                 top: start.top,
-                left: start.left,
+                left: start.left
               },
               {
                 top: newRect.top,
-                left: newRect.left,
+                left: newRect.left
               }
             )
           },
-          resized: (newRect) => {
+          resized: newRect => {
             newRect = this.unscaleElement(newRect)
             historyService.registerElementResize(
               this.id,
@@ -148,36 +131,31 @@ export default class RedactableBaseElement extends Vue {
                 top: start.top,
                 left: start.left,
                 width: start.width,
-                height: start.height,
+                height: start.height
               },
               {
                 top: newRect.top,
                 left: newRect.left,
                 width: newRect.width,
-                height: newRect.height,
+                height: newRect.height
               }
             )
           },
           activated: () => {
-            if (!Hotkeys.control) constructorService.deselectAllObjects()
-            constructorService.selectObject(this.id)
+            if (!Hotkeys.control) service.deselectAllObjects()
+            service.selectObject(this.id)
             Hotkeys.unbind('delete')
             Hotkeys.bind('delete', () => {
-              let deletedElements = constructorService.deleteObjects(
-                constructorService.selectedObjectIds
-              )
+              let deletedElements = service.deleteObjects(store.selectedObjectIds)
               if (deletedElements) {
-                historyService.registerElementDelete(
-                  deletedElements,
-                  constructorService.selectedSlideIndex ?? 0
-                )
+                historyService.registerElementDelete(deletedElements, store.selectedSlideIndex ?? 0)
               }
             })
           },
           deactivated: () => {
-            if (!Hotkeys.control) constructorService.deselectAllObjects()
-          },
-        },
+            if (!Hotkeys.control) service.deselectAllObjects()
+          }
+        }
       },
       [this.renderTargetElement(h)]
     )

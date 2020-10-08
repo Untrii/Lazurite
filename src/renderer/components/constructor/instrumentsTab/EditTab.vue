@@ -35,17 +35,16 @@ let store = new ConstrctorStore()
   }
 })
 export default class EditTab extends Vue {
-  isOneElementSelected: boolean = false
-  element: any
-  elementType: string = ''
-  editableProps: string[] = []
-
-  getState() {
-    //this.element = service.
-    this.isOneElementSelected = store.isOneElementSelected
-    this.element = store.selectedElement
-    this.elementType = this.element.type ?? ''
+  get isOneElementSelected(): boolean {
+    return store.isOneElementSelected
   }
+  get element() {
+    return store.selectedElement
+  }
+  get elementType() {
+    return this.element.type ?? ''
+  }
+  editableProps: string[] = []
 
   @Watch('elementType')
   onElementTypeChange() {

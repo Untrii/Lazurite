@@ -72,15 +72,23 @@ let elementPresetFactory = new ElementPresetFactory()
 
 @Component
 export default class TextEditor extends Vue {
-  selectedVerticalAlign = store.selectedElement.verticalAlign
-  selectedHorizontalAlign = store.selectedElement.horizontalAlign
-  fontSize = store.selectedElement.fontSize
-  presetNames = this.getPresetNames()
+  get element() {
+    return store.selectedElement
+  }
+  get selectedVerticalAlign() {
+    return this.element.verticalAlign
+  }
+  get selectedHorizontalAlign() {
+    return this.element.horizontalAlign
+  }
+  get fontSize() {
+    return this.element.fontSize
+  }
 
   verticalAlignVariants = ['top', 'center', 'bottom']
   horizontalAlignVariants = ['left', 'center', 'right']
 
-  getPresetNames() {
+  get presetNames() {
     let result: string[] = []
     let groups = elementPresetFactory.getGroups()
     let textGroup = groups.get('text')

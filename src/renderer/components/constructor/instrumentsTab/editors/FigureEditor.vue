@@ -43,8 +43,9 @@ let service = new SlideObjectService()
 
 @Component
 export default class FigureEditor extends Vue {
-  element: any = store.selectedElement
-
+  get element() {
+    return store.selectedElement
+  }
   onColorChange(newVal: IColor, propertyName: string) {
     let color = new Color()
     color.fromOther(newVal)
