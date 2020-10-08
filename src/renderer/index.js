@@ -6,7 +6,7 @@ import MainMenuService from '@/services/MainMenuService'
 import LzDesignSystem from '@/components/designSystem'
 import { promises as fs } from 'fs'
 import { existsSync } from 'fs'
-import ReactiveFileHandle from '@/repositories/ReactiveFileHandle'
+import ReactiveFileHandle from '@/repositories/fileSystems/ReactiveFileHandle'
 
 async function main() {
   let reactTest = await ReactiveFileHandle.create('C:/present.js/hui.json')
@@ -35,7 +35,10 @@ async function main() {
       let startTime = new Date()
       let a
       for (let i = 0; i < 1000000; i++) a = reactTest.syncronizedObject.a.a.a
-      console.log('1000 updates has completed in ' + (new Date() - startTime) + 'ms')
+      console.log('1 000 000 get operation completed in ' + (new Date() - startTime) + 'ms')
+      startTime = new Date()
+      for (let i = 0; i < 1000000; i++) a = reactTest.syncronizedObject.a.a.a.first = i
+      console.log('1 000 000 set operation completed in ' + (new Date() - startTime) + 'ms')
     }
   }
 

@@ -1,6 +1,7 @@
 import FileObject from './FileObject'
 import DefaultFileSystem from './DefaultFileSystem'
 import Vue from 'vue'
+import IFileSystem from '@/entities/IFileSystem'
 
 export default class ReactiveFileHandle<T extends Object> {
   _object!: T
@@ -66,23 +67,24 @@ export default class ReactiveFileHandle<T extends Object> {
 
   private clearObject() {}
 
+  private _proxyCache = new Map()
+
+  private sourceKeyword = '__attached-source__'
   private proxyObject<TargetType extends Object>(target: TargetType, path: string = '') {
-    let sourceKeyword = '__attached-source__'
     return new Proxy<TargetType>(target, {
       get: (target, prop) => {
-        if (prop == sourceKeyword) {
+        if (prop == this.sourceKeyword) {
           return path
         }
         if (typeof target[prop] == 'object' || typeof target[prop] == 'function') {
-          return this.proxyObject(
-            target[prop],
-            path == '' ? prop.toString() : path + '.' + prop.toString()
-          )
+          let fullPath = path == '' ? prop.toString() : `${path}.${prop.toString()}`
+          if (!this._proxyCache.has(fullPath))
+            this._proxyCache.set(fullPath, this.proxyObject(target[prop], fullPath))
+          return this._proxyCache.get(fullPath)
         }
         return target[prop]
       },
       set: (target, prop, value) => {
-        let path = target[sourceKeyword] ?? ''
         let parsedPath = path.split('.')
         //parsedPath.push(prop)
 
@@ -91,7 +93,7 @@ export default class ReactiveFileHandle<T extends Object> {
           if (prop != '') originalObject = originalObject[prop]
         }
 
-        if (path != '' || originalObject[prop] != undefined) {
+        if (!(path == '' && originalObject[prop] == undefined)) {
           if (typeof value != 'object') {
             originalObject[prop] = value
           } else originalObject[prop] = this.copyObject(value)
@@ -99,10 +101,13 @@ export default class ReactiveFileHandle<T extends Object> {
           if (typeof target == 'object' && typeof prop == 'string') Vue.set(target, prop, value)
           this._handle.push(this._object)
           return true
-        } else return false
+        } else {
+          if (typeof target == 'object' && typeof prop == 'string') Vue.set(target, prop, value)
+          return true
+        }
       },
       apply: (target: TargetType, thisArg, argArray) => {
-        let path = target[sourceKeyword] ?? ''
+        let path = target[this.sourceKeyword] ?? ''
         let parsedPath = path.split('.')
 
         let originalObject: any = this._object
@@ -123,10 +128,11 @@ export default class ReactiveFileHandle<T extends Object> {
     return this._filePath
   }
 
-  async openFile(filePath: string) {
+  async openFile(filePath: string, fileSystem?: IFileSystem) {
     this._filePath = filePath
 
-    this._handle = new FileObject(new DefaultFileSystem(), filePath)
+    if (fileSystem) this._handle = new FileObject(fileSystem, filePath)
+    else this._handle = new FileObject(new DefaultFileSystem(), filePath)
     let pulled: T = await this._handle.pull()
     this._object = pulled
   }
@@ -146,10 +152,11 @@ export default class ReactiveFileHandle<T extends Object> {
   static async create<ModelType>(
     filePath: string,
     modelVerificator?: Function,
-    defaultModel?: ModelType
+    defaultModel?: ModelType,
+    fileSystem?: IFileSystem
   ): Promise<ReactiveFileHandle<ModelType>> {
     let result = new ReactiveFileHandle<ModelType>()
-    await result.openFile(filePath)
+    await result.openFile(filePath, fileSystem)
     if (modelVerificator) {
       let verificationResult = result.verifyModel(modelVerificator)
       if (verificationResult == ModelState.Corruptted) {

@@ -1,7 +1,7 @@
-import FileSystem from '@/entities/IFileSystem'
+import IFileSystem from '@/entities/IFileSystem'
 import fs from 'fs'
 
-export default class LocalFileSystem implements FileSystem {
+export default class LocalFileSystem implements IFileSystem {
   public async readFile(fileName: string) {
     try {
       return (await fs.promises.readFile(fileName)).toString()

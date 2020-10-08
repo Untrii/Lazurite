@@ -1,4 +1,4 @@
-import ReactiveRepository from '@/repositories/ReactiveRepository'
+import ReactiveRepository from '@/repositories/base/ReactiveRepository'
 
 export default class ReactiveService {
   private onChangeListeners!: Set<Function>

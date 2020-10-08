@@ -1,4 +1,4 @@
-export default interface HistoryRecordInfo {
+export default interface IHistoryRecordInfo {
   icon: string
   actionType: string
   index: number

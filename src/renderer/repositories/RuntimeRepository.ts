@@ -1,4 +1,4 @@
-import ReactiveRepository from './ReactiveRepository'
+import ReactiveRepository from './base/ReactiveRepository'
 import SlideObject from '@/entities/ISlideObject'
 
 export class RuntimeRepository extends ReactiveRepository {

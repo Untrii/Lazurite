@@ -1,38 +1,27 @@
-import HistoryRepository from '@/repositories/HistoryRepository'
-import ReactiveService from '@/services/ReactiveService'
-import HistoryRecord from '@/entities/history/IHistoryRecord'
-import ConstructorService from './ConstructorService'
-import WaybackProperties from '@/entities/history/IWaybackProperties'
-import HistoryDeclarationInfo from '@/entities/history/IHistoryDeclarationInfo'
-import HistoryRecordInfo from '@/entities/history/IHistoryRecordInfo'
-import SlideObject from '@/entities/ISlideObject'
-import CommonRepository from '@/repositories/CommonRepository'
+import IHistoryRecord from '@/entities/history/IHistoryRecord'
+import IWaybackProperties from '@/entities/history/IWaybackProperties'
+import IHistoryDeclarationInfo from '@/entities/history/IHistoryDeclarationInfo'
+import IHistoryRecordInfo from '@/entities/history/IHistoryRecordInfo'
+import ISlideObject from '@/entities/ISlideObject'
+import SlideObjectService from './SlideObjectService'
+import SlideService from './SlideService'
+import HistoryRepository from '@/repositories/NewHistoryRepository'
+import PresentationRepository from '@/repositories/PresentationRepository'
 
-let constructorService = new ConstructorService()
+let slideObjectService = new SlideObjectService()
+let slideService = new SlideService()
 
-export default class HistoryService extends ReactiveService {
-  constructor() {
-    let currentObj: any = super('HistoryService', [HistoryRepository])
-    return currentObj
-  }
-  async getHistory(): Promise<HistoryDeclarationInfo> {
+let history = HistoryRepository.Instance
+let presentation = PresentationRepository.Instance
+
+export default class HistoryService {
+  async getHistory(): Promise<IHistoryDeclarationInfo> {
     console.log('here')
-    let undoInfo: HistoryRecordInfo[] = []
-    let redoInfo: HistoryRecordInfo[] = []
+    let undoInfo: IHistoryRecordInfo[] = []
+    let redoInfo: IHistoryRecordInfo[] = []
 
-    let history = await HistoryRepository.getFile()
     let undo = [...history.undo].reverse()
     let redo = history.redo
-
-    /* | 'resizeElement'
-      | 'moveElement'
-      | 'changeElementProperty'
-      | 'textChange'
-      | 'colorCorrectionChange'
-      | 'deleteSlide'
-      | 'createSlide'
-      | 'deleteElement'
-      | 'createElement',*/
 
     let getIconByType = function(type: string) {
       switch (type) {
@@ -79,7 +68,6 @@ export default class HistoryService extends ReactiveService {
   }
 
   async undo(count: number) {
-    let history = await HistoryRepository.getFile()
     let undo = history.undo
     let redo = history.redo
     for (let i = 0; i < count; i++) {
@@ -89,10 +77,8 @@ export default class HistoryService extends ReactiveService {
         this[record.waybackFunction](record)
       }
     }
-    await HistoryRepository.setFile(history)
   }
   async redo(count: number) {
-    let history = await HistoryRepository.getFile()
     let undo = history.undo
     let redo = history.redo
     for (let i = 0; i < count; i++) {
@@ -102,8 +88,6 @@ export default class HistoryService extends ReactiveService {
         this[record.waybackFunction](record, true)
       }
     }
-
-    await HistoryRepository.setFile(history)
   }
 
   /**
@@ -175,21 +159,16 @@ export default class HistoryService extends ReactiveService {
     )
   }
 
-  registerSlideDelete(index: number, slideData: Map<string, SlideObject>) {
+  registerSlideDelete(index: number, slideData: Map<string, ISlideObject>) {
     console.log('registering slide delete')
     this.registerAction('deleteSlide', { index }, slideData, {})
   }
 
   registerSlideCreate() {
-    this.registerAction(
-      'createSlide',
-      { index: CommonRepository.openedPresentation?.slides.length },
-      null,
-      null
-    )
+    this.registerAction('createSlide', { index: presentation.slides.length }, null, null)
   }
 
-  registerElementDelete(elements: SlideObject[], slideIndex: number) {
+  registerElementDelete(elements: ISlideObject[], slideIndex: number) {
     let ids: string[] = []
     for (const item of elements) {
       ids.push(item.id)
@@ -197,28 +176,18 @@ export default class HistoryService extends ReactiveService {
     this.registerAction('deleteElement', { id: ids.join(';'), index: slideIndex }, elements, null)
   }
 
-  registerElementCreate(element: SlideObject, slideIndex: number) {
+  registerElementCreate(element: ISlideObject, slideIndex: number) {
     this.registerAction('createElement', { id: element.id, index: slideIndex }, element, null)
   }
 
   async registerAction(
-    actionType:
-      | 'resizeElement'
-      | 'moveElement'
-      | 'changeElementProperty'
-      | 'textChange'
-      | 'colorCorrectionChange'
-      | 'deleteSlide'
-      | 'createSlide'
-      | 'deleteElement'
-      | 'createElement',
-
-    waybackArgs: WaybackProperties,
+    actionType: string,
+    waybackArgs: IWaybackProperties,
     oldValue: any,
     newValue: any
   ) {
     console.log('registering action')
-    let newRecord: HistoryRecord = {
+    let newRecord: IHistoryRecord = {
       actionType,
       timeStamp: new Date().getTime(),
       waybackFunction: 'nullWayback',
@@ -251,7 +220,7 @@ export default class HistoryService extends ReactiveService {
         newRecord.waybackFunction = 'createElementWayback'
         break
     }
-    let history = await HistoryRepository.getFile()
+
     history.redo = []
     if (isStackAllowed && history.undo.length > 0) {
       let lastElem = history.undo[history.undo.length - 1]
@@ -265,9 +234,6 @@ export default class HistoryService extends ReactiveService {
       }
     }
     history.undo.push(newRecord)
-
-    await HistoryRepository.setFile(history)
-    this.onChange()
   }
 
   /**
@@ -275,67 +241,58 @@ export default class HistoryService extends ReactiveService {
    * @param record History record
    * @param reverse true for redo
    */
-  changeElementWayback(record: HistoryRecord, reverse?: boolean) {
+  changeElementWayback(record: IHistoryRecord, reverse?: boolean) {
     //args: any, oldValue: object, newValue: object
     let id = record.waybackArguments?.id ?? 'null'
-    constructorService.changeObjectProperties(id, reverse ? record.newValue : record.oldValue)
+    slideObjectService.changeObjectProperties(id, reverse ? record.newValue : record.oldValue)
   }
 
-  deleteSlideWayback(record: HistoryRecord, reverse?: boolean) {
-    if (!CommonRepository.openedPresentation) return
+  deleteSlideWayback(record: IHistoryRecord, reverse?: boolean) {
     if (!reverse) {
-      let newSlideArray: Map<string, SlideObject>[] = []
-      let oldSlideArray = CommonRepository.openedPresentation.slides
+      let newSlideArray: Map<string, ISlideObject>[] = []
+      let oldSlideArray = presentation.slides
       for (let i = 0; i < oldSlideArray.length; i++) {
         const slide = oldSlideArray[i]
         if (i == record.waybackArguments.index) newSlideArray.push(record.oldValue)
         newSlideArray.push(slide)
       }
       if (record.waybackArguments.index == oldSlideArray.length) newSlideArray.push(record.oldValue)
-      CommonRepository.openedPresentation.slides = newSlideArray
-      CommonRepository.commitPresentationChanges()
+      presentation.slides = newSlideArray
     } else {
-      constructorService.deleteSlide(record.waybackArguments.index ?? 0)
+      slideService.deleteSlide(record.waybackArguments.index ?? 0)
     }
   }
 
-  createSlideWayback(record: HistoryRecord, reverse?: boolean) {
-    if (!CommonRepository.openedPresentation) return
+  createSlideWayback(record: IHistoryRecord, reverse?: boolean) {
     if (!reverse) {
-      if (record.waybackArguments.index)
-        constructorService.deleteSlide(record.waybackArguments.index)
+      if (record.waybackArguments.index) slideService.deleteSlide(record.waybackArguments.index)
     } else {
-      constructorService.createSlide()
+      slideService.createSlide()
     }
   }
 
-  deleteElementWayback(record: HistoryRecord, reverse?: boolean) {
-    if (!CommonRepository.openedPresentation) return
+  deleteElementWayback(record: IHistoryRecord, reverse?: boolean) {
     if (!reverse) {
-      let slide = CommonRepository.openedPresentation.slides[record.waybackArguments.index ?? 0]
+      let slide = presentation.slides[record.waybackArguments.index ?? 0]
       for (const item of record.oldValue) {
         slide.set(item.id, item)
       }
-      CommonRepository.commitPresentationChanges()
     } else {
-      let slide = CommonRepository.openedPresentation.slides[record.waybackArguments.index ?? 0]
+      let slide = presentation.slides[record.waybackArguments.index ?? 0]
       for (const item of record.oldValue) {
         try {
           slide.delete(item.id)
         } catch {}
       }
-      CommonRepository.commitPresentationChanges()
     }
   }
 
-  createElementWayback(record: HistoryRecord, reverse?: boolean) {
-    if (!CommonRepository.openedPresentation) return
-    let slide = CommonRepository.openedPresentation.slides[record.waybackArguments.index ?? 0]
+  createElementWayback(record: IHistoryRecord, reverse?: boolean) {
+    let slide = presentation.slides[record.waybackArguments.index ?? 0]
     if (!reverse) {
       slide.delete(record.waybackArguments.id ?? '')
     } else {
       slide.set(record.oldValue.id, record.oldValue)
     }
-    CommonRepository.commitPresentationChanges()
   }
 }

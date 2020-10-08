@@ -28,13 +28,17 @@ export default class Color {
     return this
   }
 
+  public static fromRgb(r: number, g: number, b: number, a?: number) {
+    let result = new Color()
+    result.r = r
+    result.g = g
+    result.b = b
+
+    return result
+  }
+
   public toHex(): string {
-    return (
-      '#' +
-      ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b)
-        .toString(16)
-        .slice(1)
-    )
+    return '#' + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16).slice(1)
   }
 
   public toCssColor(): string {

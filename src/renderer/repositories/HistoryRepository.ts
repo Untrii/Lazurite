@@ -1,7 +1,7 @@
-import ReactiveRepository from './ReactiveRepository'
-import FileObject from './FileObject'
-import LocalFileSystem from './LocalFileSystem'
-import HistoryDeclaration from '@/entities/history/HistoryDeclaration'
+import ReactiveRepository from './base/ReactiveRepository'
+import FileObject from './fileSystems/FileObject'
+import LocalFileSystem from './fileSystems/LocalFileSystem'
+import HistoryDeclaration from '@/entities/history/IHistoryDeclaration'
 
 export class HistoryRepository extends ReactiveRepository {
   private _handle!: FileObject
@@ -23,11 +23,11 @@ export class HistoryRepository extends ReactiveRepository {
     else
       await this.setFile({
         undo: [],
-        redo: [],
+        redo: []
       })
     return {
       undo: [],
-      redo: [],
+      redo: []
     }
   }
   async setFile(file: HistoryDeclaration) {
