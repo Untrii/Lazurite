@@ -15,7 +15,7 @@ let history = HistoryRepository.Instance
 let presentation = PresentationRepository.Instance
 
 export default class HistoryService {
-  async getHistory(): Promise<IHistoryDeclarationInfo> {
+  getHistory(): IHistoryDeclarationInfo {
     console.log('here')
     let undoInfo: IHistoryRecordInfo[] = []
     let redoInfo: IHistoryRecordInfo[] = []

@@ -16,14 +16,14 @@
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import EditorService from '@/services/EditorService'
 import SizeEditor from './editors/SizeEditor.vue'
 import SpreadsheetEditor from './editors/SpreadsheetEditor.vue'
 import ColorCorrectionEditor from './editors/ColorCorrectionEditor.vue'
 import TextEditor from './editors/TextEditor.vue'
 import FigureEditor from './editors/FigureEditor.vue'
+import ConstrctorStore from '@/services/store/ConstructorStore'
 
-let service = new EditorService()
+let store = new ConstrctorStore()
 
 @Component({
   components: {
@@ -31,8 +31,8 @@ let service = new EditorService()
     SpreadsheetEditor,
     ColorCorrectionEditor,
     TextEditor,
-    FigureEditor,
-  },
+    FigureEditor
+  }
 })
 export default class EditTab extends Vue {
   isOneElementSelected: boolean = false
@@ -42,23 +42,14 @@ export default class EditTab extends Vue {
 
   getState() {
     //this.element = service.
-    this.isOneElementSelected = service.isOneElementSelected
-    this.element = service.selectedElement
+    this.isOneElementSelected = store.isOneElementSelected
+    this.element = store.selectedElement
     this.elementType = this.element.type ?? ''
   }
 
   @Watch('elementType')
   onElementTypeChange() {
-    this.editableProps = service.getEditableProperties(this.element.type ?? '')
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
+    this.editableProps = store.getEditableProperties(this.element.type ?? '')
   }
 
   getEditorType(propertyName) {
@@ -87,7 +78,7 @@ export default class EditTab extends Vue {
       'opacity',
       'saturate',
       'sepia',
-      'dropShadow',
+      'dropShadow'
     ])
   }
 

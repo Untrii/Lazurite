@@ -1,16 +1,5 @@
 <template>
   <div class="history">
-    <!-- <div
-      class="history__item history__item_disabled"
-      v-for="item in history.redo"
-      @click="onRedoClick(item.index)"
-      :key="item.index"
-    >
-      {{ item.actionType }}
-    </div>
-    <div class="history__item" v-for="item in history.undo" @click="onUndoClick(item.index)" :key="item.index">
-      {{ item.actionType }}
-    </div> -->
     <lz-button
       v-for="item in history.redo"
       @click="onRedoClick(item.index)"
@@ -37,33 +26,21 @@
 /* eslint-disable-file no-use-before-define */
 // eslint-disable vue/require-v-for-key
 import { Vue, Component } from 'vue-property-decorator'
-import HistoryService from '@/services/HistoryService'
-import HistoryDeclarationInfo from '@/entities/history/HistoryDeclarationInfo'
-import HistoryRecordInfo from '@/entities/history/HistoryRecordInfo'
+import IHistoryDeclarationInfo from '@/entities/history/IHistoryDeclarationInfo'
+import IHistoryRecordInfo from '@/entities/history/IHistoryRecordInfo'
+import HistoryService from '@/services/constructor/HistoryService'
 
 let service = new HistoryService()
 
 @Component
 export default class HistoryTab extends Vue {
-  history: HistoryDeclarationInfo = {
-    redo: [],
-    undo: [],
-  }
+  history: IHistoryDeclarationInfo = service.getHistory()
   async getState() {
     this.history = await service.getHistory()
   }
 
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
-
   getImageFor(index: number, arrayName: string) {
-    let arr: HistoryRecordInfo[] = []
+    let arr: IHistoryRecordInfo[] = []
     if (arrayName == 'undo') arr = this.history.undo
     else arr = this.history.redo
     return arr[index].icon
