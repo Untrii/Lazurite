@@ -34,27 +34,16 @@
 <script lang="ts">
 import Color from '@/entities/Color'
 import IColor from '@/entities/IColor'
-import EditorService from '@/services/EditorService'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
 import { Vue, Component } from 'vue-property-decorator'
+import ConstructorStore from '@/services/store/ConstructorStore'
 
-let service = new EditorService()
+let store = new ConstructorStore()
+let service = new SlideObjectService()
 
 @Component
 export default class FigureEditor extends Vue {
-  element: any = {}
-  getState() {
-    this.element = service.selectedElement
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
+  element: any = store.selectedElement
 
   onColorChange(newVal: IColor, propertyName: string) {
     let color = new Color()

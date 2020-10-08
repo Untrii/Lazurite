@@ -40,9 +40,7 @@ export default class ConstrctorStore {
   }
 
   get selectedElement(): ISlideObject | any {
-    for (const entry of runtimeData.selectedObjectsIds) {
-      return this.elementById(entry)
-    }
+    for (const entry of runtimeData.selectedObjectsIds) return this.elementById(entry)
     return {}
   }
 

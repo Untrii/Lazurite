@@ -45,68 +45,57 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import EditorService from '@/services/EditorService'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
+import ConstructorStore from '@/services/store/ConstructorStore'
 
-let service = new EditorService()
+let store = new ConstructorStore()
+let service = new SlideObjectService()
 
 @Component
 export default class SizeEditor extends Vue {
-  element: any = {}
+  element: any = store.selectedElement
 
   optionGroups = {
     highlight: [
       {
         displayName: 'Top',
-        propertyName: 'highlightTop',
+        propertyName: 'highlightTop'
       },
       {
         displayName: 'Bottom',
-        propertyName: 'highlightBottom',
+        propertyName: 'highlightBottom'
       },
       {
         displayName: 'Left',
-        propertyName: 'highlightLeft',
+        propertyName: 'highlightLeft'
       },
       {
         displayName: 'Right',
-        propertyName: 'highlightRight',
-      },
+        propertyName: 'highlightRight'
+      }
     ],
     strip: [
       {
         displayName: 'Horizontally',
-        propertyName: 'stripHorizontally',
+        propertyName: 'stripHorizontally'
       },
       {
         displayName: 'Vertically',
-        propertyName: 'stripVertically',
-      },
-    ],
+        propertyName: 'stripVertically'
+      }
+    ]
   }
 
   checkers = [
     {
       displayName: 'Dark style',
-      propertyName: 'darkStyle',
+      propertyName: 'darkStyle'
     },
     {
       displayName: 'Show borders',
-      propertyName: 'showBorders',
-    },
+      propertyName: 'showBorders'
+    }
   ]
-
-  getState() {
-    this.element = service.selectedElement
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
 
   onInput(propertyName, newVal) {
     service.changeSelectedObjectProperty(propertyName, newVal)

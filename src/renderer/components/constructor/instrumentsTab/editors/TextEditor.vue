@@ -11,7 +11,11 @@
         size="small"
         class="text-editor__input"
       ></lz-number-input>
-      <lz-color-input prepend="Text color" @input="onColorChange" class="text-editor__input"></lz-color-input>
+      <lz-color-input
+        prepend="Text color"
+        @input="onColorChange"
+        class="text-editor__input"
+      ></lz-color-input>
       <div class="switch-group text-editor__input">
         <lz-prepend :minWidth="140" size="small">
           Vertical align
@@ -57,49 +61,35 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import EditorService from '@/services/EditorService'
-import ITextBlock from '@/entities/slideObjects/ITextBlock'
 import Color from '@/entities/Color'
-import ElementService from '@/services/ElementService'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
+import ConstructorStore from '@/services/store/ConstructorStore'
+import ElementPresetFactory from '@/services/constructor/ElementPresetFactory'
 
-let service = new EditorService()
-let elementService = new ElementService()
+let store = new ConstructorStore()
+let service = new SlideObjectService()
+let elementPresetFactory = new ElementPresetFactory()
 
 @Component
 export default class TextEditor extends Vue {
-  selectedVerticalAlign = 'top'
-  selectedHorizontalAlign = 'left'
-  fontSize = 0
-  presetNames: string[] = []
+  selectedVerticalAlign = store.selectedElement.verticalAlign
+  selectedHorizontalAlign = store.selectedElement.horizontalAlign
+  fontSize = store.selectedElement.fontSize
+  presetNames = this.getPresetNames()
 
   verticalAlignVariants = ['top', 'center', 'bottom']
   horizontalAlignVariants = ['left', 'center', 'right']
 
-  getState() {
-    let element: ITextBlock = service.selectedElement
-
-    this.selectedVerticalAlign = element.verticalAlign
-    this.selectedHorizontalAlign = element.horizontalAlign
-    this.fontSize = element.fontSize
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-
-    console.log('here')
-    let groups = elementService.getGroups()
+  getPresetNames() {
+    let result: string[] = []
+    let groups = elementPresetFactory.getGroups()
     let textGroup = groups.get('text')
     if (textGroup) {
       for (const item of textGroup) {
-        this.presetNames.push(item.name)
+        result.push(item.name)
       }
     }
-  }
-
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
+    return result
   }
 
   onFontSizeChange(newVal) {

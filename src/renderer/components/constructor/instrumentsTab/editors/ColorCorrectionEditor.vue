@@ -24,16 +24,18 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import EditorService from '@/services/EditorService'
-import HistoryService from '@/services/HistoryService'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
+import HistoryService from '@/services/constructor/HistoryService'
+import ConstructorStore from '@/services/store/ConstructorStore'
 
-let service = new EditorService()
+let store = new ConstructorStore()
+let service = new SlideObjectService()
 let historyService = new HistoryService()
 let startVal: null | string = null
 
 @Component
 export default class ColorCorrectionEditor extends Vue {
-  element: any = {}
+  element: any = store.selectedElement
 
   forms = [
     {
@@ -41,78 +43,65 @@ export default class ColorCorrectionEditor extends Vue {
       propertyName: 'blur',
       min: 0,
       max: 30,
-      default: 0,
+      default: 0
     },
     {
       displayName: 'Brightness',
       propertyName: 'brightness',
       min: 0,
       max: 2,
-      default: 1,
+      default: 1
     },
     {
       displayName: 'Contrast',
       propertyName: 'contrast',
       min: 0,
       max: 2,
-      default: 1,
+      default: 1
     },
     {
       displayName: 'Grayscale',
       propertyName: 'grayscale',
       min: 0,
       max: 1,
-      default: 0,
+      default: 0
     },
     {
       displayName: 'Hue rotate',
       propertyName: 'hueRotate',
       min: 0,
       max: 360,
-      default: 0,
+      default: 0
     },
     {
       displayName: 'Opacity',
       propertyName: 'opacity',
       min: 0,
       max: 1,
-      default: 1,
+      default: 1
     },
     {
       displayName: 'Saturate',
       propertyName: 'saturate',
       min: 0,
       max: 5,
-      default: 1,
+      default: 1
     },
     {
       displayName: 'Sepia',
       propertyName: 'sepia',
       min: 0,
       max: 1,
-      default: 0,
+      default: 0
     },
     {
       displayName: 'Drop shadow',
       propertyName: 'dropShadow',
       min: 0,
       max: 40,
-      default: 0,
-    },
+      default: 0
+    }
   ]
-
-  getState() {
-    this.element = service.selectedElement
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
 
   onInput(propertyName, newVal) {
     if (typeof newVal != 'number') newVal = parseFloat(newVal)

@@ -3,14 +3,9 @@
     <div class="root" :style="tabStyle">
       <preview></preview>
       <workspace></workspace>
-      <instruments
-        @demonstration-started="demonstrationOpened = true"
-      ></instruments>
+      <instruments @demonstration-started="demonstrationOpened = true"></instruments>
     </div>
-    <demonstration
-      v-if="demonstrationOpened"
-      @closed="demonstrationOpened = false"
-    ></demonstration>
+    <demonstration v-if="demonstrationOpened" @closed="demonstrationOpened = false"></demonstration>
   </div>
 </template>
 
@@ -19,46 +14,37 @@ import { Vue, Component } from 'vue-property-decorator'
 import Preview from './components/constructor/Preview.vue'
 import Workspace from './components/constructor/Workspace.vue'
 import Instruments from './components/constructor/Instruments.vue'
-import ConstructorService from './services/ConstructorService'
 import Demonstration from './components/constructor/Demonstration.vue'
+import ConstructorStore from '@/services/store/ConstructorStore'
+import HotkeysService from '@/services/constructor/HotkeysService'
 
-let service = new ConstructorService()
+let store = new ConstructorStore()
+let hotkeyService = new HotkeysService()
 
 @Component({
   components: {
     Preview,
     Workspace,
     Instruments,
-    Demonstration,
-  },
+    Demonstration
+  }
 })
 export default class ConstructorTab extends Vue {
-  previewSize = 0
-  instrumentsSize = 0
-  timelineSize = 0
+  previewSize = store.previewModuleSize
+  instrumentsSize = store.instrumentsModuleSize
+  timelineSize = store.timelineModuleSize
   demonstrationOpened = false
 
-  getState() {
-    this.previewSize = service.previewModuleSize ?? 0
-    this.instrumentsSize = service.instrumentsModuleSize ?? 0
-    this.timelineSize = service.timelineModuleSize ?? 0
-  }
-
-  onChangeListener: Function = () => this.getState()
   beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-    service.bindDefaultConstructorHotkeys()
+    hotkeyService.bindDefaultConstructorHotkeys()
   }
   beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-    service.unbindDefaultConstructorHotkeys()
+    hotkeyService.unbindDefaultConstructorHotkeys()
   }
 
   get tabStyle() {
     return {
-      gridTemplateColumns:
-        this.previewSize + 'px 1fr ' + this.instrumentsSize + 'px',
+      gridTemplateColumns: this.previewSize + 'px 1fr ' + this.instrumentsSize + 'px'
     }
   }
 }
