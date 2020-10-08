@@ -9,7 +9,7 @@ let presentation = PresentationRepository.Instance
 let runtimeData = RuntimeRepository.Instance.data
 
 export default class ConstrctorStore {
-  get selectedSlideIndex(): number | undefined {
+  get selectedSlideIndex(): number {
     return runtimeData.selectedSlideIndex
   }
   get selectedObjectId(): string | undefined {

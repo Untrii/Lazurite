@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="slide"
-    :style="rootStyle"
-    :class="rootClasses"
-    v-if="isRedactable"
-  >
+  <div class="slide" :style="rootStyle" :class="rootClasses" v-if="isRedactable">
     <redactable-base-element
       v-for="id in elementIds"
       :key="id"
@@ -13,52 +8,37 @@
     ></redactable-base-element>
   </div>
   <div class="slide" :style="rootStyle" :class="rootClasses" v-else>
-    <base-element
-      v-for="id in elementIds"
-      :key="id"
-      :id="id"
-      :scale="width / 1920"
-    ></base-element>
+    <base-element v-for="id in elementIds" :key="id" :id="id" :scale="width / 1920"></base-element>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import BaseElement from '@/components/elements/BaseElement.vue'
 import RedactableBaseElement from './redactableElements/RedactableBaseElement.vue'
-import VisualisationService from '@/services/VisualisationService'
-import ITheme, { getBlankTheme, BackgroundType } from '@/entities/ITheme'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import { BackgroundType } from '@/entities/ITheme'
 
-let service = new VisualisationService()
+let store = new ConstrctorStore()
 
 @Component({
   components: {
     BaseElement,
-    RedactableBaseElement,
-  },
+    RedactableBaseElement
+  }
 })
 export default class Slide extends Vue {
-  elementIds: string[] = []
-  theme: ITheme = getBlankTheme()
+  get elementIds() {
+    return Array.from(store.slideByIndex(this.index).keys())
+  }
+  get theme() {
+    return store.presentation.theme
+  }
   @Prop(Number) index
   @Prop(Number) width
   @Prop(Number) height
   @Prop(Boolean) isRedactable
 
-  @Watch('index')
-  getState() {
-    this.elementIds = Array.from(service.slideByIndex(this.index).keys())
-    this.theme = { ...service.theme }
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
   mounted() {
     requestAnimationFrame(() => this.animateSlideOpacity())
   }
@@ -68,7 +48,7 @@ export default class Slide extends Vue {
     console.log('anumate slide')
     let win: any = window
     if (!win.__enqueueSlideAnimation) {
-      win.__enqueueSlideAnimation = (func) => {
+      win.__enqueueSlideAnimation = func => {
         if (!win.__slideAnimationQueue) {
           win.__slideAnimationQueue = []
         }
@@ -78,8 +58,7 @@ export default class Slide extends Vue {
           let animateFunction = () => {
             win.__slideAnimationQueue[0]()
             win.__slideAnimationQueue.splice(0, 1)
-            if (win.__slideAnimationQueue.length > 0)
-              requestAnimationFrame(animateFunction)
+            if (win.__slideAnimationQueue.length > 0) requestAnimationFrame(animateFunction)
             else win.__slideAnimationPlanned = false
           }
           requestAnimationFrame(animateFunction)
@@ -104,13 +83,13 @@ export default class Slide extends Vue {
     switch (type) {
       case BackgroundType.Color:
         bgStyle = {
-          background: val,
+          background: val
         }
         break
       case BackgroundType.Gradient:
       case BackgroundType.Gradicolor:
         bgStyle = {
-          backgroundImage: 'linear-gradient(' + val + ')',
+          backgroundImage: 'linear-gradient(' + val + ')'
         }
         break
       case BackgroundType.Pattern:
@@ -124,7 +103,7 @@ export default class Slide extends Vue {
             '/data' +
             val +
             '")',
-          backgroundSize: '20%',
+          backgroundSize: '20%'
         }
         break
       case BackgroundType.Image:
@@ -138,7 +117,7 @@ export default class Slide extends Vue {
             '/data' +
             val +
             '")',
-          backgroundSize: 'cover',
+          backgroundSize: 'cover'
         }
         break
     }
@@ -146,13 +125,12 @@ export default class Slide extends Vue {
     return {
       height: this.height + 'px',
       width: this.width + 'px',
-      ...bgStyle,
+      ...bgStyle
     }
   }
   get rootClasses() {
     let result: string[] = []
-    if (this.isVisible)
-      result.push(this.isRedactable ? 'slide_visible-fast' : 'slide_visible')
+    if (this.isVisible) result.push(this.isRedactable ? 'slide_visible-fast' : 'slide_visible')
     return result
   }
 }

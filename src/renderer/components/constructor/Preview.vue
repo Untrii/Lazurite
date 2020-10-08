@@ -1,7 +1,12 @@
 <template>
   <div class="preview" :style="rootStyle">
     <div class="preview__content">
-      <div v-for="(s, index) in slides" :key="index" :class="itemClasses(index)" @click="selectSlide(index)">
+      <div
+        v-for="(s, index) in slides"
+        :key="index"
+        :class="itemClasses(index)"
+        @click="selectSlide(index)"
+      >
         <div :style="itemStyle" class="preview__item">
           <slide :index="parseInt(index)" :height="previewHeight" :width="previewWidth"></slide>
         </div>
@@ -19,37 +24,29 @@
 <script lang="ts">
 import assets from '@/assets/index'
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '@/services/ConstructorService'
-import ISlideObject from '@/entities/ISlideObject'
 import Slide from './Slide.vue'
-import HistoryService from '@/services/HistoryService'
+import HistoryService from '@/services/constructor/HistoryService'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import SlideService from '@/services/constructor/SlideService'
 
-let service = new ConstructorService()
 let historyService = new HistoryService()
+let store = new ConstrctorStore()
+let slideService = new SlideService()
 
 @Component({
   components: {
-    Slide,
-  },
+    Slide
+  }
 })
 export default class Preview extends Vue {
-  previewSize = 0
-  selectedSlideIndex = 0
-  slides: Map<string, ISlideObject>[] = []
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
+  get previewSize() {
+    return store.previewModuleSize
   }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
+  get selectedSlideIndex() {
+    return store.selectedSlideIndex
   }
-
-  getState() {
-    this.previewSize = service.previewModuleSize ?? 0
-    this.selectedSlideIndex = service.selectedSlideIndex ?? 0
-    if (service.presentation) this.slides = { ...service.presentation?.slides }
+  get slides() {
+    return store.presentation.slides
   }
 
   get assets(): any {
@@ -57,12 +54,12 @@ export default class Preview extends Vue {
   }
   get rootStyle(): object {
     return {
-      width: this.previewSize + 'px',
+      width: this.previewSize + 'px'
     }
   }
   get itemStyle(): object {
     return {
-      height: this.previewHeight + 'px',
+      height: this.previewHeight + 'px'
     }
   }
   get previewHeight() {
@@ -72,22 +69,24 @@ export default class Preview extends Vue {
     return this.previewSize - 40
   }
   itemClasses(index: number): string[] {
-    return ['preview__item-wrap', this.selectedSlideIndex == index ? 'preview__item-wrap_selected' : '']
+    return [
+      'preview__item-wrap',
+      this.selectedSlideIndex == index ? 'preview__item-wrap_selected' : ''
+    ]
   }
 
   createSlide() {
-    service.createSlide()
+    slideService.createSlide()
     historyService.registerSlideCreate()
-    this.getState()
   }
   selectSlide(index: number | string) {
     console.log('preview')
     if (typeof index == 'string') index = parseInt(index)
-    service.selectSlide(index)
+    slideService.selectSlide(index)
   }
   deleteSlide(index: number) {
     console.log('here')
-    let slide = service.deleteSlide(index)
+    let slide = slideService.deleteSlide(index)
     if (slide) {
       historyService.registerSlideDelete(index, slide)
     }

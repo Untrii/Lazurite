@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="demonstration"
-    v-if="selectedSlideIndex >= 0"
-    :class="rootClasses"
-  >
+  <div class="demonstration" v-if="selectedSlideIndex >= 0" :class="rootClasses">
     <slide
       :index="selectedSlideIndex"
       :width="currentSlideWidth"
@@ -16,25 +12,30 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import ConstructorService from '@/services/ConstructorService'
 import Slide from './Slide.vue'
 import Hotkeys from '@/utils/Hotkeys'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import SlideService from '@/services/constructor/SlideService'
 
-let service = new ConstructorService()
+let store = new ConstrctorStore()
+let service = new SlideService()
 
 @Component({
   components: {
-    Slide,
-  },
+    Slide
+  }
 })
 export default class Demonstration extends Vue {
-  selectedSlideIndex = -1
   isVisible = false
   animationEnded = false
   startSlideWidth = 1
   windowHeight = 0
   windowWidth = 0
   animationProgress = 0
+
+  get selectedSlideIndex() {
+    return store.selectedSlideIndex
+  }
 
   get demonstrationAreaHeight(): number {
     return this.windowHeight
@@ -48,30 +49,20 @@ export default class Demonstration extends Vue {
   }
 
   get slideHeigth() {
-    return Math.min(
-      this.demonstrationAreaHeight,
-      (this.demonstrationAreaWidth / 16) * 9
-    )
+    return Math.min(this.demonstrationAreaHeight, (this.demonstrationAreaWidth / 16) * 9)
   }
 
   get slideWidth() {
-    return Math.min(
-      this.demonstrationAreaWidth,
-      (this.demonstrationAreaHeight / 9) * 16
-    )
+    return Math.min(this.demonstrationAreaWidth, (this.demonstrationAreaHeight / 9) * 16)
   }
 
   get currentSlideWidth() {
-    return (
-      (this.slideWidth - this.startSlideWidth) * this.animationProgress +
-      this.startSlideWidth
-    )
+    return (this.slideWidth - this.startSlideWidth) * this.animationProgress + this.startSlideWidth
   }
 
   get currentSlideHeight() {
     return (
-      (this.slideHeigth - this.startSlideHeight) * this.animationProgress +
-      this.startSlideHeight
+      (this.slideHeigth - this.startSlideHeight) * this.animationProgress + this.startSlideHeight
     )
   }
 
@@ -101,8 +92,8 @@ export default class Demonstration extends Vue {
 
   get workspacePosition(): { x: number; y: number } {
     return {
-      x: service.previewModuleSize ?? 0 + 40,
-      y: 51,
+      x: store.previewModuleSize ?? 0 + 40,
+      y: 51
     }
   }
 
@@ -110,37 +101,19 @@ export default class Demonstration extends Vue {
     let result = 1
 
     result =
-      window.innerWidth -
-      (service.previewModuleSize ?? 0) -
-      (service.instrumentsModuleSize ?? 0) -
-      40
-    if (
-      window.innerHeight <
-      (result / 16) * 9 + 75 + (service.timelineModuleSize ?? 0)
-    )
-      result =
-        ((window.innerHeight - (service.timelineModuleSize ?? 0) - 75) / 9) * 16
+      window.innerWidth - (store.previewModuleSize ?? 0) - (store.instrumentsModuleSize ?? 0) - 40
+    if (window.innerHeight < (result / 16) * 9 + 75 + (store.timelineModuleSize ?? 0))
+      result = ((window.innerHeight - (store.timelineModuleSize ?? 0) - 75) / 9) * 16
     return result
   }
 
-  getState() {
-    this.selectedSlideIndex = service.selectedSlideIndex ?? -1
-  }
-
-  onChangeListener: Function = () => this.getState()
   beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
     this.windowHeight = window.innerHeight
     this.windowWidth = window.innerWidth
     this.startSlideWidth = this.recalcStartSlideWidth()
   }
 
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
   mounted() {
-    this.getState()
     window.addEventListener('resize', () => {
       this.windowHeight = window.innerHeight
       this.windowWidth = window.innerWidth
@@ -149,8 +122,8 @@ export default class Demonstration extends Vue {
     requestAnimationFrame(() => (this.isVisible = true))
     requestAnimationFrame(() => this.animate())
 
-    Hotkeys.bind('z', () => service.selectSlide(this.selectedSlideIndex - 1))
-    Hotkeys.bind('x', () => service.selectSlide(this.selectedSlideIndex + 1))
+    Hotkeys.bind('z', () => service.selectSlide(store.selectedSlideIndex - 1))
+    Hotkeys.bind('x', () => service.selectSlide(store.selectedSlideIndex + 1))
     Hotkeys.bind('c', () => {
       this.$emit('closed')
       document.exitFullscreen()
@@ -167,8 +140,7 @@ export default class Demonstration extends Vue {
 
   get rootClasses() {
     let result: string[] = []
-    if (this.isVisible && !this.animationEnded)
-      result.push('demonstration_appear')
+    if (this.isVisible && !this.animationEnded) result.push('demonstration_appear')
     else if (this.animationEnded) result.push('demonstration_no-anim')
     return result
   }
@@ -177,7 +149,7 @@ export default class Demonstration extends Vue {
     return {
       marginLeft: this.currentMarginLeft + 'px',
       marginTop: this.currentMarginTop + 'px',
-      transition: '0s',
+      transition: '0s'
     }
   }
 }
