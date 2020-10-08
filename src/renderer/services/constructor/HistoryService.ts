@@ -5,7 +5,7 @@ import IHistoryRecordInfo from '@/entities/history/IHistoryRecordInfo'
 import ISlideObject from '@/entities/ISlideObject'
 import SlideObjectService from './SlideObjectService'
 import SlideService from './SlideService'
-import HistoryRepository from '@/repositories/NewHistoryRepository'
+import HistoryRepository from '@/repositories/HistoryRepository'
 import PresentationRepository from '@/repositories/PresentationRepository'
 
 let slideObjectService = new SlideObjectService()

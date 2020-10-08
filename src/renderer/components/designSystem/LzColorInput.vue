@@ -27,34 +27,24 @@
 <script lang="ts">
 import 'reflect-metadata'
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import DesignService from '@/services/DesignService'
 import IColor from '@/entities/IColor'
 import Color from '@/entities/Color'
 import ColorPalette from '@/components/dialogs/ColorPalette.vue'
+import DesignStore from '@/services/store/DesignStore'
 
-let service = new DesignService()
+let store = new DesignStore()
 
 @Component({
   components: {
-    ColorPalette,
-  },
+    ColorPalette
+  }
 })
 export default class LzColorInput extends Vue {
   @Prop({ default: '' }) prepend!: string
   @Prop({ default: 'small' }) size!: string
-  colors: IColor[] = []
-  getState() {
-    this.colors = service.theme.palette
-  }
 
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
+  get colors(): IColor[] {
+    return store.theme.palette
   }
 
   get prependSize() {
@@ -73,7 +63,7 @@ export default class LzColorInput extends Vue {
     //if color isnt instance of Color
     console.log('here')
     return {
-      backgroundColor: color.toCssColor(),
+      backgroundColor: color.toCssColor()
     }
   }
 

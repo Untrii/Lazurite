@@ -36,28 +36,28 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import BackgroundModule from './components/design/BackgroundModule.vue'
 import ColorModule from './components/design/ColorModule.vue'
 import TypographyModule from './components/design/TypographyModule.vue'
+import DesignStore from './services/store/DesignStore'
 import localize from './utils/locales'
-import DesignService from './services/DesignService'
 
-const service = new DesignService()
+let store = new DesignStore()
 
 @Component({
   components: {
     BackgroundModule,
     ColorModule,
-    TypographyModule,
-  },
+    TypographyModule
+  }
 })
 export default class DesignTab extends Vue {
   selectedTab: string = 'background'
 
   beforeMount() {
-    this.selectedTab = service.openedTab
+    this.selectedTab = store.openedTab
   }
 
   @Watch('selectedTab')
   updateTab() {
-    service.openedTab = this.selectedTab
+    store.openedTab = this.selectedTab
   }
 
   localize(str) {

@@ -1,5 +1,5 @@
 import PresentationRepository from '@/repositories/PresentationRepository'
-import RuntimeRepository from '@/repositories/NewRuntimeRepository'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
 import IPresentation from '@/entities/IPresentation'
 import ISlideObject, { getBlankObject } from '@/entities/ISlideObject'
 import BlankObjects from '@/entities/slideObjects/BlankObjects'

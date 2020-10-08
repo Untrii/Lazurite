@@ -1,6 +1,7 @@
 export default interface IFileSystem {
   readFile: ReadFunction
   writeFile: WriteFunction
+  readFileSync: SyncReadFunction
 }
 
 export interface ReadFunction {
@@ -8,4 +9,7 @@ export interface ReadFunction {
 }
 export interface WriteFunction {
   (fileName: string, data: string): Promise<void>
+}
+export interface SyncReadFunction {
+  (fileName: string): string
 }

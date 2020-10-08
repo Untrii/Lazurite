@@ -5,10 +5,10 @@ import ReactiveFileHandle from './fileSystems/ReactiveFileHandle'
 
 export default class BackgroundsRepository extends SingletoneRepository
   implements IBackgroundCollection {
-  static async init(filePath: string) {
+  static init(filePath: string) {
     let model = getBlankCollection()
     let verificator = ModelVerificator.createVerificator(model)
-    let fileHandle = await ReactiveFileHandle.create(filePath, verificator, model)
+    let fileHandle = ReactiveFileHandle.create(filePath, verificator, model)
     this.setInstance(new BackgroundsRepository(fileHandle))
   }
 

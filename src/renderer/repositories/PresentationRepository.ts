@@ -4,10 +4,10 @@ import ReactiveFileHandle from './fileSystems/ReactiveFileHandle'
 import SingletoneRepository from './base/SingletoneRepository'
 
 export default class PresentationRepository extends SingletoneRepository implements IPresentation {
-  static async init(filePath: string) {
+  static init(filePath: string) {
     let model = getBlankPresentation()
     let verificator = ModelVerificator.createVerificator(model)
-    let fileHandle = await ReactiveFileHandle.create(filePath, verificator, model)
+    let fileHandle = ReactiveFileHandle.create(filePath, verificator, model)
     this.setInstance(new PresentationRepository(fileHandle))
   }
 

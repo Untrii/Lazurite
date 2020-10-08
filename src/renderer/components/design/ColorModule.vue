@@ -3,7 +3,12 @@
     <h2 class="header">
       Selected palette:
     </h2>
-    <div class="palette" @mouseenter="showPrompt(10)" @mouseleave="hidePrompt(10)" style="max-width: 100vw;">
+    <div
+      class="palette"
+      @mouseenter="showPrompt(10)"
+      @mouseleave="hidePrompt(10)"
+      style="max-width: 100vw;"
+    >
       <lz-prompt
         text="CTRL+Click to delete color, SHIFT+Click to edit color"
         :is-visible="hoveredPalette == 10"
@@ -62,23 +67,40 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import DesignService from '@/services/DesignService'
 import Color from '@/entities/Color'
 import Hotkeys from '@/utils/Hotkeys'
 import ColorPalette from '@/components/dialogs/ColorPalette.vue'
+import DesignStore from '@/services/store/DesignStore'
+import PalettesService from '@/services/design/PalettesService'
+import IColor from '@/entities/IColor'
 
-let service = new DesignService()
+let service = new PalettesService()
+let store = new DesignStore()
 
 @Component({
   components: {
-    ColorPalette,
-  },
+    ColorPalette
+  }
 })
 export default class ColorModule extends Vue {
-  backgroundColor = new Color().fromRgb(0, 0, 1)
-  selectedPalette: Color[] = []
-  customPalette = [new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1)]
+  customPalette = [
+    new Color().fromRgb(0, 0, 1),
+    new Color().fromRgb(0, 0, 1),
+    new Color().fromRgb(0, 0, 1)
+  ]
   hoveredPalette = -1
+
+  get backgroundColor() {
+    return Color.fromOther(store.theme.backgroundColor)
+  }
+
+  get selectedPalette() {
+    let selectedPalette: Color[] = []
+    for (let i = 0; i < store.theme.palette.length; i++) {
+      selectedPalette.push(Color.fromOther(store.theme.palette[i]))
+    }
+    return selectedPalette
+  }
 
   showPrompt(palette: number) {
     this.hoveredPalette = palette
@@ -87,34 +109,15 @@ export default class ColorModule extends Vue {
     if (this.hoveredPalette == palette) this.hoveredPalette = -1
   }
 
-  getState() {
-    this.backgroundColor = new Color().fromOther(service.theme.backgroundColor)
-    let selectedPalette: Color[] = []
-    for (let i = 0; i < service.theme.palette.length; i++) {
-      selectedPalette.push(new Color().fromOther(service.theme.palette[i]))
-    }
-    this.selectedPalette = selectedPalette
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    console.log('ColorModule')
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
-
-  get recomendedPalettes(): Color[][] {
+  get recomendedPalettes(): IColor[][] {
     return service.getRecommendedPalettes(this.backgroundColor)
   }
 
-  isPalettesEquals(palette0: Color[], palette1: Color[]) {
+  arePalettesEquals(palette0: IColor[], palette1: IColor[]) {
     if (palette0.length != palette1.length) return false
     let isPaletteEquals = true
     for (let i = 0; i < palette0.length; i++) {
-      if (palette0[i].equals(palette1[i])) continue
+      if (Color.fromOther(palette0[i]).equals(palette1[i])) continue
       else {
         isPaletteEquals = false
         break
@@ -124,11 +127,11 @@ export default class ColorModule extends Vue {
   }
 
   get selectedPaletteIndex() {
-    if (this.isPalettesEquals(this.selectedPalette, this.customPalette)) return 10
+    if (this.arePalettesEquals(this.selectedPalette, this.customPalette)) return 10
     let result = -1
     for (let paletteIndex = 0; paletteIndex < this.recomendedPalettes.length; paletteIndex++) {
       let palette = this.recomendedPalettes[paletteIndex]
-      if (this.isPalettesEquals(palette, this.selectedPalette)) {
+      if (this.arePalettesEquals(palette, this.selectedPalette)) {
         result = paletteIndex
         break
       }
@@ -148,7 +151,6 @@ export default class ColorModule extends Vue {
   deleteColor(colorIndex: number) {
     let newPalette = [...this.selectedPalette]
     newPalette.splice(colorIndex, 1)
-    this.selectedPalette = newPalette
     service.selectPalette(newPalette)
   }
 

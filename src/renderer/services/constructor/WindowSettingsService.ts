@@ -1,4 +1,4 @@
-import RuntimeRepository from '@/repositories/NewRuntimeRepository'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 let runtimeData = RuntimeRepository.Instance.data
 

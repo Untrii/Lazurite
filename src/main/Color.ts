@@ -20,6 +20,18 @@ export default class Color {
     return this
   }
 
+  public static fromHex(hex: string) {
+    let result = new Color()
+    hex = hex.replace('#', '')
+    let hexNum = parseInt(hex, 16)
+
+    result.r = Math.floor(hexNum / 0x10000)
+    result.g = Math.floor(hexNum % 0x10000) / 0x100
+    result.b = Math.floor(hexNum % 0x100)
+
+    return result
+  }
+
   public fromRgb(r: number, g: number, b: number, a?: number) {
     this.r = r
     this.g = g

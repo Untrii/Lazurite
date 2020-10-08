@@ -2,7 +2,7 @@ import { BackgroundType, stringFromType, typeFromString } from '@/entities/IThem
 import BackgroundsRepository from '@/repositories/BackgroundsRepository'
 import PresentationRepository from '@/repositories/PresentationRepository'
 import { remote } from 'electron'
-import Color from 'src/main/Color'
+import Color from '@/entities/Color'
 const { ImageProcessing } = remote.require('./main')
 
 let presentation = PresentationRepository.Instance

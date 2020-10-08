@@ -52,56 +52,52 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import IBackgroundCollection, { getBlankCollection } from '@/entities/IBackgroundCollection'
-import DesignService from '@/services/DesignService'
-import VisualisationService from '@/services/VisualisationService'
 import ColorTile from './ColorTile.vue'
 import ColorPalette from '@/components/dialogs/ColorPalette.vue'
 import { stringFromType } from '@/entities/ITheme'
 import { remote } from 'electron'
 import { promises as fs } from 'fs'
+import DesignStore from '@/services/store/DesignStore'
+import BackgroundService from '@/services/design/BackgroundService'
 
 const dialog = remote.dialog
 const { ImageProcessing } = remote.require('./main')
 
-let service = new DesignService()
-let visService = new VisualisationService()
+let store = new DesignStore()
+let service = new BackgroundService()
+
 let addBackgroundResolve: Function
 let addBackgroundReject: Function
 
 @Component({
   components: {
     ColorTile,
-    ColorPalette,
-  },
+    ColorPalette
+  }
 })
 export default class BackgroundModule extends Vue {
   availableBackgrounds: IBackgroundCollection = getBlankCollection()
-  pickedType = 'color'
-  pickedTileVal = '#FFFFFF'
-  pickedTileType = 'color'
   isColorPaletteOpened = false
   isListScrolled = false
   trackedFrames = 20
+
+  get pickedType() {
+    return this.pickedType
+  }
+
+  get pickedTileType() {
+    return stringFromType(store.theme.backgroundType)
+  }
+
+  get pickedTileVal() {
+    return store.theme.backgroundValue
+  }
 
   localize(str) {
     return str
   }
 
-  getState() {
-    this.availableBackgrounds = service.getBackgroundCollection()
-    this.pickedTileType = this.pickedType = stringFromType(visService.theme.backgroundType)
-    this.pickedTileVal = visService.theme.backgroundValue
-  }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    console.log('background module')
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
   beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-
     let element = document.querySelector('.bg-module-tiles')
     if (!element) return
     element.removeEventListener('scroll', this.startScrollTracking)
@@ -128,8 +124,6 @@ export default class BackgroundModule extends Vue {
   }
 
   async selectBackground(val) {
-    this.pickedTileVal = val
-    this.pickedTileType = this.pickedType
     await service.selectBackground(this.pickedType, val)
   }
 
@@ -165,7 +159,7 @@ export default class BackgroundModule extends Vue {
       case 'pattern':
         let result = await dialog.showOpenDialog({
           properties: ['openFile', 'multiSelections'],
-          filters: [{ name: 'Images', extensions: ['jpg', 'png'] }],
+          filters: [{ name: 'Images', extensions: ['jpg', 'png'] }]
         })
         if (!result.canceled) {
           for (const file of result.filePaths) {

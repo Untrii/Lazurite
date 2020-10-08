@@ -4,9 +4,24 @@
       <div class="row">
         <div class="col-md-6 col-lg-4 col-xl-3" v-for="file in files" :key="file">
           <div class="card dialog__card" @click="createElement(file)">
-            <div class="card-img-top dialog__card-preview" :style="{ backgroundImage: `url('${getFullPath(file)}')` }">
-              <img v-if="isImage(file)" :src="getFullPath(file)" height="0" width="0" :id="'selrs' + file" />
-              <video v-if="isVideo(file)" :src="getFullPath(file)" height="0" width="0" :id="'selrs' + file"></video>
+            <div
+              class="card-img-top dialog__card-preview"
+              :style="{ backgroundImage: `url('${getFullPath(file)}')` }"
+            >
+              <img
+                v-if="isImage(file)"
+                :src="getFullPath(file)"
+                height="0"
+                width="0"
+                :id="'selrs' + file"
+              />
+              <video
+                v-if="isVideo(file)"
+                :src="getFullPath(file)"
+                height="0"
+                width="0"
+                :id="'selrs' + file"
+              ></video>
             </div>
             <div class="card-body">
               <p class="card-text">{{ file }}</p>
@@ -28,21 +43,23 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import DialogService from '@/services/DialogService'
-import ResourceService from '@/services/ResourceService'
 import Browser from './Browser.vue'
 import { promises as fs } from 'fs'
 import { Buffer } from 'buffer'
 import { shell, remote } from 'electron'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import ResourceSercvice from '@/services/constructor/ResourceService'
 const dialog = remote.dialog
 
 let dialogService = new DialogService()
-let resourceService = new ResourceService()
+let store = new ConstrctorStore()
+let resourceService = new ResourceSercvice()
 let isDialogShown = false
 
 @Component({
   components: {
-    Browser,
-  },
+    Browser
+  }
 })
 export default class ChooseFileDialog extends Vue {
   files: string[] = []
@@ -50,7 +67,7 @@ export default class ChooseFileDialog extends Vue {
 
   async getState() {
     if (dialogService.isChooseFileDialogOpened && !isDialogShown) {
-      this.files = await resourceService.getResourceFiles(dialogService.chooseFileDialogType)
+      this.files = await store.getResourceFiles(dialogService.chooseFileDialogType)
       this.$bvModal.show('choseFileDialog')
       isDialogShown = true
     } else if (!dialogService.isChooseFileDialogOpened && isDialogShown) {
@@ -59,17 +76,8 @@ export default class ChooseFileDialog extends Vue {
     }
   }
 
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    dialogService.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    dialogService.removeOnChangeListener(this.onChangeListener)
-  }
-
   getFullPath(fileName: string) {
-    return resourceService.resourceFolder + '/' + fileName
+    return store.resourceFolder + '/' + fileName
   }
 
   isImage(fileName: string) {
@@ -89,7 +97,7 @@ export default class ChooseFileDialog extends Vue {
 
   async openFile() {
     let result = await dialog.showOpenDialog({
-      properties: ['openFile', 'multiSelections'],
+      properties: ['openFile', 'multiSelections']
     })
     if (!result.canceled) {
       for (const file of result.filePaths) {
@@ -101,7 +109,7 @@ export default class ChooseFileDialog extends Vue {
     this.isBrowserOpened = true
   }
   openProjectFolder() {
-    shell.openItem(resourceService.resourceFolder)
+    shell.openItem(store.resourceFolder)
   }
   reloadFiles() {
     this.getState()
@@ -120,7 +128,7 @@ export default class ChooseFileDialog extends Vue {
 
       let dataArr = new Buffer(d[1], 'base64')
 
-      await fs.writeFile(resourceService.resourceFolder + '/' + key + '.' + format, dataArr)
+      await fs.writeFile(store.resourceFolder + '/' + key + '.' + format, dataArr)
     }
 
     this.isBrowserOpened = false

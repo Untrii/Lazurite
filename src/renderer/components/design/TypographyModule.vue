@@ -31,25 +31,17 @@
             <li
               class="list-group-item font-list__item"
               :class="{
-                'list-group-item-info':
-                  getPresetFont(selectedPresetId).family == font.name,
+                'list-group-item-info': getPresetFont(selectedPresetId).family == font.name
               }"
               @click="selectFont(font.name)"
               v-for="font in fontList"
               :key="font.name"
             >
-              <div
-                :style="'font-family:' + font.name"
-                class="font-list__item-label"
-              >
+              <div :style="'font-family:' + font.name" class="font-list__item-label">
                 {{ font.name }}
               </div>
               <span class="badge badge-pill">
-                <div
-                  v-for="size in font.variants"
-                  :key="size"
-                  class="badge-entry"
-                >
+                <div v-for="size in font.variants" :key="size" class="badge-entry">
                   {{ size + ' ' }}
                 </div>
               </span>
@@ -63,17 +55,19 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import DesignService from '@/services/DesignService'
 import localize from '@/utils/locales'
 import IFontPreset, { getBlankPreset } from '@/entities/IFontPreset'
 import FontPreview from './FontPreview.vue'
+import DesignStore from '@/services/store/DesignStore'
+import FontService from '@/services/design/FontService'
 
-const service = new DesignService()
+let store = new DesignStore()
+let service = new FontService()
 
 @Component({
   components: {
-    FontPreview,
-  },
+    FontPreview
+  }
 })
 export default class TypographyModule extends Vue {
   pickedType = 'text'
@@ -84,20 +78,14 @@ export default class TypographyModule extends Vue {
     return localize('en', str)
   }
 
-  getState() {
+  getState() {}
+
+  async beforeMount() {
     if (this.fontList.length == 0) {
-      ;(async () => (this.fontList = await service.getFontList()))()
+      this.fontList = await store.getFontList()
     }
   }
-
-  onChangeListener: Function = () => this.getState()
-  beforeMount() {
-    this.getState()
-    service.addOnChangeListener(this.onChangeListener)
-  }
-  beforeDestroy() {
-    service.removeOnChangeListener(this.onChangeListener)
-  }
+  beforeDestroy() {}
 
   onPresetChanged(selectedPreset) {
     this.selectedPresetId = selectedPreset
@@ -120,7 +108,7 @@ export default class TypographyModule extends Vue {
   }
 
   getPresetFont(presetId): IFontPreset {
-    let presets = service.theme.fontPresets
+    let presets = store.theme.fontPresets
     for (const entry of presets) {
       if (entry.id == presetId) return entry
     }
@@ -128,8 +116,7 @@ export default class TypographyModule extends Vue {
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == this.getPresetFont(this.selectedPresetId).family)
-        return entry.variants
+      if (entry.name == this.getPresetFont(this.selectedPresetId).family) return entry.variants
     }
     return [400]
   }

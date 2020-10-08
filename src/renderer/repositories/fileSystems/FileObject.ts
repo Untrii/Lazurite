@@ -23,6 +23,13 @@ export default class FileObject {
     this.syncRate = 2000
   }
 
+  private pullFromFsSync(): string {
+    this.ioActive = true
+    let data = this.fs.readFileSync(this.fileName)
+    this.ioActive = false
+    return data
+  }
+
   private async pullFromFs(): Promise<string> {
     this.ioActive = true
     let data = await this.fs.readFile(this.fileName)
@@ -34,6 +41,21 @@ export default class FileObject {
     this.ioActive = true
     await this.fs.writeFile(this.fileName, data)
     this.ioActive = false
+  }
+
+  pullSync(): any {
+    if (!this.cachedObject) {
+      let data = this.pullFromFsSync()
+      let obj: any
+      try {
+        obj = deserialize(data)
+      } catch {
+        obj = new Object()
+      }
+      this.cachedObject = obj
+      return obj
+    } else if (Array.isArray(this.cachedObject)) return [...this.cachedObject]
+    else return { ...this.cachedObject }
   }
 
   async pull(): Promise<any> {

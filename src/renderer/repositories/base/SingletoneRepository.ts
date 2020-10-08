@@ -8,17 +8,17 @@ export default class SingletoneRepository {
 
   protected static setInstance(instance: SingletoneRepository) {
     let singletones = this.singletonesObject
-    singletones[this.constructor.name] = instance
+    singletones[this.prototype.constructor.name] = instance
   }
 
   protected static getInstanse(initFunction?: Function) {
     let singletones = this.singletonesObject
 
-    if (!singletones[this.constructor.name]) {
+    if (!singletones[this.prototype.constructor.name]) {
       if (initFunction) {
         initFunction()
-      } else throw new Error(`${this.constructor.name} isn't loaded`)
+      } else return {}
     }
-    return singletones[this.constructor.name]
+    return singletones[this.prototype.constructor.name]
   }
 }

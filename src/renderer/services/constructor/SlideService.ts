@@ -1,5 +1,5 @@
 import PresentationRepository from '@/repositories/PresentationRepository'
-import RuntimeRepository from '@/repositories/NewRuntimeRepository'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
 import ISlideObject from '@/entities/ISlideObject'
 
 let presentation = PresentationRepository.Instance

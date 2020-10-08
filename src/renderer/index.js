@@ -1,26 +1,42 @@
 import Vue from 'vue'
-import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
-import CommonRepository from '@/repositories/CommonRepository'
-import MainMenuService from '@/services/MainMenuService'
-import LzDesignSystem from '@/components/designSystem'
 import { promises as fs } from 'fs'
 import { existsSync } from 'fs'
 import ReactiveFileHandle from '@/repositories/fileSystems/ReactiveFileHandle'
 
-async function main() {
-  let reactTest = await ReactiveFileHandle.create('C:/present.js/hui.json')
-  window.reactTest = reactTest
+import BackgroundRepository from '@/repositories/BackgroundsRepository'
+import HistoryRepository from '@/repositories/HistoryRepository'
+import PalettesRepository from '@/repositories/PalettesRepository'
+import PresentationRepository from '@/repositories/PresentationRepository'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
 
+import LzDesignSystem from '@/components/designSystem'
+import App from './App.vue'
+
+async function loadFiles(presentationPath) {
+  let a = RuntimeRepository.Instance
+  await Promise.all([
+    BackgroundRepository.init('data/bg.json'),
+    HistoryRepository.init(presentationPath + '.history'),
+    PalettesRepository.init('data/palettes.json'),
+    PresentationRepository.init(presentationPath)
+  ])
+}
+
+async function main() {
+  console.log('entry')
   let presentationPath = await fs.readFile('testProjectPath.txt', {
     encoding: 'utf-8'
   })
+  await loadFiles(presentationPath)
+
+  let test = PalettesRepository.Instance.data
+
   Vue.use(BootstrapVue)
   for (const element in LzDesignSystem) {
     Vue.component(element, LzDesignSystem[element])
   }
 
-  await CommonRepository.load()
   if (!existsSync(presentationPath)) {
     await new MainMenuService().createPresentation(presentationPath)
   }
@@ -42,9 +58,7 @@ async function main() {
     }
   }
 
-  new MainMenuService().openPresentation(presentationPath)
-  console.log('instance loaded')
-
+  //import  from '@/components/designSystem'
   new Vue({
     el: '#app',
     render(h) {

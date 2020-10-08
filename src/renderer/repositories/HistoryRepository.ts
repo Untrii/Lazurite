@@ -1,45 +1,38 @@
-import ReactiveRepository from './base/ReactiveRepository'
-import FileObject from './fileSystems/FileObject'
-import LocalFileSystem from './fileSystems/LocalFileSystem'
-import HistoryDeclaration from '@/entities/history/IHistoryDeclaration'
+import IHistoryDeclaration, { getBlankHistory } from '@/entities/history/IHistoryDeclaration'
+import ModelVerificator from '@/utils/ModelVerificator'
+import SingletoneRepository from './base/SingletoneRepository'
+import ReactiveFileHandle from './fileSystems/ReactiveFileHandle'
 
-export class HistoryRepository extends ReactiveRepository {
-  private _handle!: FileObject
-  private _isFileOpened = false
-
-  get isFileOpened(): boolean {
-    return this._isFileOpened
+export default class HistoryRepository extends SingletoneRepository implements IHistoryDeclaration {
+  static init(filePath: string) {
+    let model = getBlankHistory()
+    let verificator = ModelVerificator.createVerificator(model)
+    let fileHandle = ReactiveFileHandle.create(filePath, verificator, model)
+    this.setInstance(new HistoryRepository(fileHandle))
   }
 
-  async openFile(fileName: string) {
-    this._handle = new FileObject(new LocalFileSystem(), fileName)
-    this._isFileOpened = true
-    this.onChange()
+  static get Instance(): HistoryRepository {
+    return this.getInstanse()
   }
 
-  async getFile(): Promise<HistoryDeclaration> {
-    let result = await this._handle.pull()
-    if (Array.isArray(result.undo) && Array.isArray(result.redo)) return result
-    else
-      await this.setFile({
-        undo: [],
-        redo: []
-      })
-    return {
-      undo: [],
-      redo: []
-    }
+  constructor(fileHandle: ReactiveFileHandle<IHistoryDeclaration>) {
+    super()
+    this._fileHandle = fileHandle
   }
-  async setFile(file: HistoryDeclaration) {
-    await this._handle.push(file)
-    this.onChange()
+
+  private _fileHandle: ReactiveFileHandle<IHistoryDeclaration>
+
+  get undo() {
+    return this._fileHandle.syncronizedObject.undo
+  }
+  set undo(val) {
+    this._fileHandle.syncronizedObject.undo = val
+  }
+
+  get redo() {
+    return this._fileHandle.syncronizedObject.redo
+  }
+  set redo(val) {
+    this._fileHandle.syncronizedObject.redo = val
   }
 }
-
-function getInstance(): HistoryRepository {
-  let win: any = window
-  if (!win.__historyInstance) win.__historyInstance = new HistoryRepository()
-  return win.__historyInstance
-}
-
-export default getInstance()

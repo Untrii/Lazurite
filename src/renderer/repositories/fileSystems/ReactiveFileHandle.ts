@@ -12,60 +12,51 @@ export default class ReactiveFileHandle<T extends Object> {
   _reflection!: T
   private get reflection(): T {
     if (!this._reflection) {
-      this._reflection = this.proxyObject(this.copyObject(this._object))
-      new Vue({ data: this._reflection })
+      this._reflection = this.proxyObject(this._object)
+      new Vue({ data: this._object })
     }
     return this._reflection
   }
 
-  private copyObject(sourceObject: object, path?: string): any {
-    if (!path || path == '') {
-      let result = {}
-      for (const property in sourceObject) {
-        result[property.toString()] = this.copyObject(sourceObject, property)
-      }
-      return result
-    } else {
-      let parsedPath = path.split('.')
-      let obj: any = this._object
-      for (const property of parsedPath) {
-        obj = obj[property]
-      }
-      if (typeof obj == 'object') {
-        if (Array.isArray(obj)) {
-          let result: any = []
-          for (const key in obj) {
-            result.push(this.copyObject(sourceObject, path + '.' + key))
-          }
-          return result
-        }
-        if (obj.constructor.name == 'Map') {
-          let objMap: Map<any, any> = obj
-          let result = new Map()
-          for (const item of objMap.entries()) {
-            result.set(item[0], item[1])
-          }
-          return result
-        }
-        if (obj.constructor.name == 'Set') {
-          let objSet: Set<any> = obj
-          let result = new Set()
-          for (const item of objSet.entries()) {
-            result.add(item)
-          }
-          return result
-        }
-        let result = {}
-        if (obj['__proto__']) result['__proto__'] = obj.prototype
-        for (const key in obj) {
-          result[key.toString()] = this.copyObject(sourceObject, path + '.' + key)
-        }
-        return result
-      } else return obj
+  private copyArray(sourceArray: any[]) {
+    let result: any[] = []
+    for (let i = 0; i < sourceArray.length; i++) {
+      result.push(this.copyObject(sourceArray[i]))
     }
+    return result
   }
 
-  private clearObject() {}
+  private copyMap(sourceMap: Map<any, any>) {
+    let result = new Map()
+    for (const key of sourceMap.entries()) {
+      result.set(key, this.copyObject(sourceMap.get(key)))
+    }
+    return result
+  }
+
+  private copySet(sourceSet: Set<any>) {
+    let result = new Set()
+    for (const key of sourceSet.entries()) {
+      result.add(this.copyObject(key))
+    }
+    return result
+  }
+
+  private copyObject(sourceObject): any {
+    if (typeof sourceObject == 'object') {
+      if (Array.isArray(sourceObject)) return this.copyArray(sourceObject)
+      if (sourceObject.constructor.name == 'Map') return this.copyMap(sourceObject)
+      if (sourceObject.constructor.name == 'Set') return this.copySet(sourceObject)
+
+      let result = {}
+      try {
+        for (const key of sourceObject) {
+          result[key] = this.copyObject(sourceObject[key])
+        }
+      } catch {}
+      return result
+    } else return sourceObject
+  }
 
   private _proxyCache = new Map()
 
@@ -76,7 +67,7 @@ export default class ReactiveFileHandle<T extends Object> {
         if (prop == this.sourceKeyword) {
           return path
         }
-        if (typeof target[prop] == 'object' || typeof target[prop] == 'function') {
+        if (typeof target[prop] == 'object') {
           let fullPath = path == '' ? prop.toString() : `${path}.${prop.toString()}`
           if (!this._proxyCache.has(fullPath))
             this._proxyCache.set(fullPath, this.proxyObject(target[prop], fullPath))
@@ -105,18 +96,19 @@ export default class ReactiveFileHandle<T extends Object> {
           if (typeof target == 'object' && typeof prop == 'string') Vue.set(target, prop, value)
           return true
         }
-      },
-      apply: (target: TargetType, thisArg, argArray) => {
-        let path = target[this.sourceKeyword] ?? ''
-        let parsedPath = path.split('.')
-
-        let originalObject: any = this._object
-        for (const prop of parsedPath) {
-          originalObject = originalObject[prop]
-        }
-        originalObject.apply(thisArg, argArray)
-        if (typeof target == 'function') return target.apply(thisArg, argArray)
       }
+      // ,
+      // apply: (target: TargetType, thisArg, argArray) => {
+      //   let path = target[this.sourceKeyword] ?? ''
+      //   let parsedPath = path.split('.')
+
+      //   let originalObject: any = this._object
+      //   for (const prop of parsedPath) {
+      //     if (prop != '') originalObject = originalObject[prop]
+      //   }
+      //   if (typeof originalObject == 'function') originalObject(...argArray)
+      //   if (typeof target == 'function') return target(...argArray)
+      // }
     })
   }
 
@@ -128,12 +120,12 @@ export default class ReactiveFileHandle<T extends Object> {
     return this._filePath
   }
 
-  async openFile(filePath: string, fileSystem?: IFileSystem) {
+  openFile(filePath: string, fileSystem?: IFileSystem) {
     this._filePath = filePath
 
     if (fileSystem) this._handle = new FileObject(fileSystem, filePath)
     else this._handle = new FileObject(new DefaultFileSystem(), filePath)
-    let pulled: T = await this._handle.pull()
+    let pulled: T = this._handle.pullSync()
     this._object = pulled
   }
 
@@ -149,14 +141,14 @@ export default class ReactiveFileHandle<T extends Object> {
     }
   }
 
-  static async create<ModelType>(
+  static create<ModelType>(
     filePath: string,
     modelVerificator?: Function,
     defaultModel?: ModelType,
     fileSystem?: IFileSystem
-  ): Promise<ReactiveFileHandle<ModelType>> {
+  ): ReactiveFileHandle<ModelType> {
     let result = new ReactiveFileHandle<ModelType>()
-    await result.openFile(filePath, fileSystem)
+    result.openFile(filePath, fileSystem)
     if (modelVerificator) {
       let verificationResult = result.verifyModel(modelVerificator)
       if (verificationResult == ModelState.Corruptted) {

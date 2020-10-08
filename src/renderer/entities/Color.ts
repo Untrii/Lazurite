@@ -23,6 +23,17 @@ export default class Color {
 
     return this
   }
+  public static fromHex(hex: string) {
+    let result = new Color()
+    hex = hex.replace('#', '')
+    let hexNum = parseInt(hex, 16)
+
+    result.r = Math.floor(hexNum / 0x10000)
+    result.g = Math.floor(hexNum % 0x10000) / 0x100
+    result.b = Math.floor(hexNum % 0x100)
+
+    return result
+  }
 
   public fromRgb(r: number, g: number, b: number, a?: number): Color {
     this.r = r
@@ -32,6 +43,14 @@ export default class Color {
 
     return this
   }
+  public static fromRgb(r: number, g: number, b: number, a?: number) {
+    let result = new Color()
+    result.r = r
+    result.g = g
+    result.b = b
+
+    return result
+  }
 
   public fromOther(color: IColor): Color {
     this.r = color.r
@@ -39,6 +58,14 @@ export default class Color {
     this.b = color.b
     this.a = color.a ?? 1
     return this
+  }
+  public static fromOther(color: IColor): Color {
+    let result = new Color()
+    result.r = color.r
+    result.g = color.g
+    result.b = color.b
+    result.a = color.a ?? 1
+    return result
   }
 
   public toHex(): string {

@@ -15,4 +15,12 @@ export default class LocalFileSystem implements IFileSystem {
     } catch {}
     await fs.promises.writeFile(fileName, data)
   }
+
+  public readFileSync(fileName: string) {
+    try {
+      return fs.readFileSync(fileName).toString()
+    } catch {
+      return ''
+    }
+  }
 }
