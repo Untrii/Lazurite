@@ -1,17 +1,25 @@
 {
   "compilerOptions": {
     "noImplicitAny": false,
-    "allowJs": true,
+    "downlevelIteration": true,
+    "target": "es5",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
     "baseUrl": ".",
+    "types": ["webpack-env"],
     "paths": {
-      "@/*": ["src/renderer/*"]
+      "@/*": ["src/*"]
     },
-    "jsx": "react",
-    "jsxFactory": "h",
-    "target": "es2017",
-    "lib": ["es2020.string", "DOM", "es2020"]
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
-  "experimentalDecorators": true,
-  "typeRoots": ["./typings"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
+  "exclude": ["node_modules"]
 }

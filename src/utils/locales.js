@@ -1,0 +1,161 @@
+export default function localize(locale, str) {
+  if (locales[locale] && locales[locale][str]) return locales[locale][str]
+  else return str.toString()
+}
+
+const locales = {
+  en: {
+    off: 'Off',
+    designTab: 'Design',
+    constructorTab: 'Constructor',
+    autosaveTab: 'Autosave',
+    autosave: 'Autosave',
+
+    background: 'Background',
+    color: 'Color',
+    typography: 'Typograhpy',
+
+    'Paragraph text': 'Main text',
+    'Paragraph title': 'Title',
+    'Slide subtitle': 'Slide subtitle',
+    'Slide title': 'Slide title',
+
+    gradient: 'Gradient',
+    pattern: 'Pattern',
+    image: 'Image',
+
+    text: 'Text',
+    media: 'Media',
+    datavis: 'Data visualisation',
+    'textBlock/slideHeader': 'Slide header',
+    'textBlock/slideTitle': 'Slide title',
+    'textBlock/slideSubtitle': 'Slide subtitle',
+    'textBlock/paragraphTitle': 'Title',
+    'textBlock/paragraphText': 'Main text',
+
+    'localImage/std': 'Image',
+    'localImage/poster': 'Poster',
+    'localVideo/std': 'Video',
+    'embeddedVideo/youtube': 'Video from Youtube',
+
+    'lTable/std': 'Table',
+    'chart/std': 'Chart',
+    'graph/std': 'Graph',
+
+    grid: 'Grid',
+    snapToGrid: 'Snap to grid',
+    isGridActive: 'Show grid',
+    gridSize: 'Grid size',
+    subGridSize: 'Subgrid size',
+    verticalAlign: 'Vertical align',
+    horizontalAlign: 'Horizontal align',
+
+    center: 'Center',
+    top: 'Top',
+    bottom: 'Bottom',
+    right: 'Right',
+    left: 'Left',
+
+    textFormat: 'Text format',
+    fontSize: 'Font size',
+
+    url: 'Share link',
+    blur: 'Blur',
+    brightness: 'Brightness',
+    contrast: 'Contrast',
+    grayscale: 'Grayscale',
+    hueRotate: 'Hue rotate',
+    opacity: 'Opacity',
+    saturate: 'Saturate',
+    sepia: 'Sepia',
+    dropShadow: 'Drop shadow',
+
+    rowCount: 'Row count',
+    columnCount: 'Column count',
+    highlightTop: 'Highlite first row',
+    highlightBottom: 'Highlite last row',
+    highlightLeft: 'Highlite first column',
+    highlightRight: 'Highlite last column',
+    stripHorizontally: 'Strip hotizontally',
+    stripVertically: 'Strip vertically',
+    darkStyle: 'Dark style',
+    showBorders: 'Show borders',
+  },
+  ru: {
+    off: 'Выкл',
+    designTab: 'Дизайн',
+    constructorTab: 'Конструктор',
+    autosaveTab: 'Автосохранение',
+    autosave: 'Автосохранение',
+
+    background: 'Фон',
+    color: 'Цвет',
+    typography: 'Шрифт',
+
+    'Paragraph text': 'Основной текст',
+    'Paragraph title': 'Заголовок',
+    'Slide subtitle': 'Подзаголовок слайда',
+    'Slide title': 'Заголовок слайда',
+
+    gradient: 'Градиент',
+    pattern: 'Узор',
+    image: 'Картинка',
+
+    text: 'Текст',
+    media: 'Мультимедиа',
+    datavis: 'Инфографика',
+    'textBlock/slideHeader': 'Шапка слайда',
+    'textBlock/slideTitle': 'Заголовок слайда',
+    'textBlock/slideSubtitle': 'Подзаголовок слайда',
+    'textBlock/paragraphTitle': 'Заголовок',
+    'textBlock/paragraphText': 'Основной текст',
+
+    'localImage/std': 'Изображение',
+    'localImage/poster': 'Постер',
+    'localVideo/std': 'Видео',
+    'embeddedVideo/youtube': 'Видео из Youtube',
+
+    'lTable/std': 'Таблица',
+    'chart/std': 'График',
+    'graph/std': 'График функции',
+
+    grid: 'Сетка',
+    snapToGrid: 'Прилипать к сетке',
+    isGridActive: 'Отображение сетки',
+    gridSize: 'Размер сетки',
+    subGridSize: 'Размер подсетки',
+    verticalAlign: 'Выравнивание по вертикали',
+    horizontalAlign: 'Выравнивание по горизонтали',
+
+    center: 'Центр',
+    top: 'Верх',
+    bottom: 'Низ',
+    right: 'Право',
+    left: 'Лево',
+
+    textFormat: 'Форматирование текста',
+    fontSize: 'Размер шрифта',
+
+    url: 'Ссылка',
+    blur: 'Размытие',
+    brightness: 'Яркость',
+    contrast: 'Контраст',
+    grayscale: 'Чёрно-белое',
+    hueRotate: 'Смещение цвета',
+    opacity: 'Прозрачность',
+    saturate: 'Насыщенность',
+    sepia: 'Сепия',
+    dropShadow: 'Тень',
+
+    rowCount: 'Количество строк',
+    columnCount: 'Количество столбцов',
+    highlightTop: 'Выделить первую строку',
+    highlightBottom: 'Выделить последнюю строку',
+    highlightLeft: 'Выделить первый столбец',
+    highlightRight: 'Выделить последний столбец',
+    stripHorizontally: 'Горизонтальные полосы',
+    stripVertically: 'Вертикальные полосы',
+    darkStyle: 'Темный стиль',
+    showBorders: 'Обводка ячеек',
+  },
+}
