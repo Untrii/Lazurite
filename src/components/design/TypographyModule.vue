@@ -27,44 +27,17 @@
             class="preset-redactor__input"
           >
           </lz-select>
-          <!-- 
-          <b-input-group prepend="Font weight" class="preset-redactor__input">
-            <b-form-select
-              :value="getPresetFont(selectedPresetId).weight"
-              :options="presetFontVariants"
-              @change="onWeightChange"
-            ></b-form-select>
-          </b-input-group> -->
         </div>
         <div class="font-list">
-          <ul class="list-group">
-            <li
-              class="list-group-item font-list__item"
-              :class="{
-                'list-group-item-info':
-                  getPresetFont(selectedPresetId).family == font.name,
-              }"
-              @click="selectFont(font.name)"
-              v-for="font in fontList"
-              :key="font.name"
-            >
-              <div
-                :style="'font-family:' + font.name"
-                class="font-list__item-label"
-              >
-                {{ font.name }}
-              </div>
-              <span class="badge badge-pill">
-                <div
-                  v-for="size in font.variants"
-                  :key="size"
-                  class="badge-entry"
-                >
-                  {{ size + ' ' }}
-                </div>
-              </span>
-            </li>
-          </ul>
+          <font-demo-tile
+            class="font-list__item"
+            v-for="font in fontList"
+            :key="font.name"
+            :name="font.name"
+            :variants="font.variants"
+            :isSelected="selectedPresetFamily == font.name"
+            @click="selectFont(font.name)"
+          ></font-demo-tile>
         </div>
       </div>
     </div>
@@ -78,6 +51,7 @@ import IFontPreset, { getBlankPreset } from '@/entities/IFontPreset'
 import FontPreview from './FontPreview.vue'
 import DesignStore from '@/services/store/DesignStore'
 import FontService from '@/services/design/FontService'
+import FontDemoTile from './FontDemoTile.vue'
 
 const store = new DesignStore()
 const service = new FontService()
@@ -85,6 +59,7 @@ const service = new FontService()
 @Options({
   components: {
     FontPreview,
+    FontDemoTile,
   },
 })
 export default class TypographyModule extends Vue {
@@ -107,6 +82,10 @@ export default class TypographyModule extends Vue {
     this.selectedPresetId = selectedPreset
   }
 
+  get selectedPresetFamily() {
+    return this.getPresetFont(this.selectedPresetId).family
+  }
+
   onSizeChange(newSize) {
     if (newSize == '') return
     if (typeof newSize != 'number') newSize = parseInt(newSize)
@@ -115,7 +94,6 @@ export default class TypographyModule extends Vue {
   }
 
   onWeightChange(newWeight) {
-    console.log('changing weight: ' + newWeight)
     if (typeof newWeight != 'number') newWeight = parseInt(newWeight)
     service.changePresetFontWeight(this.selectedPresetId, newWeight)
   }
@@ -178,7 +156,7 @@ export default class TypographyModule extends Vue {
 
 .preset-redactor {
   display: grid;
-  grid-template-rows: min-content 1fr;
+  grid-template-rows: 68px 1fr;
   height: 100%;
 
   &__font-settings {
@@ -199,11 +177,21 @@ export default class TypographyModule extends Vue {
   margin-top: 20px;
   padding-right: 2px;
   margin-right: 6px;
+
   &__item {
     cursor: pointer;
-    justify-content: space-between !important;
-    display: flex !important;
-    align-items: center !important;
+    display: inline-block;
+    width: calc(50% - 10px);
+    &:nth-child(odd) {
+      margin-right: 20px;
+    }
+    margin-top: 20px;
+    &:nth-child(1) {
+      margin-top: 0 !important;
+    }
+    &:nth-child(2) {
+      margin-top: 0 !important;
+    }
   }
   &__item-label {
     font-size: 18px;
@@ -216,6 +204,13 @@ export default class TypographyModule extends Vue {
       border: solid 2px $gray-extralight;
       border-radius: 10px;
     }
+  }
+}
+
+@media (max-width: 1640px) {
+  .font-list__item {
+    width: 100%;
+    margin-right: 0px !important;
   }
 }
 

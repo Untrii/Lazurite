@@ -9,7 +9,10 @@
     >
       <div class="preset-card__content">
         <div :style="preset.style">
-          <div contenteditable="true" @input="onPresetNameChange(preset, $event)">
+          <div
+            contenteditable="true"
+            @input="onPresetNameChange(preset, $event)"
+          >
             {{ preset.name }}
           </div>
         </div>
@@ -19,7 +22,11 @@
         </div>
       </div>
 
-      <div class="preset-card__close" :class="getCrossClasses(preset.id)" @click.stop="removePreset(preset.id)">
+      <div
+        class="preset-card__close"
+        :class="getCrossClasses(preset.id)"
+        @click.stop="removePreset(preset.id)"
+      >
         ×
       </div>
     </lz-card>
@@ -35,7 +42,12 @@
         Add preset
       </lz-button>
 
-      <lz-button @click="randomizePreset" size="large" variant="secondary" style="margin-top:15px">
+      <lz-button
+        @click="randomizePreset"
+        size="large"
+        variant="secondary"
+        style="margin-top:15px"
+      >
         Random preset
       </lz-button>
     </div>
@@ -96,7 +108,8 @@ export default class FontPreview extends Vue {
         style: {
           fontFamily: font.family,
           fontWeight: font.weight,
-          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size * (1 / 10.8)}vh)`,
+          fontSize: `min(${font.size * (1 / 19.2)}vw, ${font.size *
+            (1 / 10.8)}vh)`,
         },
       })
     }
@@ -133,7 +146,8 @@ export default class FontPreview extends Vue {
   removePreset(id) {
     fontService.removeFontPreset(id)
     if (this.selectedPresetId == id) {
-      if (store.theme.fontPresets.length > 0) this.selectedPresetId = store.theme.fontPresets[0].id
+      if (store.theme.fontPresets.length > 0)
+        this.selectedPresetId = store.theme.fontPresets[0].id
     }
   }
 
@@ -190,7 +204,9 @@ export default class FontPreview extends Vue {
     for (const preset of store.theme.fontPresets) {
       fontService.removeFontPreset(preset.id)
     }
-    const fontFamily = this.fontFamilies[Math.floor(Math.random() * this.fontFamilies.length)]
+    const fontFamily = this.fontFamilies[
+      Math.floor(Math.random() * this.fontFamilies.length)
+    ]
     const fontPresets: IFontPreset[] = [
       {
         name: 'Title',
@@ -247,11 +263,13 @@ export default class FontPreview extends Vue {
 
     &_white {
       color: White !important;
+      transition: 0.3s;
     }
   }
 }
 
 .bg-blue {
   background-color: $blue-light !important;
+  transition: 0.3s;
 }
 </style>

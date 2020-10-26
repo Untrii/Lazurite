@@ -12,6 +12,7 @@ import RuntimeRepository from '@/repositories/RuntimeRepository'
 
 import LzDesignSystem from '@/components/designSystem'
 import App from './App.vue'
+import DesignStore from './services/store/DesignStore'
 
 function loadFiles(presentationPath: string) {
   const a = RuntimeRepository.Instance
@@ -26,6 +27,8 @@ async function main() {
   try {
     const presentationPath = await fs.readFile('testProjectPath.txt')
     loadFiles(presentationPath.toString())
+    const store = new DesignStore()
+    await store.getFontList()
   } catch {}
 
   const app = createApp(App)

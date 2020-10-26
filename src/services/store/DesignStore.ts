@@ -34,6 +34,8 @@ export default class DesignStore {
         .join('/') + '/data'
     const files = await fs.readdir(dataDir + '/fonts')
     console.log(files.length)
+    const isStylesRendered =
+      document.querySelectorAll(fontPrerendererElementName).length > 0
     for (const fileName of files) {
       const entry = fileName.replace('.ttf', '').split('__')
 
@@ -56,10 +58,10 @@ export default class DesignStore {
       paintElement.innerHTML = 'a'
       paintElement.style.fontFamily = fontFamily
       paintElement.style.fontWeight = fontWeight
-
-      document.querySelector('head')?.appendChild(styleElement)
-      document.querySelector('body')?.appendChild(paintElement)
-
+      if (!isStylesRendered) {
+        document.querySelector('head')?.appendChild(styleElement)
+        document.querySelector('body')?.appendChild(paintElement)
+      }
       let found = false
       if (fontStyle == 'regular') {
         for (const font of fontList) {

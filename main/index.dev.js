@@ -1,7 +1,10 @@
 /* eslint-disable */
 
 // install devtools
-const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer')
+const {
+  default: installExtension,
+  VUEJS_DEVTOOLS,
+} = require('electron-devtools-installer')
 
 // debug
 //require('electron-debug')()
