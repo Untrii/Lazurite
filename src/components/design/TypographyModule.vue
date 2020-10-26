@@ -2,7 +2,11 @@
   <div class="root">
     <div class="content">
       <div class="presets">
-        <font-preview class="preview" @presetChanged="onPresetChanged" :fontFamilies="fontFamilies"></font-preview>
+        <font-preview
+          class="preview"
+          @presetChanged="onPresetChanged"
+          :fontFamilies="fontFamilies"
+        ></font-preview>
       </div>
       <div class="preset-redactor">
         <div class="preset-redactor__font-settings">
@@ -14,30 +18,48 @@
             class="preset-redactor__input"
           ></lz-number-input>
 
+          <lz-select
+            size="large"
+            prepend="Font weight"
+            :value="getPresetFont(selectedPresetId).weight"
+            :options="presetFontVariants"
+            @change="onWeightChange"
+            class="preset-redactor__input"
+          >
+          </lz-select>
+          <!-- 
           <b-input-group prepend="Font weight" class="preset-redactor__input">
             <b-form-select
               :value="getPresetFont(selectedPresetId).weight"
               :options="presetFontVariants"
               @change="onWeightChange"
             ></b-form-select>
-          </b-input-group>
+          </b-input-group> -->
         </div>
         <div class="font-list">
           <ul class="list-group">
             <li
               class="list-group-item font-list__item"
               :class="{
-                'list-group-item-info': getPresetFont(selectedPresetId).family == font.name,
+                'list-group-item-info':
+                  getPresetFont(selectedPresetId).family == font.name,
               }"
               @click="selectFont(font.name)"
               v-for="font in fontList"
               :key="font.name"
             >
-              <div :style="'font-family:' + font.name" class="font-list__item-label">
+              <div
+                :style="'font-family:' + font.name"
+                class="font-list__item-label"
+              >
                 {{ font.name }}
               </div>
               <span class="badge badge-pill">
-                <div v-for="size in font.variants" :key="size" class="badge-entry">
+                <div
+                  v-for="size in font.variants"
+                  :key="size"
+                  class="badge-entry"
+                >
                   {{ size + ' ' }}
                 </div>
               </span>
@@ -93,6 +115,7 @@ export default class TypographyModule extends Vue {
   }
 
   onWeightChange(newWeight) {
+    console.log('changing weight: ' + newWeight)
     if (typeof newWeight != 'number') newWeight = parseInt(newWeight)
     service.changePresetFontWeight(this.selectedPresetId, newWeight)
   }
@@ -110,7 +133,8 @@ export default class TypographyModule extends Vue {
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == this.getPresetFont(this.selectedPresetId).family) return entry.variants
+      if (entry.name == this.getPresetFont(this.selectedPresetId).family)
+        return entry.variants
     }
     return [400]
   }
