@@ -21,8 +21,10 @@ import IImageBlock from '@/entities/slideObjects/IImageBlock'
 import ConstrctorStore from '@/services/store/ConstructorStore'
 import assets from '@/assets'
 import { Vue } from 'vue-class-component'
+import SlideObjectService from '@/services/constructor/SlideObjectService'
 
 const store = new ConstrctorStore()
+const service = new SlideObjectService()
 
 interface ISlideObjectInfo {
   id: string
@@ -96,7 +98,14 @@ export default class LayersTab extends Vue {
     this.currentY = 0
   }
 
+  swapLayers(offset: number, objectId: string) {
+    const delta = -Math.floor((offset + 23) / 46.5)
+    service.changeObjectZIndex(objectId, delta)
+    console.log({ delta })
+  }
+
   onMouseUp(event: MouseEvent) {
+    this.swapLayers(this.currentY - this.startY, this.lastPressedId)
     this.resetValues()
     document.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('mouseup', this.onMouseUp)
@@ -111,14 +120,16 @@ export default class LayersTab extends Vue {
     } else {
       let offsetY = this.currentY - this.startY
       if (offsetY > 0) {
-        let lastIndex = this.lastPressedIndex + Math.floor((offsetY + 23) / 46.5)
+        let lastIndex =
+          this.lastPressedIndex + Math.floor((offsetY + 23) / 46.5)
         if (index <= lastIndex && index > this.lastPressedIndex)
           return {
             transform: `translateY(-46.5px)`,
           }
       }
       if (offsetY < 0) {
-        let lastIndex = this.lastPressedIndex + Math.floor((offsetY + 23) / 46.5)
+        let lastIndex =
+          this.lastPressedIndex + Math.floor((offsetY + 23) / 46.5)
         if (index >= lastIndex && index < this.lastPressedIndex)
           return {
             transform: `translateY(46.5px)`,

@@ -59,6 +59,7 @@ export default class RedactableBaseElement extends Vue {
     return h(elements[this.tagName], {
       ...this.element,
       scale: this.scale,
+
       onLocked: () => {
         this.isDraggable = false
         this.isResizable = false
@@ -99,6 +100,10 @@ export default class RedactableBaseElement extends Vue {
         parentWidth: 1920 * this.scale,
         parentHeight: 1080 * this.scale,
         canActivate: true,
+
+        style: {
+          zIndex: this.element.zIndex,
+        },
 
         onRectangleChanged: (newRect) => {
           const unscaledElement = this.unscaleElement(newRect)
@@ -144,9 +149,14 @@ export default class RedactableBaseElement extends Vue {
           service.selectObject(this.id)
           Hotkeys.unbind('delete')
           Hotkeys.bind('delete', () => {
-            const deletedElements = service.deleteObjects(store.selectedObjectIds)
+            const deletedElements = service.deleteObjects(
+              store.selectedObjectIds
+            )
             if (deletedElements) {
-              historyService.registerElementDelete(deletedElements, store.selectedSlideIndex ?? 0)
+              historyService.registerElementDelete(
+                deletedElements,
+                store.selectedSlideIndex ?? 0
+              )
             }
           })
         },

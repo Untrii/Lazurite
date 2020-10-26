@@ -1,5 +1,5 @@
 <template>
-  <spreadsheet v-bind="$attrs"></spreadsheet>
+  <spreadsheet v-bind="$props"></spreadsheet>
 </template>
 
 <script lang="ts">

@@ -28,7 +28,10 @@ export default class SlideObjectService {
     slideObject.id = randomString(12)
     slideObject.zIndex = this.maxZIndex + 1
 
-    presentation.slides[runtimeData.selectedSlideIndex].set(slideObject.id, slideObject)
+    presentation.slides[runtimeData.selectedSlideIndex].set(
+      slideObject.id,
+      slideObject
+    )
     return slideObject
   }
   selectObject(id: string) {
@@ -94,12 +97,42 @@ export default class SlideObjectService {
 
   changeSelectedObjectProperty(propertyName: string, newVal: any) {
     const store = new ConstructorStore()
-    this.changeObjectProperty(store.selectedObjectId ?? '', propertyName, newVal)
+    this.changeObjectProperty(
+      store.selectedObjectId ?? '',
+      propertyName,
+      newVal
+    )
   }
 
   changeObjectProperties(objectId: string, properties: any) {
     for (const key in properties) {
       this.changeObjectProperty(objectId, key, properties[key])
     }
+  }
+
+  changeObjectZIndex(objectId: string, delta: number) {
+    if (delta == 0) return
+    const store = new ConstructorStore()
+    const currentSlide = store.slideByIndex(store.selectedSlideIndex)
+    const targetObject = currentSlide.get(objectId)
+    if (!targetObject) return
+    const oldZIndex = targetObject.zIndex
+    let newZIndex = oldZIndex + delta
+    newZIndex = Math.max(newZIndex, 0)
+    newZIndex = Math.min(newZIndex, currentSlide.size - 1)
+    for (const object of currentSlide.values()) {
+      if (delta < 0) {
+        console.log(`${object.zIndex} -> ${object.zIndex + 1}`)
+        if (object.zIndex < oldZIndex && object.zIndex >= newZIndex)
+          object.zIndex++
+      }
+      if (delta > 0) {
+        console.log(`${object.zIndex} -> ${object.zIndex - 1}`)
+        if (object.zIndex <= newZIndex && object.zIndex > oldZIndex)
+          object.zIndex--
+      }
+    }
+    targetObject.zIndex = newZIndex
+    console.log(`${oldZIndex} -> ${newZIndex}`)
   }
 }
