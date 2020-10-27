@@ -12,6 +12,11 @@ export default class ResourceSercvice {
         ?.split('/')
         .pop() ?? 'fileName'
 
+    fs.mkdir(store.resourceFolder)
     fs.copyFile(fileName, store.resourceFolder + '/' + shortFileName)
+  }
+
+  async getFiles() {
+    return fs.readdir(store.resourceFolder)
   }
 }

@@ -38,7 +38,7 @@ export default class LayersTab extends Vue {
   getDisplayImage(object: ISlideObject) {
     if (object.type == 'ImageBlock') {
       const imageBlock: any = object
-      return 'local-img://' + imageBlock.src
+      return 'local-img://' + store.resourceFolder + '/' + imageBlock.src
     } else if (object.type == 'TextBlock') {
       return assets.text
     } else return assets.logo

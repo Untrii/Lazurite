@@ -19,6 +19,7 @@ export default class SlideObjectService {
   }
 
   async createObject(preset: ElementPreset): Promise<ISlideObject | undefined> {
+    console.log('creating object ' + preset.type)
     const slideObject: any = getBlankObject()
 
     const parameters = await preset.getParameters()

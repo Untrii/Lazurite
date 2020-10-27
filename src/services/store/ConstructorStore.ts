@@ -40,7 +40,8 @@ export default class ConstrctorStore {
   }
 
   get selectedElement(): ISlideObject | any {
-    for (const entry of runtimeData.selectedObjectsIds) return this.elementById(entry)
+    for (const entry of runtimeData.selectedObjectsIds)
+      return this.elementById(entry)
     return {}
   }
 
@@ -53,7 +54,10 @@ export default class ConstrctorStore {
   }
 
   get resourceFolder() {
-    return presentation.presentationPath + '/workspace'
+    console.log('resoutceFolder')
+    const path = presentation.presentationPath.split('\\').join('/')
+    const presentationFolder = path.substring(0, path.lastIndexOf('/'))
+    return presentationFolder + '/workspace'
   }
 
   elementById(id: string): ISlideObject {

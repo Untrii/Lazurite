@@ -5,8 +5,15 @@
       <slot></slot>
     </div>
     <div class="lz-modal__buttons" @click.stop>
-      <lz-button variant="secondary" style="grid-column:2" @click="$emit('close')">Cancel</lz-button>
-      <lz-button variant="primary" style="grid-column:4" @click="$emit('ok')">OK</lz-button>
+      <lz-button
+        variant="secondary"
+        style="grid-column:2"
+        @click="$emit('close')"
+        >Cancel</lz-button
+      >
+      <lz-button variant="primary" style="grid-column:4" @click="$emit('ok')"
+        >OK</lz-button
+      >
     </div>
   </div>
 </template>

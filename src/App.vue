@@ -11,7 +11,7 @@
         class="tab"
         v-show="openedTab == 'constructor'"
       ></constructor-tab>
-      <!-- <dialogs-wrapper></dialogs-wrapper> -->
+      <dialogs-wrapper></dialogs-wrapper>
     </div>
   </div>
 </template>

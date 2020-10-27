@@ -16,44 +16,44 @@ const groupsInfo = {
       name: 'image',
       elementType: 'ImageBlock',
       image: assets.logo,
-      factoryFunction: 'generateImageProps'
+      factoryFunction: 'generateImageProps',
     },
     {
       name: 'video',
       elementType: 'VideoBlock',
       image: assets.logo,
-      factoryFunction: 'generateVideoProps'
+      factoryFunction: 'generateVideoProps',
     },
     {
       name: 'youtubeVideo',
       elementType: 'EmbeddedVideoBlock',
-      image: assets.logo
-    }
+      image: assets.logo,
+    },
   ],
   figures: [
     {
       name: 'rectangle',
       elementType: 'Rectangle',
-      image: assets.logo
+      image: assets.logo,
     },
     {
       name: 'ellipse',
       elementType: 'EllipseBlock',
-      image: assets.logo
+      image: assets.logo,
     },
     {
       name: 'star',
       elementType: 'Star',
-      image: assets.logo
-    }
+      image: assets.logo,
+    },
   ],
   datavis: [
     {
       name: 'table',
       elementType: 'Spreadsheet',
-      image: assets.logo
-    }
-  ]
+      image: assets.logo,
+    },
+  ],
 }
 
 const dialogService = new DialogService()
@@ -80,6 +80,43 @@ export default class ElementPresetFactory {
     return result
   }
 
+  getImageSize(fileName: string) {
+    const image = document.createElement('img')
+    image.src = 'local-img://' + store.resourceFolder + '/' + fileName
+
+    return {
+      width: image.naturalWidth,
+      height: image.naturalHeight,
+    }
+  }
+
+  getVideoSize(fileName: string): Promise<{ width: number; height: number }> {
+    const video = document.createElement('video')
+    video.src = 'local-img://' + store.resourceFolder + '/' + fileName
+
+    const container = document.createElement('x-internal')
+    container.style.display = 'none'
+    container.appendChild(video)
+    document.body.appendChild(container)
+
+    let onGotMetadata
+    const result: Promise<{
+      width: number
+      height: number
+    }> = new Promise((resolve, reject) => {
+      onGotMetadata = resolve
+    })
+
+    video.addEventListener('loadedmetadata', () => {
+      onGotMetadata({
+        width: video.videoWidth,
+        height: video.videoHeight,
+      })
+    })
+
+    return result
+  }
+
   async generateImageProps() {
     const fileName = await dialogService.openChooseFileDialog('image')
     const imageSize = this.getImageSize(fileName)
@@ -90,43 +127,6 @@ export default class ElementPresetFactory {
     const fileName = await dialogService.openChooseFileDialog('video')
     const videoSize = await this.getVideoSize(fileName)
     return this.generateMediaProps('ImageBlock', videoSize, fileName)
-  }
-
-  private getImageSize(fileName: string) {
-    const image = document.createElement('img')
-    image.src = store.resourceFolder + '/' + fileName
-
-    return {
-      width: image.naturalWidth,
-      height: image.naturalHeight
-    }
-  }
-
-  private getVideoSize(fileName: string): Promise<{ width: number; height: number }> {
-    const video = document.createElement('video')
-    video.src = store.resourceFolder + '/' + fileName
-
-    const container = document.createElement('x-internal')
-    container.style.display = 'none'
-    container.appendChild(video)
-    document.body.appendChild(container)
-
-    let onGotMetadata
-    const result: Promise<{
-      width: number;
-      height: number;
-    }> = new Promise((resolve, reject) => {
-      onGotMetadata = resolve
-    })
-
-    video.addEventListener('loadedmetadata', () => {
-      onGotMetadata({
-        width: video.videoWidth,
-        height: video.videoHeight
-      })
-    })
-
-    return result
   }
 
   getTextGroup(): IElementGroup {
@@ -142,14 +142,16 @@ export default class ElementPresetFactory {
           fontWeight: entry.weight,
           fontSize: entry.size,
           fontFamily: entry.family,
-          content: 'Type here'
-        }
+          content: 'Type here',
+        },
       }
-      elementPresets.push(new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock))
+      elementPresets.push(
+        new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock)
+      )
     }
     return {
       name: 'text',
-      presets: elementPresets
+      presets: elementPresets,
     }
   }
 
@@ -166,7 +168,7 @@ export default class ElementPresetFactory {
               presetInfo.image,
               presetInfo.name,
               presetInfo.elementType,
-              presetInfo.factoryFunction
+              () => this[presetInfo.factoryFunction]()
             )
           )
         } else {
@@ -182,7 +184,7 @@ export default class ElementPresetFactory {
       }
       result.push({
         name,
-        presets
+        presets,
       })
     }
     return result
