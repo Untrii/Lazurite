@@ -1,9 +1,12 @@
-import IHistoryDeclaration, { getBlankHistory } from '@/entities/history/IHistoryDeclaration'
+import IHistoryDeclaration, {
+  getBlankHistory,
+} from '@/entities/history/IHistoryDeclaration'
 import ModelVerificator from '@/utils/ModelVerificator'
 import SingletoneRepository from './base/SingletoneRepository'
 import ReactiveFileHandle from './fileSystems/ReactiveFileHandle'
 
-export default class HistoryRepository extends SingletoneRepository implements IHistoryDeclaration {
+export default class HistoryRepository extends SingletoneRepository
+  implements IHistoryDeclaration {
   static init(filePath: string) {
     const model = getBlankHistory()
     const verificator = ModelVerificator.createVerificator(model)
@@ -33,6 +36,7 @@ export default class HistoryRepository extends SingletoneRepository implements I
     return this._fileHandle.syncronizedObject.redo
   }
   set redo(val) {
+    console.log('changing redo')
     this._fileHandle.syncronizedObject.redo = val
   }
 }

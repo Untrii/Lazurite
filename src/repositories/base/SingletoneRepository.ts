@@ -26,7 +26,12 @@ export default class SingletoneRepository {
               if (singletones[this.prototype.constructor.name])
                 return singletones[this.prototype.constructor.name][prop]
               else return undefined
-            }
+            },
+            set: (target, prop, value) => {
+              if (singletones[this.prototype.constructor.name])
+                singletones[this.prototype.constructor.name][prop] = value
+              return true
+            },
           }
         )
     }

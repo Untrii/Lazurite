@@ -1,7 +1,17 @@
 <template>
   <div :class="rootClasses">
-    <img :src="assets[image]" alt="" v-if="assets[image]" :class="imageClasses" />
-    <img :src="image" alt="" v-else-if="image.trim().length > 0" :class="imageClasses" />
+    <img
+      :src="assets[image]"
+      alt=""
+      v-if="assets[image]"
+      :class="imageClasses"
+    />
+    <img
+      :src="image"
+      alt=""
+      v-else-if="image.trim().length > 0"
+      :class="imageClasses"
+    />
     <div :class="textClasses">
       <slot></slot>
     </div>
@@ -46,6 +56,7 @@ export default class LzButton extends Vue {
     if (this.isImageCorrect) {
       result.push('button__text_align-image')
       result.push('button__text_with-' + this.size + '-image')
+      if (this.imagePosition == 'left') result.push('button__text_image-left')
     } else result.push('button__text_centered')
 
     return result
@@ -93,6 +104,10 @@ export default class LzButton extends Vue {
     }
     &_with-large-image {
       line-height: 48px;
+    }
+
+    &_image-left {
+      margin-left: 8px;
     }
   }
 
