@@ -16,7 +16,7 @@
       @keypress="onKeyPress($event)"
       @keydown="onKeyDown($event)"
       @paste="onPaste($event)"
-      @input="onInput($event)"
+      @input.stop="onInput($event)"
       @mousewheel="onMouseWheel($event)"
     >
       {{ visualisableValue }}
@@ -73,6 +73,7 @@ export default class LzNumberInput extends Vue {
 
   @Watch('value')
   onValueChange(newValue) {
+    newValue = this.acceptFloat ? parseFloat(newValue) : parseInt(newValue)
     if (newValue != this.localValue) {
       this.localValue = newValue
       this.visualisableValue = this.localValue
@@ -120,6 +121,7 @@ export default class LzNumberInput extends Vue {
   }
 
   onKeyDown(event: KeyboardEvent) {
+    console.log('key down')
     if (event.key == 'Delete') event.stopPropagation()
   }
 
