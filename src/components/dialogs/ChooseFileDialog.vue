@@ -59,11 +59,14 @@ import { Buffer } from 'buffer'
 import { shell, remote } from 'electron'
 import ConstrctorStore from '@/services/store/ConstructorStore'
 import ResourceSercvice from '@/services/constructor/ResourceService'
+import RuntimeRepository from '@/repositories/RuntimeRepository'
+import { Watch } from 'vue-property-decorator'
 const dialog = remote.dialog
 
 const dialogService = new DialogService()
 const store = new ConstrctorStore()
 const resourceService = new ResourceSercvice()
+const runtimeData = RuntimeRepository.Instance.data
 let isDialogShown = false
 
 @Options({
@@ -81,6 +84,12 @@ export default class ChooseFileDialog extends Vue {
 
   get isVisible() {
     return dialogService.isChooseFileDialogOpened
+  }
+
+  @Watch('isVisible')
+  onVisibilityChanged() {
+    this.files = []
+    this.reloadFiles()
   }
 
   getFullPath(fileName: string) {
@@ -121,7 +130,7 @@ export default class ChooseFileDialog extends Vue {
     //shell.openItem(store.resourceFolder)
   }
   async reloadFiles() {
-    this.files = await resourceService.getFiles()
+    this.files = await resourceService.getFiles(runtimeData.dialogType)
   }
 
   rejectChoose() {
@@ -161,6 +170,8 @@ export default class ChooseFileDialog extends Vue {
     max-height: calc(100vh - 320px);
     overflow-y: scroll;
     overflow-x: hidden;
+    height: calc(100vh - 320px);
+    max-height: 720px;
   }
 
   &__card {
