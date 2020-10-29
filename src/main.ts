@@ -25,7 +25,7 @@ function loadFiles(presentationPath: string) {
 async function main() {
   console.log('entry')
   try {
-    const presentationPath = await fs.readFile('testProjectPath.txt')
+    const presentationPath = await fs.readFile('data/testProjectPath.txt')
     loadFiles(presentationPath.toString())
     const store = new DesignStore()
     await store.getFontList()
