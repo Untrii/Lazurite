@@ -226,7 +226,7 @@ export default class TypographyModule extends Vue {
 }
 
 .preview {
-  padding: 20px;
+  padding: 0 2px 0 20px;
   position: sticky;
 }
 
@@ -237,8 +237,22 @@ export default class TypographyModule extends Vue {
 }
 
 .presets {
+  overflow-y: scroll;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 6px;
+  height: calc(100% - 40px);
   &__add-button-wrap {
     margin: 0 30px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-style: solid;
+    border-width: 0px 10px 0px 0px;
+    border-color: $gray-extralight;
+    &:hover {
+      border: solid 2px $gray-extralight;
+      border-radius: 10px;
+    }
   }
 }
 </style>
