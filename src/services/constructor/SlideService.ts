@@ -1,6 +1,7 @@
 import PresentationRepository from '@/repositories/PresentationRepository'
 import RuntimeRepository from '@/repositories/RuntimeRepository'
 import ISlideObject from '@/entities/ISlideObject'
+import SlideObjectService from './SlideObjectService'
 
 const presentation = PresentationRepository.Instance
 const runtimeData = RuntimeRepository.Instance.data
@@ -8,8 +9,8 @@ const runtimeData = RuntimeRepository.Instance.data
 export default class SlideService {
   selectSlide(index: number) {
     runtimeData.selectedSlideIndex = index
-    throw new Error('Not fully implemented')
-    //this.deselectAllObjects()
+    const service = new SlideObjectService()
+    service.deselectAllObjects()
   }
   createSlide() {
     presentation.slides.push(new Map())
