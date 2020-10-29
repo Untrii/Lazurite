@@ -1,7 +1,7 @@
 const electron = require('electron')
 const { is } = require('electron-util')
 
-const { app, protocol } = electron
+const { app, protocol, globalShortcut } = electron
 
 function loadRoute(window, route) {
   let url
@@ -19,7 +19,7 @@ function loadRoute(window, route) {
 let mainWindow
 
 function createMainWindow() {
-  mainWindow = new electron.BrowserWindow({
+  let newMainWindow = new electron.BrowserWindow({
     width: 1600,
     height: 900,
     webPreferences: {
@@ -31,11 +31,12 @@ function createMainWindow() {
     frame: false,
   })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
+  newMainWindow.on('closed', () => {
+    newMainWindow = null
   })
 
-  loadRoute(mainWindow, '')
+  loadRoute(newMainWindow, '')
+  mainWindow = newMainWindow
 }
 
 function createSafeFileProtocol(protocolName, placeholderPath) {
@@ -59,4 +60,8 @@ app.on('ready', () => {
   createMainWindow()
   createSafeFileProtocol('local-img', 'data/null/image.png')
   createSafeFileProtocol('local-font', 'data/null/font.ttf')
+  globalShortcut.register('CommandOrControl+R', () => {
+    mainWindow.close()
+    createMainWindow()
+  })
 })

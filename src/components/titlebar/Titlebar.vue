@@ -15,7 +15,10 @@
         {{ tab }}
       </div>
     </div>
-    <div class="titlebar__dragzone" :class="{ 'titlebar__dragzone-maximized': isMaximized }"></div>
+    <div
+      class="titlebar__dragzone"
+      :class="{ 'titlebar__dragzone-maximized': isMaximized }"
+    ></div>
     <div class="titlebar__buttons">
       <div class="titlebar__button" @click="minimize">
         <img :src="assets.minimize" alt="" />
@@ -41,6 +44,10 @@ export default class Titlebar extends Vue {
   isMaximized = false
   tabs = ['design', 'constructor']
 
+  reloadApp() {
+    console.log('reloading')
+    remote.getCurrentWindow().loadURL('http://localhost:8080/')
+  }
   minimize() {
     remote.getCurrentWindow().minimize()
   }

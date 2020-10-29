@@ -3,22 +3,33 @@
     <h2 class="header">
       Selected palette:
     </h2>
-    <div class="palette" @mouseenter="showPrompt(10)" @mouseleave="hidePrompt(10)" style="max-width: 100vw;">
-      <lz-prompt
-        text="CTRL+Click to delete color, SHIFT+Click to edit color"
-        :is-visible="hoveredPalette == 10"
-      ></lz-prompt>
+    <div
+      class="palette"
+      @mouseenter="showPrompt(10)"
+      @mouseleave="hidePrompt(10)"
+      style="max-width: 100vw;"
+    >
       <div
         class="palette__brick-wrap palette__brick-wrap_large"
-        :style="`grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`"
+        :style="
+          `grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`
+        "
       >
         <div
           class="palette__brick palette__brick_large"
           v-for="(color, cindex) in selectedPalette"
           :key="cindex"
           :style="{ background: color.toCssColor() }"
-          @click="onPaletteBrickClick(cindex)"
-        ></div>
+        >
+          <div class="palette__brick-buttons">
+            <lz-button size="small" @click="deleteColor(cindex)"
+              >Delete</lz-button
+            >
+            <lz-button size="small" @click="changeColor(cindex)"
+              >Edit</lz-button
+            >
+          </div>
+        </div>
         <div @click="onAddColorButtonClick">
           add
         </div>
@@ -36,7 +47,10 @@
         @mouseenter="showPrompt(index)"
         @mouseleave="hidePrompt(index)"
       >
-        <lz-prompt text="Click to select" :is-visible="hoveredPalette == index"></lz-prompt>
+        <lz-prompt
+          text="Click to select"
+          :is-visible="hoveredPalette == index"
+        ></lz-prompt>
         <div
           class="palette__brick-wrap"
           @click="selectedPaletteIndex = index"
@@ -78,7 +92,11 @@ const store = new DesignStore()
   },
 })
 export default class ColorModule extends Vue {
-  customPalette = [new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1)]
+  customPalette = [
+    new Color().fromRgb(0, 0, 1),
+    new Color().fromRgb(0, 0, 1),
+    new Color().fromRgb(0, 0, 1),
+  ]
   hoveredPalette = -1
 
   get backgroundColor() {
@@ -118,9 +136,14 @@ export default class ColorModule extends Vue {
   }
 
   get selectedPaletteIndex() {
-    if (this.arePalettesEquals(this.selectedPalette, this.customPalette)) return 10
+    if (this.arePalettesEquals(this.selectedPalette, this.customPalette))
+      return 10
     let result = -1
-    for (let paletteIndex = 0; paletteIndex < this.recomendedPalettes.length; paletteIndex++) {
+    for (
+      let paletteIndex = 0;
+      paletteIndex < this.recomendedPalettes.length;
+      paletteIndex++
+    ) {
       const palette = this.recomendedPalettes[paletteIndex]
       if (this.arePalettesEquals(palette, this.selectedPalette)) {
         result = paletteIndex
@@ -191,7 +214,7 @@ export default class ColorModule extends Vue {
 .palette {
   display: inline-block;
   padding: 0 20px 40px 40px;
-  border-radius: 8px;
+  //border-radius: 8px;
   position: relative;
   width: 100%;
 
@@ -199,7 +222,7 @@ export default class ColorModule extends Vue {
     width: 100%;
     height: 82px;
     border: 1px solid #596b7d;
-    border-radius: 10px;
+    //border-radius: 10px;
     cursor: pointer;
     display: inline-grid;
   }
@@ -210,12 +233,34 @@ export default class ColorModule extends Vue {
     display: inline-block;
 
     &:first-child {
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
+      //border-top-left-radius: 8px;
+      //border-bottom-left-radius: 8px;
     }
     &:last-child {
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
+      //border-top-right-radius: 8px;
+      //border-bottom-right-radius: 8px;
+    }
+
+    &:hover &-buttons {
+      opacity: 1;
+      transition: 0.3s;
+    }
+  }
+
+  &__brick-buttons {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr max-content;
+
+    opacity: 0;
+
+    & *:nth-child(1) {
+      grid-row: 2;
+      grid-column: 1;
+    }
+    & *:nth-child(2) {
+      grid-row: 2;
+      grid-column: 2;
     }
   }
 }
