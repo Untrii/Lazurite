@@ -25,7 +25,7 @@ export function getBlankObject(): ITextBlock {
     left: 750,
     width: 420,
     height: 180,
-    verticalAlign: 'flex-start',
+    verticalAlign: 'top',
     horizontalAlign: 'left',
     content: 'Type here',
     fontFamily: 'pjs0',
