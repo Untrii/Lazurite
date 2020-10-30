@@ -29,10 +29,7 @@ export default class SlideObjectService {
     slideObject.id = randomString(12)
     slideObject.zIndex = this.maxZIndex + 1
 
-    presentation.slides[runtimeData.selectedSlideIndex].set(
-      slideObject.id,
-      slideObject
-    )
+    presentation.slides[runtimeData.selectedSlideIndex].set(slideObject.id, slideObject)
     return slideObject
   }
   selectObject(id: string) {
@@ -70,11 +67,14 @@ export default class SlideObjectService {
       }
   }
 
-  pasteObjects() {
+  async pasteObjects(): Promise<ISlideObject[]> {
+    let result: ISlideObject[] = []
     for (const element of runtimeData.clipboard) {
       const elementPreset = new ElementPreset('', '', element.type, element)
-      this.createObject(elementPreset)
+      let createdElement = await this.createObject(elementPreset)
+      if (createdElement) result.push(createdElement)
     }
+    return result
   }
 
   changeObjectProperty(objectId: string, propertyName: string, newVal: any) {
@@ -98,11 +98,7 @@ export default class SlideObjectService {
 
   changeSelectedObjectProperty(propertyName: string, newVal: any) {
     const store = new ConstructorStore()
-    this.changeObjectProperty(
-      store.selectedObjectId ?? '',
-      propertyName,
-      newVal
-    )
+    this.changeObjectProperty(store.selectedObjectId ?? '', propertyName, newVal)
   }
 
   changeObjectProperties(objectId: string, properties: any) {
@@ -124,13 +120,11 @@ export default class SlideObjectService {
     for (const object of currentSlide.values()) {
       if (delta < 0) {
         console.log(`${object.zIndex} -> ${object.zIndex + 1}`)
-        if (object.zIndex < oldZIndex && object.zIndex >= newZIndex)
-          object.zIndex++
+        if (object.zIndex < oldZIndex && object.zIndex >= newZIndex) object.zIndex++
       }
       if (delta > 0) {
         console.log(`${object.zIndex} -> ${object.zIndex - 1}`)
-        if (object.zIndex <= newZIndex && object.zIndex > oldZIndex)
-          object.zIndex--
+        if (object.zIndex <= newZIndex && object.zIndex > oldZIndex) object.zIndex--
       }
     }
     targetObject.zIndex = newZIndex
