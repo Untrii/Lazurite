@@ -36,7 +36,7 @@
         <span> Files downloaded: {{ savedFilesCount }} <span style="color: gray;">(click RMB to download)</span></span>
       </div>
 
-      <div class="browser-navbar__button" id="close-button" @click="$emit('closed', savedData)">
+      <div class="browser-navbar__button" id="close-button" @click="closeBrowser">
         Close browser
       </div>
     </div>
@@ -105,7 +105,8 @@ export default class Browser extends Vue {
     window.addEventListener('resize', this.onWindowResize)
   }
 
-  beforeDestroy() {
+  closeBrowser() {
+    this.$emit('closed', this.savedData)
     const windowID = remote.getCurrentWindow().id
     const win = BrowserWindow.fromId(windowID)
     win.removeBrowserView(view)
