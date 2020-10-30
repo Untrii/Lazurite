@@ -49,6 +49,7 @@
         variant="light-gray"
         size="small"
         class="text-editor__input"
+        @click="applyPreset(name)"
         >{{ name }}</lz-button
       >
     </div>
@@ -115,6 +116,20 @@ export default class TextEditor extends Vue {
 
   capitalizeFirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
+  async applyPreset(presetName: string) {
+    const groups = elementPresetFactory.getGroups()
+    const textGroup = groups.get('text')
+    if (textGroup) {
+      for (const item of textGroup) {
+        if (item.name == presetName) {
+          const props = await item.getParameters()
+          const neededProps = ['fontFamily', 'fontWeight', 'fontSize']
+          for (const prop of neededProps) service.changeSelectedObjectProperty(prop, props.get(prop))
+        }
+      }
+    }
   }
 }
 </script>
