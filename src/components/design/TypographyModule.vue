@@ -48,6 +48,7 @@ import FontPreview from './FontPreview.vue'
 import DesignStore from '@/services/store/DesignStore'
 import FontService from '@/services/design/FontService'
 import FontDemoTile from './FontDemoTile.vue'
+import Hotkeys from '@/utils/Hotkeys'
 
 const store = new DesignStore()
 const service = new FontService()
@@ -95,7 +96,12 @@ export default class TypographyModule extends Vue {
   }
 
   selectFont(family) {
-    service.changePresetFontFamily(this.selectedPresetId, family)
+    if (Hotkeys.control) {
+      const presets = store.theme.fontPresets
+      for (const item of presets) {
+        service.changePresetFontFamily(item.id, family)
+      }
+    } else service.changePresetFontFamily(this.selectedPresetId, family)
   }
 
   getPresetFont(presetId): IFontPreset {
