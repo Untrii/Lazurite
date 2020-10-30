@@ -13,8 +13,7 @@ export default class ConstrctorStore {
     return runtimeData.selectedSlideIndex
   }
   get selectedObjectId(): string | undefined {
-    if (runtimeData.selectedObjectsIds.size == 1)
-      for (const index of runtimeData.selectedObjectsIds) return index
+    if (runtimeData.selectedObjectsIds.size == 1) for (const index of runtimeData.selectedObjectsIds) return index
     return undefined
   }
   get selectedObjectIds(): string[] {
@@ -40,8 +39,7 @@ export default class ConstrctorStore {
   }
 
   get selectedElement(): ISlideObject | any {
-    for (const entry of runtimeData.selectedObjectsIds)
-      return this.elementById(entry)
+    for (const entry of runtimeData.selectedObjectsIds) return this.elementById(entry)
     return {}
   }
 
@@ -54,10 +52,18 @@ export default class ConstrctorStore {
   }
 
   get resourceFolder() {
-    console.log('resoutceFolder')
     const path = presentation.presentationPath.split('\\').join('/')
     const presentationFolder = path.substring(0, path.lastIndexOf('/'))
     return presentationFolder + '/workspace'
+  }
+
+  get dataFolder() {
+    return (
+      process
+        .cwd()
+        .split('\\')
+        .join('/') + '/data'
+    )
   }
 
   elementById(id: string): ISlideObject {

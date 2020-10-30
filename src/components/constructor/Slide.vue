@@ -46,7 +46,6 @@ export default class Slide extends Vue {
 
   isVisible = false
   animateSlideOpacity() {
-    console.log('anumate slide')
     const win: any = window
     if (!win.__enqueueSlideAnimation) {
       win.__enqueueSlideAnimation = (func) => {
@@ -95,29 +94,13 @@ export default class Slide extends Vue {
         break
       case BackgroundType.Pattern:
         bgStyle = {
-          backgroundImage:
-            'url("' +
-            process
-              .cwd()
-              .split('\\')
-              .join('/') +
-            '/data' +
-            val +
-            '")',
+          backgroundImage: `url('local-img://${store.dataFolder}/${val}')`,
           backgroundSize: '20%',
         }
         break
       case BackgroundType.Image:
         bgStyle = {
-          backgroundImage:
-            'url("' +
-            process
-              .cwd()
-              .split('\\')
-              .join('/') +
-            '/data' +
-            val +
-            '")',
+          backgroundImage: `url('local-img://${store.dataFolder}/${val}')`,
           backgroundSize: 'cover',
         }
         break
