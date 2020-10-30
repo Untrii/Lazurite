@@ -1,16 +1,9 @@
 <template>
   <div id="vue">
-    <titlebar
-      @tab-changed="changeTab"
-      @tab-hovered="onTabHover"
-      @tab-unhovered="onTabUnhover"
-    ></titlebar>
+    <titlebar @tab-changed="changeTab" @tab-hovered="onTabHover" @tab-unhovered="onTabUnhover"></titlebar>
     <div id="app">
-      <design-tab class="tab" v-show="openedTab == 'design'"></design-tab>
-      <constructor-tab
-        class="tab"
-        v-show="openedTab == 'constructor'"
-      ></constructor-tab>
+      <design-tab class="tab" v-if="openedTab == 'design'"></design-tab>
+      <constructor-tab class="tab" v-if="openedTab == 'constructor'"></constructor-tab>
       <dialogs-wrapper></dialogs-wrapper>
     </div>
   </div>
@@ -64,8 +57,7 @@ export default class App extends Vue {
     const result: string[] = []
     if (this.hoveredTab != '' && this.openedTab != this.hoveredTab)
       result.push(`app__${this.openedTab}-to-${this.hoveredTab}`)
-    else if (this.openedTab != this.lastHovered)
-      result.push('app__' + this.openedTab + '-back')
+    else if (this.openedTab != this.lastHovered) result.push('app__' + this.openedTab + '-back')
     else if (!this.isAnimationStopped) result.push('app__' + this.openedTab)
     else result.push('app__' + this.openedTab + '-no-anim')
     this.lastStopRequest = new Date()

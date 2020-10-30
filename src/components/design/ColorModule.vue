@@ -3,17 +3,10 @@
     <h2 class="header">
       Selected palette:
     </h2>
-    <div
-      class="palette"
-      @mouseenter="showPrompt(10)"
-      @mouseleave="hidePrompt(10)"
-      style="max-width: 100vw;"
-    >
+    <div class="palette" @mouseenter="showPrompt(10)" @mouseleave="hidePrompt(10)" style="max-width: 100vw;">
       <div
         class="palette__brick-wrap palette__brick-wrap_large"
-        :style="
-          `grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`
-        "
+        :style="`grid-template-columns: repeat(${selectedPalette.length + 1}, 1fr)`"
       >
         <div
           class="palette__brick palette__brick_large"
@@ -22,16 +15,12 @@
           :style="{ background: color.toCssColor() }"
         >
           <div class="palette__brick-buttons">
-            <lz-button size="small" @click="deleteColor(cindex)"
-              >Delete</lz-button
-            >
-            <lz-button size="small" @click="changeColor(cindex)"
-              >Edit</lz-button
-            >
+            <lz-button size="small" @click="deleteColor(cindex)">Delete</lz-button>
+            <lz-button size="small" @click="changeColor(cindex)">Edit</lz-button>
           </div>
         </div>
-        <div @click="onAddColorButtonClick">
-          add
+        <div @click="onAddColorButtonClick" class="palette__add-button">
+          <img :src="assets.plus" alt="" />
         </div>
       </div>
     </div>
@@ -47,10 +36,7 @@
         @mouseenter="showPrompt(index)"
         @mouseleave="hidePrompt(index)"
       >
-        <lz-prompt
-          text="Click to select"
-          :is-visible="hoveredPalette == index"
-        ></lz-prompt>
+        <lz-prompt text="Click to select" :is-visible="hoveredPalette == index"></lz-prompt>
         <div
           class="palette__brick-wrap"
           @click="selectedPaletteIndex = index"
@@ -82,6 +68,7 @@ import ColorPalette from '@/components/dialogs/ColorPalette.vue'
 import DesignStore from '@/services/store/DesignStore'
 import PalettesService from '@/services/design/PalettesService'
 import IColor from '@/entities/IColor'
+import assets from '@/assets/index'
 
 const service = new PalettesService()
 const store = new DesignStore()
@@ -92,12 +79,12 @@ const store = new DesignStore()
   },
 })
 export default class ColorModule extends Vue {
-  customPalette = [
-    new Color().fromRgb(0, 0, 1),
-    new Color().fromRgb(0, 0, 1),
-    new Color().fromRgb(0, 0, 1),
-  ]
+  customPalette = [new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1), new Color().fromRgb(0, 0, 1)]
   hoveredPalette = -1
+
+  get assets(): any {
+    return assets
+  }
 
   get backgroundColor() {
     return Color.fromOther(store.theme.backgroundColor)
@@ -136,14 +123,9 @@ export default class ColorModule extends Vue {
   }
 
   get selectedPaletteIndex() {
-    if (this.arePalettesEquals(this.selectedPalette, this.customPalette))
-      return 10
+    if (this.arePalettesEquals(this.selectedPalette, this.customPalette)) return 10
     let result = -1
-    for (
-      let paletteIndex = 0;
-      paletteIndex < this.recomendedPalettes.length;
-      paletteIndex++
-    ) {
+    for (let paletteIndex = 0; paletteIndex < this.recomendedPalettes.length; paletteIndex++) {
       const palette = this.recomendedPalettes[paletteIndex]
       if (this.arePalettesEquals(palette, this.selectedPalette)) {
         result = paletteIndex
@@ -261,6 +243,20 @@ export default class ColorModule extends Vue {
     & *:nth-child(2) {
       grid-row: 2;
       grid-column: 2;
+    }
+  }
+
+  &__add-button {
+    background-color: #4d5f71;
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    align-items: center;
+
+    img {
+      margin: auto;
+      height: 40px;
+      width: 40px;
     }
   }
 }
