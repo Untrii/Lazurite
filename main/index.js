@@ -1,3 +1,4 @@
+const { BrowserWindow } = require('electron')
 const electron = require('electron')
 const { is } = require('electron-util')
 
@@ -61,7 +62,7 @@ app.on('ready', () => {
   createSafeFileProtocol('local-img', 'data/null/image.png')
   createSafeFileProtocol('local-font', 'data/null/font.ttf')
   globalShortcut.register('CommandOrControl+R', () => {
-    mainWindow.close()
+    mainWindow.destroy()
     createMainWindow()
   })
 })
