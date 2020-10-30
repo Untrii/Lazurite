@@ -57,8 +57,9 @@ import Color from '@/entities/Color'
 let colorPicker
 
 export default class ColorPalette extends Vue {
-  @Prop(Boolean) isColorPaletteOpened
-  @Prop(String) mode
+  @Prop() defaultColor: string = '#FF0000'
+  @Prop() isColorPaletteOpened!: boolean
+  @Prop() mode!: string
 
   pickedColor = '#FF0000'
   pickedColorRGB = { r: 255, g: 0, b: 0 }
@@ -152,6 +153,7 @@ export default class ColorPalette extends Vue {
 
   @Watch('isColorPaletteOpened')
   openPalette() {
+    this.pickedColor = this.defaultColor
     if (!this.isColorPaletteOpened) this.close()
     else {
       this.$nextTick(this.mountColorPicker)
@@ -181,7 +183,7 @@ export default class ColorPalette extends Vue {
         color: this.pickedColor,
       })
 
-      colorPicker.on('color:change', (res) => {
+      const handler = (res) => {
         this.pickedColor = res.hexString
         const rgb = res.rgb
         const hsl = res.hsl
@@ -193,7 +195,10 @@ export default class ColorPalette extends Vue {
         this.pickedColorHSL.h = hsl.h
         this.pickedColorHSL.s = hsl.s
         this.pickedColorHSL.l = hsl.l
-      })
+      }
+
+      colorPicker.on('color:change', handler)
+      colorPicker.on('color:init', handler)
     }
   }
 

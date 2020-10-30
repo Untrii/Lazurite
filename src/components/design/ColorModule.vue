@@ -53,6 +53,7 @@
     </div>
     <color-palette
       :isColorPaletteOpened="isColorPaletteOpened"
+      :defaultColor="pickerDefaultColor"
       mode="color"
       @picked="onColorPicked"
       @closed="onPaletteClosed"
@@ -152,9 +153,11 @@ export default class ColorModule extends Vue {
 
   isColorPaletteOpened = false
   changingColorIndex = 0
+  pickerDefaultColor = '#FF0000'
   changeColor(colorIndex: number) {
     this.changingColorIndex = colorIndex
     this.isColorPaletteOpened = true
+    this.pickerDefaultColor = this.selectedPalette[colorIndex].toHex()
   }
   onColorPicked(pickedColor: string) {
     this.isColorPaletteOpened = false
