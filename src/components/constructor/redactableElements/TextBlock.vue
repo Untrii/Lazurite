@@ -21,6 +21,7 @@
     <div v-else class="wrap" :style="wrapStyle">
       <div
         @click.stop
+        @paste="onPaste"
         class="text-block text-block_editable"
         :id="'tbr' + id"
         :style="blockStyle"
@@ -84,6 +85,13 @@ export default class RedactableTextBlock extends Vue {
   // onStrikethroughClick() {}
   // onUnderlineClick() {}
   // onClearClick() {}
+
+  onPaste(e) {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text')
+    console.log('text to past: ', text)
+    e.target.ownerDocument.execCommand('insertText', false, text)
+  }
 
   buttons = [
     {
