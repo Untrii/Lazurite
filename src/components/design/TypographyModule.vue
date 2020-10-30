@@ -2,11 +2,7 @@
   <div class="root">
     <div class="content">
       <div class="presets">
-        <font-preview
-          class="preview"
-          @presetChanged="onPresetChanged"
-          :fontFamilies="fontFamilies"
-        ></font-preview>
+        <font-preview class="preview" @presetChanged="onPresetChanged" :fontFamilies="fontFamilies"></font-preview>
       </div>
       <div class="preset-redactor">
         <div class="preset-redactor__font-settings">
@@ -111,8 +107,7 @@ export default class TypographyModule extends Vue {
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == this.getPresetFont(this.selectedPresetId).family)
-        return entry.variants
+      if (entry.name == this.getPresetFont(this.selectedPresetId).family) return entry.variants
     }
     return [400]
   }
@@ -211,6 +206,10 @@ export default class TypographyModule extends Vue {
   .font-list__item {
     width: 100%;
     margin-right: 0px !important;
+
+    &:nth-child(2) {
+      margin-top: 20px !important;
+    }
   }
 }
 
