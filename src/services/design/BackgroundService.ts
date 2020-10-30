@@ -3,6 +3,9 @@ import BackgroundsRepository from '@/repositories/BackgroundsRepository'
 import PresentationRepository from '@/repositories/PresentationRepository'
 import { remote } from 'electron'
 import Color from '@/entities/Color'
+import ConstrctorStore from '../store/ConstructorStore'
+import path from 'path'
+import fs from 'fs'
 const ImageProcessing = remote.require('./ImageProcessing')
 
 const presentation = PresentationRepository.Instance
@@ -24,7 +27,15 @@ export default class BackgroundService {
   }
 
   deleteBackground(type: BackgroundType | string, value: string) {
+    console.log(value)
     if (typeof type != 'string') type = stringFromType(type)
+
+    const store = new ConstrctorStore()
+    const previewPath = store.dataFolder + value
+    const mainFilePath = previewPath.replace('/preview/', '/')
+
+    if (fs.existsSync(previewPath)) fs.unlinkSync(previewPath)
+    if (fs.existsSync(mainFilePath)) fs.unlinkSync(mainFilePath)
 
     const customCollection = backgrounds.custom.get(type)
     if (customCollection) {

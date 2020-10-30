@@ -59,9 +59,11 @@ import { remote } from 'electron'
 import { promises as fs } from 'fs'
 import DesignStore from '@/services/store/DesignStore'
 import BackgroundService from '@/services/design/BackgroundService'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+import randomString from '@/utils/StringGenerator'
 
 const dialog = remote.dialog
-//const { ImageProcessing } = remote.require('./main')
+const ImageProcessing = remote.require('./ImageProcessing')
 
 const store = new DesignStore()
 const service = new BackgroundService()
@@ -131,14 +133,14 @@ export default class BackgroundModule extends Vue {
   async addBackground() {
     const getFreeFileName = async function(folder: string): Promise<string> {
       const files = await fs.readdir(folder)
-      let index = 0
+      let name = randomString(12)
       while (true) {
-        if (!files.includes(`custom${index}.png`) && !files.includes(`custom${index}.jpg`)) {
-          return 'custom' + index
+        if (!files.includes(`${name}.png`) && !files.includes(`${name}.jpg`)) {
+          return name
         }
-        index++
+        randomString(12)
       }
-      return ''
+      return name
     }
     switch (this.pickedType) {
       case 'color':
@@ -164,21 +166,18 @@ export default class BackgroundModule extends Vue {
         })
         if (!result.canceled) {
           for (const file of result.filePaths) {
-            const dataPath =
-              process
-                .cwd()
-                .split('\\')
-                .join('/') + '/data'
+            const constructorStore = new ConstrctorStore()
+            const dataPath = constructorStore.dataFolder
             const path = dataPath + (this.pickedType == 'image' ? '/background' : '/patterns')
             const extension = '.' + file.split('.').pop()
             const fileName = (await getFreeFileName(path)) + extension
             const filePath = path + '/' + fileName
+            const previewPath = path + '/preview/' + fileName
             await fs.copyFile(file, filePath)
             if (this.pickedType == 'image') {
-              //await ImageProcessing.createPreviews()
-              throw new Error('not implemented')
+              await ImageProcessing.createPreviews()
             }
-            service.addBackground(this.pickedType, filePath.replace(dataPath, ''))
+            service.addBackground(this.pickedType, previewPath.replace(dataPath, ''))
           }
         }
         break
