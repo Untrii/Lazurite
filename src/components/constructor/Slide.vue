@@ -6,6 +6,7 @@
       :id="id"
       :scale="width / 1920"
     ></redactable-base-element>
+    <div class="grid" v-if="isGridShown"><div class="grid__cell" v-for="i in range(gridSize)" :key="i"></div></div>
   </div>
   <div class="slide" :style="rootStyle" :class="rootClasses" v-else>
     <base-element v-for="id in elementIds" :key="id" :id="id" :scale="width / 1920"></base-element>
@@ -42,6 +43,19 @@ export default class Slide extends Vue {
 
   mounted() {
     requestAnimationFrame(() => this.animateSlideOpacity())
+  }
+
+  range(size: number) {
+    let result = new Array(size)
+    return result
+  }
+
+  get isGridShown() {
+    return store.isGridEnabled
+  }
+
+  get gridSize() {
+    return store.gridSize
   }
 
   isVisible = false
@@ -120,7 +134,7 @@ export default class Slide extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss">
 .slide {
   position: relative;
   overflow: hidden;
@@ -132,5 +146,25 @@ export default class Slide extends Vue {
 }
 .slide_visible-fast {
   opacity: 1 !important;
+}
+
+.grid {
+  display: inline-grid;
+  grid-template-rows: repeat(9, 1fr);
+  grid-template-columns: repeat(16, 1fr);
+  width: 100%;
+  height: 100%;
+
+  &__cell {
+    // width: 6.25%;
+    // height: 11.1111%;
+    width: 100%;
+    height: 100%;
+    border-top: 1px dashed gray;
+    border-left: 1px dashed gray;
+  }
+
+  border-bottom: 1px dashed gray;
+  border-right: 1px dashed gray;
 }
 </style>

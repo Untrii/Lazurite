@@ -59,7 +59,7 @@ export default class Titlebar extends Vue {
   }
 
   close() {
-    remote.app.quit()
+    remote.getCurrentWindow().destroy()
   }
 
   selectTab(tabname) {
