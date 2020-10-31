@@ -39,6 +39,9 @@
         </div>
       </div>
     </div>
+    <div class="progress-bar">
+      <div class="progress-bar__progress" :style="progressBarStyle"></div>
+    </div>
 
     <color-palette
       :isColorPaletteOpened="isColorPaletteOpened"
@@ -82,6 +85,21 @@ export default class BackgroundModule extends Vue {
   isListScrolled = false
   trackedFrames = 20
   pickedType = 'color'
+  progressBar = {
+    value: 0,
+    maxValue: 0,
+  }
+
+  get progressBarStyle() {
+    let { value, maxValue } = this.progressBar
+    if (maxValue == 0) return { width: 0 }
+    else {
+      return {
+        width: `${(value / maxValue) * 100}%`,
+        transform: `translateY(${maxValue == value ? '10px' : '0px'})`,
+      }
+    }
+  }
 
   get availableBackgrounds(): IBackgroundCollection {
     console.log('here')
@@ -165,6 +183,12 @@ export default class BackgroundModule extends Vue {
           filters: [{ name: 'Images', extensions: ['jpg', 'png'] }],
         })
         if (!result.canceled) {
+          const fileCount = result.filePaths.length
+          const progress = 0
+          this.progressBar = {
+            value: progress,
+            maxValue: fileCount,
+          }
           for (const file of result.filePaths) {
             const constructorStore = new ConstrctorStore()
             const dataPath = constructorStore.dataFolder
@@ -178,12 +202,11 @@ export default class BackgroundModule extends Vue {
               await ImageProcessing.createPreviews()
             }
             service.addBackground(this.pickedType, previewPath.replace(dataPath, ''))
+            this.progressBar.value++
           }
         }
         break
     }
-
-    //service.addBackground()
   }
   onColorPicked(value) {
     console.log('picked background')
@@ -275,6 +298,21 @@ export default class BackgroundModule extends Vue {
 }
 .tiles__grid {
   display: inline-grid;
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  height: 10px;
+  width: calc(100vw - 240px);
+  overflow: hidden;
+  background: none;
+
+  &__progress {
+    transition: 0.3s;
+    height: 10px;
+    background-color: $gray-extradark;
+  }
 }
 
 @media (min-width: 520px) {
