@@ -126,7 +126,7 @@ export default class ElementPresetFactory {
   async generateVideoProps() {
     const fileName = await dialogService.openChooseFileDialog('video')
     const videoSize = await this.getVideoSize(fileName)
-    return this.generateMediaProps('ImageBlock', videoSize, fileName)
+    return this.generateMediaProps('VideoBlock', videoSize, fileName)
   }
 
   getTextGroup(): IElementGroup {
