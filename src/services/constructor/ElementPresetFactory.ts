@@ -59,11 +59,7 @@ const groupsInfo = {
 const dialogService = new DialogService()
 
 export default class ElementPresetFactory {
-  generateMediaProps(
-    type: string,
-    originalSize: { height: number; width: number },
-    fileName: string
-  ) {
+  generateMediaProps(type: string, originalSize: { height: number; width: number }, fileName: string) {
     if (originalSize.height > 540) {
       originalSize.width /= originalSize.height / 540
       originalSize.height = 540
@@ -126,7 +122,7 @@ export default class ElementPresetFactory {
   async generateVideoProps() {
     const fileName = await dialogService.openChooseFileDialog('video')
     const videoSize = await this.getVideoSize(fileName)
-    return this.generateMediaProps('ImageBlock', videoSize, fileName)
+    return this.generateMediaProps('VideoBlock', videoSize, fileName)
   }
 
   getTextGroup(): IElementGroup {
@@ -145,9 +141,7 @@ export default class ElementPresetFactory {
           content: 'Type here',
         },
       }
-      elementPresets.push(
-        new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock)
-      )
+      elementPresets.push(new ElementPreset(assets.text, entry.name, 'TextBlock', sampleTextBlock))
     }
     return {
       name: 'text',
@@ -164,11 +158,8 @@ export default class ElementPresetFactory {
       for (const presetInfo of info[key]) {
         if (presetInfo.factoryFunction) {
           presets.push(
-            new ElementPreset(
-              presetInfo.image,
-              presetInfo.name,
-              presetInfo.elementType,
-              () => this[presetInfo.factoryFunction]()
+            new ElementPreset(presetInfo.image, presetInfo.name, presetInfo.elementType, () =>
+              this[presetInfo.factoryFunction]()
             )
           )
         } else {
