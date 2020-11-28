@@ -2,7 +2,11 @@
   <div class="root">
     <div class="content">
       <div class="presets">
-        <font-preview class="preview" @presetChanged="onPresetChanged" :fontFamilies="fontFamilies"></font-preview>
+        <font-preview
+          class="preview"
+          @presetChanged="onPresetChanged"
+          :fontFamilies="fontFamilies"
+        ></font-preview>
       </div>
       <div class="preset-redactor">
         <div class="preset-redactor__font-settings">
@@ -24,16 +28,29 @@
           >
           </lz-select>
         </div>
+        <div class="preset-redactor__search">
+          <lz-text-input
+            :value="searchValue"
+            @input="onSearchInput"
+            size="large"
+            prepend="Search"
+          ></lz-text-input>
+        </div>
         <div class="font-list">
-          <font-demo-tile
-            class="font-list__item"
-            v-for="font in fontList"
+          <div
+            v-for="(font, index) in fontList"
+            v-show="filteredFontIndexes.has(index)"
             :key="font.name"
-            :name="font.name"
-            :variants="font.variants"
-            :isSelected="selectedPresetFamily == font.name"
-            @click="selectFont(font.name)"
-          ></font-demo-tile>
+            class="font-list__item-wrap"
+          >
+            <font-demo-tile
+              class="font-list__item"
+              :name="font.name"
+              :variants="font.variants"
+              :isSelected="selectedPresetFamily == font.name"
+              @click="selectFont(font.name)"
+            ></font-demo-tile>
+          </div>
         </div>
       </div>
     </div>
@@ -44,11 +61,13 @@
 import { Options, Vue } from 'vue-class-component'
 import localize from '@/utils/locales'
 import IFontPreset, { getBlankPreset } from '@/entities/IFontPreset'
+import IFontRecord from '@/entities/IFontRecord'
 import FontPreview from './FontPreview.vue'
 import DesignStore from '@/services/store/DesignStore'
 import FontService from '@/services/design/FontService'
 import FontDemoTile from './FontDemoTile.vue'
 import Hotkeys from '@/utils/Hotkeys'
+import Searcher from '@/utils/Searcher'
 
 const store = new DesignStore()
 const service = new FontService()
@@ -62,7 +81,9 @@ const service = new FontService()
 export default class TypographyModule extends Vue {
   pickedType = 'text'
   selectedPresetId = ''
-  fontList: any[] = []
+  fontList: IFontRecord[] = []
+  searchValue = ''
+  searcher!: Searcher
 
   localize(str) {
     return localize('en', str)
@@ -71,9 +92,15 @@ export default class TypographyModule extends Vue {
   async beforeMount() {
     if (this.fontList.length == 0) {
       this.fontList = await store.getFontList()
+      this.searcher = new Searcher(this.fontList, (item) =>
+        item.name.toLowerCase()
+      )
     }
   }
-  beforeDestroy() {}
+
+  onSearchInput(newVal) {
+    this.searchValue = newVal
+  }
 
   onPresetChanged(selectedPreset) {
     this.selectedPresetId = selectedPreset
@@ -113,7 +140,8 @@ export default class TypographyModule extends Vue {
   }
   get presetFontVariants() {
     for (const entry of this.fontList) {
-      if (entry.name == this.getPresetFont(this.selectedPresetId).family) return entry.variants
+      if (entry.name == this.getPresetFont(this.selectedPresetId).family)
+        return entry.variants
     }
     return [400]
   }
@@ -124,6 +152,14 @@ export default class TypographyModule extends Vue {
       result.push(font.name)
     }
     return result
+  }
+
+  get filteredFontIndexes() {
+    console.log('filtered font list')
+    if (!this.searcher) return this.fontList
+    else {
+      return this.searcher.search(this.searchValue.toLowerCase())
+    }
   }
 }
 </script>
@@ -157,7 +193,7 @@ export default class TypographyModule extends Vue {
 
 .preset-redactor {
   display: grid;
-  grid-template-rows: 68px 1fr;
+  grid-template-rows: 68px max-content 1fr;
   height: 100%;
 
   &__font-settings {
@@ -169,30 +205,33 @@ export default class TypographyModule extends Vue {
     padding-top: 20px;
     padding-right: 20px;
   }
+
+  &__search {
+    margin-top: 20px;
+    padding-right: 20px;
+  }
 }
 
 .font-list {
   overflow-y: scroll;
+  text-align: end;
+  margin-left: -20px;
   height: 100%;
   max-height: calc(100vh - 124px);
   margin-top: 20px;
   padding-right: 2px;
   margin-right: 6px;
 
+  &__item-wrap {
+    display: inline-block;
+    width: 50%;
+    padding-left: 20px;
+  }
+
   &__item {
     cursor: pointer;
-    display: inline-block;
-    width: calc(50% - 10px);
-    &:nth-child(odd) {
-      margin-right: 20px;
-    }
+
     margin-top: 20px;
-    &:nth-child(1) {
-      margin-top: 0 !important;
-    }
-    &:nth-child(2) {
-      margin-top: 0 !important;
-    }
   }
   &__item-label {
     font-size: 18px;
@@ -209,6 +248,9 @@ export default class TypographyModule extends Vue {
 }
 
 @media (max-width: 1640px) {
+  .font-list__item-wrap {
+    width: 100% !important;
+  }
   .font-list__item {
     width: 100%;
     margin-right: 0px !important;

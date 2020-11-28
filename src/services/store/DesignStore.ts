@@ -2,14 +2,10 @@ import PresentationRepository from '@/repositories/PresentationRepository'
 import { promises as fs } from 'fs'
 import BackgroundsRepository from '@/repositories/BackgroundsRepository'
 import IBackgroundCollection from '@/entities/IBackgroundCollection'
+import IFontRecord from '@/entities/IFontRecord'
 
 const presentation = PresentationRepository.Instance
 const backgrounds = BackgroundsRepository.Instance
-
-interface IFontRecord {
-  name: string
-  variants: string[]
-}
 
 export default class DesignStore {
   get theme() {

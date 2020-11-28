@@ -1,6 +1,10 @@
 <template>
   <color-corrector v-bind="$attrs">
-    <video :src="src" alt="" class="video-block" />
+    <video
+      :src="'local-img://' + resourceFolder + '/' + src"
+      alt=""
+      class="video-block"
+    />
   </color-corrector>
 </template>
 
@@ -9,6 +13,9 @@ import 'reflect-metadata'
 import { Prop } from 'vue-property-decorator'
 import { Options, Vue } from 'vue-class-component'
 import ColorCorrector from '@/components/elements/hocs/ColorCorrector.vue'
+import ConstrctorStore from '@/services/store/ConstructorStore'
+
+const store = new ConstrctorStore()
 
 @Options({
   components: {
@@ -17,6 +24,10 @@ import ColorCorrector from '@/components/elements/hocs/ColorCorrector.vue'
 })
 export default class VideoBlock extends Vue {
   @Prop() src!: string
+
+  get resourceFolder() {
+    return store.resourceFolder
+  }
 }
 </script>
 
