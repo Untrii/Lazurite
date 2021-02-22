@@ -11,6 +11,9 @@ export default {
     main: ['./main.tsx'],
   },
   devtool: 'source-map',
+  devServer: {
+    port: 9090,
+  },
   target: 'electron-renderer',
   resolve: {
     extensions: ['.js', '.json', '.ts', '.jsx', '.tsx'],
@@ -31,6 +34,10 @@ export default {
             },
           },
         ],
+      },
+      {
+        test: /\.s(a|c)ss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
     ],
   },
