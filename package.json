@@ -7,13 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
     "devbuild": "webpack --mode development",
-    "dev": "webpack-dev-server --mode development"
+    "devserver": "webpack-dev-server --mode development",
+    "serve": "node .serve-util/serve"
   },
   "author": "Azullon",
   "license": "ISC",
   "devDependencies": {
+    "chokidar": "^3.5.1",
     "css-loader": "^5.0.2",
+    "electron-builder": "^22.9.1",
+    "electron-debug": "^3.2.0",
+    "electron-devtools-installer": "^3.1.1",
     "html-webpack-plugin": "^5.2.0",
+    "lodash.debounce": "^4.0.8",
+    "node-sass": "^5.0.0",
     "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
     "ts-loader": "~8.0.17",
@@ -24,6 +31,9 @@
     "webpack-dev-server": "^4.0.0-0"
   },
   "dependencies": {
+    "electron": "^11.3.0",
+    "electron-util": "^0.14.2",
+    "jimp": "^0.16.1",
     "preact": "^10.5.12"
   },
   "alias": {
