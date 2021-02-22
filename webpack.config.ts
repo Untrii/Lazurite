@@ -15,7 +15,7 @@ export default {
   resolve: {
     extensions: ['.js', '.json', '.ts', '.jsx', '.tsx'],
     alias: {
-      '~': srcPath,
+      '@': srcPath,
     },
   },
   module: {
