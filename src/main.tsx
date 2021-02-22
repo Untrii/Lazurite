@@ -1,3 +1,4 @@
+import 'preact/debug'
 import { render, h } from 'preact'
 
 const App = () => {
@@ -5,3 +6,4 @@ const App = () => {
 }
 
 render(<App />, document.querySelector('#app'))
+console.log('abcd')

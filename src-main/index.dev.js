@@ -1,15 +1,17 @@
-/* eslint-disable */
+const { app, session } = require('electron')
+const path = require('path')
+const os = require('os')
 
-// install devtools
-const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer')
+const extensionID = 'ilcajpmogmhpliinlbcdebhbcanbghmd'
+const extensionVersion = '1.3.0_0'
+let absoluteExtensionPath = `${os.homedir()}/Library/Application Support/Google/Chrome/Default/Extensions/${extensionID}/${extensionVersion}`
 
-// debug
-//require('electron-debug')()
+if (process.platform == 'win32') {
+  absoluteExtensionPath = `${process.env.LOCALAPPDATA}/Google/Chrome/User Data/Default/Extensions/${extensionID}/${extensionVersion}`
+}
 
-require('electron').app.on('ready', () => {
-  installExtension('ljjemllljcmogpfapbkkighbhhppjdbg')
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log('An error occurred: ', err))
+app.whenReady().then(async () => {
+  await session.defaultSession.loadExtension(absoluteExtensionPath)
 })
 
 require('./index')

@@ -3,6 +3,7 @@ node_modules
 /dist
 /data
 /.vs
+devtools-ext
 
 .VSCodeCounter
 
