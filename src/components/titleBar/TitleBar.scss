@@ -1,0 +1,26 @@
+@import '@/css/variables.scss';
+
+.title-bar {
+  display: inline-flex;
+  width: 100vw;
+  height: 30px;
+  background: $blue-100;
+
+  &__logo {
+    height: 30px;
+    width: 30px;
+
+    img {
+      height: inherit;
+      transform: scale(0.6666);
+    }
+  }
+
+  &__drag-area {
+    min-width: 40px;
+    -webkit-app-region: drag;
+    margin-top: 4px;
+    height: 26px;
+    flex-grow: 2;
+  }
+}

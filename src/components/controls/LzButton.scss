@@ -1,0 +1,48 @@
+@import '@/css/variables.scss';
+
+.lz-button {
+  color: white;
+  line-height: 24px;
+  height: 24px;
+  border-radius: 4px;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: fit-content;
+  overflow: hidden;
+  cursor: pointer;
+
+  &_block {
+    width: 100%;
+    text-align: center;
+  }
+
+  img {
+    max-width: 12px;
+    max-height: 12px;
+    margin-right: 12px;
+  }
+
+  &_no-text {
+    width: 24px;
+    padding: 0 !important;
+    img {
+      margin: auto !important;
+    }
+  }
+}
+
+@for $i from 1 through 6 {
+  .lz-button_color-blue-#{$i}00 {
+    background: nth($list: $blue-shades, $n: $i);
+    &:hover {
+      background: nth($list: $blue-shades, $n: $i + 1);
+      transition: 0.3s;
+    }
+    &:not(:hover) {
+      background: nth($list: $blue-shades, $n: $i);
+      transition: 0.3s;
+    }
+  }
+}

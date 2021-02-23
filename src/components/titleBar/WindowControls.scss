@@ -1,0 +1,31 @@
+@import '@/css/variables.scss';
+.window-controls {
+  align-self: flex-end;
+  display: inline-flex;
+  height: inherit;
+  width: max-content;
+}
+
+.window-control {
+  width: 45px;
+  height: inherit;
+  &:hover {
+    background: $blue-300;
+  }
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#close-control:hover {
+  background: #d71538;
+}
+
+g {
+  stroke: white;
+  stroke-width: 0.9px;
+  fill: none;
+}
+g:not([id|='close']) {
+  shape-rendering: crispEdges;
+}

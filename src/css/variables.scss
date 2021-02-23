@@ -1,0 +1,17 @@
+$blue-100: #191b1e;
+$blue-200: #202532;
+$blue-300: #282d3c;
+$blue-400: #323746;
+$blue-500: #3c4150;
+$blue-600: #4b505f;
+$blue-700: #646978;
+$blue-800: #aab6c8;
+$blue-900: #efeff4;
+
+$blue-shades: ($blue-100 $blue-200 $blue-300 $blue-400 $blue-500 $blue-600 $blue-700 $blue-800 $blue-900);
+
+@for $i from 1 through 9 {
+  .bg-blue-#{$i}00 {
+    background-color: nth($list: $blue-shades, $n: $i);
+  }
+}
