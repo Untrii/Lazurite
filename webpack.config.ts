@@ -39,6 +39,10 @@ export default {
         test: /\.s(a|c)ss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      {
+        test: /\.(png|jpg|svg|gif|ttf|woff|woff2|eot)$/,
+        use: ['file-loader'],
+      },
     ],
   },
   plugins: [
