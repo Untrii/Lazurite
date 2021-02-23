@@ -60,9 +60,9 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   createMainWindow()
   createSafeFileProtocol('local')
-  globalShortcut.register('CommandOrControl+R', () => {
-    let oldMainWindow = mainWindow
-    createMainWindow()
-    oldMainWindow.destroy()
-  })
+  // globalShortcut.register('CommandOrControl+R', () => {
+  //   let oldMainWindow = mainWindow
+  //   createMainWindow()
+  //   oldMainWindow.destroy()
+  // })
 })

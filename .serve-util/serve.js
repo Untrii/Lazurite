@@ -5,7 +5,9 @@ const path = require('path')
 const { exec, spawn } = require('child_process')
 
 async function startRenderer() {
-  exec('npm run devserver')
+  let proc = exec('npm run devserver')
+  proc.stdout.pipe(process.stdout)
+  proc.stderr.pipe(process.stderr)
 }
 
 let manualRestart = false
