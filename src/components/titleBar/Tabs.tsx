@@ -16,16 +16,9 @@ const Tabs = (props: TabsProps) => {
     draggingTabIndex: -1,
     draggingTabStartX: -1,
     draggingTabCurrentX: -1,
+    startOffsetX: -1,
     tabSize: 200,
   })
-
-  // const state = {
-  //   draggingTabIndex: -1,
-  //   draggingTabStartX: -1,
-  //   draggingTabCurrentX: -1,
-  // }
-
-  //let state.tabSize = 200
 
   const getDraggingTabDelta = function () {
     return Math.round((state.draggingTabCurrentX - state.draggingTabStartX) / state.tabSize)
@@ -36,19 +29,35 @@ const Tabs = (props: TabsProps) => {
     if (target.clientWidth) state.tabSize = target.clientWidth + 1
     if (tabIndex != props.openedTabIndex && props.onTabOpened) props.onTabOpened(tabIndex)
     state.draggingTabIndex = tabIndex
+
     let mouseUpListener = (event: MouseEvent) => {
       let delta = getDraggingTabDelta()
-      if (props.onReplaced && typeof props.openedTabIndex == 'number')
-        props.onReplaced(state.draggingTabIndex, state.draggingTabIndex + delta)
+      if (props.onReplaced) {
+        let newPosition = state.draggingTabIndex + delta
+        newPosition = Math.max(0, Math.min(newPosition, props.names.length - 1))
+        props.onReplaced(state.draggingTabIndex, newPosition)
+      }
       if (state.draggingTabIndex == tabIndex) state.draggingTabIndex = -1
       state.draggingTabStartX = state.draggingTabCurrentX = -1
       window.removeEventListener('mouseup', mouseUpListener)
       window.removeEventListener('mousemove', mouseMoveListener)
     }
+
     let mouseMoveListener = (event: MouseEvent) => {
-      state.draggingTabCurrentX = event.clientX
-      if (state.draggingTabStartX == -1) state.draggingTabStartX = event.clientX
+      let x = event.clientX
+
+      if (x - state.startOffsetX < 30) x = state.startOffsetX + 30
+      if (window.innerWidth - 135 - state.tabSize + state.startOffsetX < x)
+        x = window.innerWidth - 135 + state.startOffsetX - state.tabSize
+
+      state.draggingTabCurrentX = x
+      if (state.draggingTabStartX == -1) {
+        console.log('setting start x')
+        state.draggingTabStartX = x
+        state.startOffsetX = event.offsetX
+      }
     }
+
     window.addEventListener('mouseup', mouseUpListener)
     window.addEventListener('mousemove', mouseMoveListener)
   }
