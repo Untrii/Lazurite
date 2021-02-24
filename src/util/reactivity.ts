@@ -7,43 +7,46 @@ import { useEffect, useMemo, useState } from 'preact/hooks'
  * @param component Функциональный компонент Preact
  * @return Переданный компонент в реактивной обёртке
  */
-function reactiveComponent<P>(component: FunctionalComponent<P>): FunctionalComponent<P> {
-  let reactiveComponent: FunctionalComponent<P> = (props: P) => {
-    // Используем useState для получения возможности обновления компонента
-    const [, requestRerender] = useState({})
-    // create a memoized reactive wrapper of the original component
-    // at the very first run of the component function
-    const render = useMemo(
-      () =>
-        observe(component, {
-          // React (и Preact тоже) неплохо умеет склеивать setState
-          // Поэтому его можно спокойно вызвать хоть миллион раз(буквально)
-          scheduler: () => requestRerender({}),
-          lazy: true,
-        }),
-      // В оригинальной либе для React написано, что так надо, чтобы девтулзы не ломались
-      [component]
-    )
+export function reactiveComponent<P>(component: FunctionalComponent<P>): FunctionalComponent<P> {
+  let name = component.displayName || component.name
+  let result: { [key: string]: FunctionalComponent<P> } = {
+    [name]: (props: P) => {
+      // Используем useState для получения возможности обновления компонента
+      const [, requestRerender] = useState({})
+      // create a memoized reactive wrapper of the original component
+      // at the very first run of the component function
+      const render = useMemo(
+        () =>
+          observe(component, {
+            // React (и Preact тоже) неплохо умеет склеивать setState
+            // Поэтому его можно спокойно вызвать хоть миллион раз(буквально)
+            scheduler: () => requestRerender({}),
+            lazy: true,
+          }),
+        // В оригинальной либе для React написано, что так надо, чтобы девтулзы не ломались
+        [component]
+      )
 
-    // После анмаунта компонента очищаем зависимость
-    useEffect(() => {
-      return () => unobserve(render)
-    }, [])
+      // После анмаунта компонента очищаем зависимость
+      useEffect(() => {
+        return () => unobserve(render)
+      }, [])
 
-    return render(props)
+      return render(props)
+    },
   }
 
-  reactiveComponent.displayName = component.displayName || component.name
-  reactiveComponent['isReactive'] = true
-
-  return reactiveComponent
+  result[name].displayName = name
+  return result[name]
 }
 
 //Используем option hooks для навешивания на компоненты преакта реактивности
 let oldVnode = options.vnode
 const cache = new WeakMap()
+window['componentCache'] = cache
 options.vnode = (vnode) => {
   if (typeof vnode.type == 'function') {
+    console.log('Rerendering ' + vnode.type.name)
     if (!cache.has(vnode.type)) cache.set(vnode.type, reactiveComponent(vnode.type as FunctionalComponent))
     vnode.type = cache.get(vnode.type)
   }
@@ -58,7 +61,6 @@ options.vnode = (vnode) => {
 
 export function useReactiveState<T extends Object>(initialState: T | (() => T)) {
   let [state] = useState(() => {
-    console.log('reinitializing state')
     if (typeof initialState == 'function') initialState = (initialState as Function)()
     //initialState может быть очищен GC при удалении компонента
     return observable(initialState as T)
