@@ -106,7 +106,6 @@ const Tabs = (props: TabsProps) => {
     }
     return result
   }
-  console.log('rerendering')
   return <div class="tabs">{renderTabs()}</div>
 }
 export default Tabs
