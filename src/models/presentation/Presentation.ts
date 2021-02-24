@@ -7,5 +7,5 @@ type SlidesCollection = {
 
 export default class Presentation {
   theme = new Theme()
-  slides = [] as SlidesCollection[]
+  slides = [] as SlidesCollection
 }
