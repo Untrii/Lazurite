@@ -99,7 +99,7 @@ const Tabs = (props: TabsProps) => {
         tabClasses.push('tab_border-right')
 
       result.push(
-        <div class={tabClasses.join(' ')} style={tabStyles} onMouseDown={(event) => onMousedown(i, event)}>
+        <div class={tabClasses.join(' ')} key={i} style={tabStyles} onMouseDown={(event) => onMousedown(i, event)}>
           {props.names[i]}
         </div>
       )

@@ -27,6 +27,7 @@ function createMainWindow() {
       nodeIntegration: true,
       webSecurity: false,
       webviewTag: true,
+      enableRemoteModule: true,
     },
 
     frame: false,

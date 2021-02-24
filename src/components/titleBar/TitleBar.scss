@@ -22,5 +22,10 @@
     margin-top: 4px;
     height: 26px;
     flex-grow: 2;
+
+    &_window-maximized {
+      margin-top: 0 !important;
+      height: 30px;
+    }
   }
 }
