@@ -62,4 +62,12 @@ export default class Color {
       Math.floor(Math.random() * 256)
     )
   }
+
+  public static get white() {
+    return Color.fromRgb(255, 255, 255)
+  }
+
+  public static get black() {
+    return Color.fromRgb(255, 255, 255)
+  }
 }

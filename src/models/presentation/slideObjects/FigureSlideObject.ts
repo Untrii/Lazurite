@@ -1,4 +1,4 @@
-import Color from '../common/Color'
+import Color from '../../common/Color'
 
 type FigureName = 'rectangle' | 'line' | 'arrow' | 'ellipse' | 'star'
 
