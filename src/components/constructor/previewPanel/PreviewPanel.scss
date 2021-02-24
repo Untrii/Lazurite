@@ -1,7 +1,8 @@
 @import '@/css/variables.scss';
 
-.preview {
+.preview-panel {
   height: 100%;
+  overflow: hidden;
   width: 200px;
   background: $blue-400;
 }
