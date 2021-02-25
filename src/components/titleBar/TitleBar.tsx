@@ -5,6 +5,7 @@ import Tabs from './Tabs'
 import WindowControls from './WindowControls'
 import { reactiveComponent, useReactiveState } from '@/util/reactivity'
 import { remote } from 'electron'
+import { useEffect, useState } from 'preact/hooks'
 
 const TitleBar = () => {
   const state = useReactiveState(() => {
@@ -36,6 +37,13 @@ const TitleBar = () => {
 
   const dragAreaClasses = ['title-bar__drag-area']
   if (state.isMaximized) dragAreaClasses.push('title-bar__drag-area_window-maximized')
+
+  useEffect(() => {
+    console.log('body')
+    return () => {
+      console.log('exit')
+    }
+  })
 
   return (
     <div class="title-bar">

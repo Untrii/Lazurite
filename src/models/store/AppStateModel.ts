@@ -6,6 +6,11 @@ export default class AppStateModel {
 
   selectedTabIndex = 0
 
+  panelSizes = {
+    preview: 200,
+    instruments: 240,
+  }
+
   get currentTab() {
     return this.tabs[this.selectedTabIndex]
   }

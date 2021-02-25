@@ -1,6 +1,5 @@
 import { useReactiveState } from '@/util/reactivity'
 import { h, JSX } from 'preact'
-import { useState } from 'preact/hooks'
 import './Tabs.scss'
 
 interface TabsProps {
@@ -106,6 +105,7 @@ const Tabs = (props: TabsProps) => {
     }
     return result
   }
+
   return <div class="tabs">{renderTabs()}</div>
 }
 export default Tabs
