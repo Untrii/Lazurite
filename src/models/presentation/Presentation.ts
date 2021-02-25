@@ -1,11 +1,13 @@
-import SlideObject from './slideObjects/base/SlideObject'
 import Theme from './theme/Theme'
-
-type SlidesCollection = {
-  [id: string]: SlideObject
-}[]
+import Slide from './Slide'
 
 export default class Presentation {
   theme = new Theme()
-  slides = [] as SlidesCollection
+  slides = [] as Slide[]
+  resolution = {
+    width: 1920,
+    height: 1080,
+  }
+  name = 'My presentation'
+  author = 'Lazurite dev'
 }
