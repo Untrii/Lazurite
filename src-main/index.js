@@ -41,6 +41,16 @@ function createMainWindow() {
   mainWindow = newMainWindow
 }
 
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'local',
+    privileges: {
+      supportFetchAPI: true,
+      bypassCSP: true,
+      secure: true,
+    },
+  },
+])
 function createSafeFileProtocol(protocolName) {
   protocol.registerFileProtocol(protocolName, (request, callback) => {
     const url = request.url.replace(`${protocolName}://`, '')
