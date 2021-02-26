@@ -35,7 +35,6 @@ export function requireFile(source: string): LoadedResource | undefined {
 
 export async function waitForFile(source: string): Promise<LoadedResource> {
   if (loadedResources.get(source)) return loadedResources.get(source)
-  debugger
   let startTime = performance.now()
   if (!pendingResources.has(source)) {
     pendingResources.set(
@@ -50,16 +49,13 @@ export async function waitForFile(source: string): Promise<LoadedResource> {
         }
 
         let handleMedia = (tagName: string) => {
-          let el = document.createElement(tagName) as
-            | HTMLImageElement
-            | HTMLVideoElement
+          let el = document.createElement(tagName) as HTMLImageElement | HTMLVideoElement
           el.src = source
           if (tagName == 'img') el.onload = () => onLoad(el)
           else el.onloadedmetadata = () => onLoad(el)
         }
 
         let handleFont = async () => {
-          let format: string
           let getFormat = (extension: string) => {
             switch (extension) {
               case 'ttf':
@@ -81,8 +77,8 @@ export async function waitForFile(source: string): Promise<LoadedResource> {
           reader.onload = function () {
             let style = document.createElement('style')
             style.innerHTML = `@font-face {
-              font-family: "ff_${getFontFamilyName(source)}";
-              src: url('${reader.result}') format('${format}');
+              font-family: "${getFontFamilyName(source)}";
+              src: url('${reader.result}') format('${getFormat(extension)}');
             }`
 
             const head = document.querySelector('head')
