@@ -15,7 +15,7 @@ export default class TableSlideObject extends SlideObject {
   text = {
     verticalAlign: 'top' as VerticalAlignVariants,
     horizontalAlign: 'left' as HorizontalAlignVariants,
-    style: { presetName: 'null' } as TextStyle,
+    style: new TextStyle(),
   }
   highlight = {
     top: true,

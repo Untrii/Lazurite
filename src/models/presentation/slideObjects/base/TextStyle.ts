@@ -1,14 +1,8 @@
 import Color from '@/models/common/Color'
 
-type TextStyle =
-  | {
-      presetName: string
-    }
-  | {
-      fontFamily: string
-      fontSize: number
-      fontWeight: number
-      color: Color
-    }
-
-export default TextStyle
+export default class TextStyle {
+  fontFamily = 'Arial'
+  fontSize = 10
+  fontWeight = 400
+  color = new Color()
+}

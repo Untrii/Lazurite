@@ -1,3 +1,4 @@
+import Color from '@/models/common/Color'
 import SlideObject from './base/SlideObject'
 import TextStyle from './base/TextStyle'
 
@@ -9,5 +10,5 @@ export default class TextSlideObject extends SlideObject {
   type = TextSlideObject.name
   verticalAlign: VerticalAlignVariants = 'top'
   horizontalAlign: HorizontalAlignVariants = 'left'
-  style: TextStyle = { presetName: 'null' }
+  style = new TextStyle()
 }
