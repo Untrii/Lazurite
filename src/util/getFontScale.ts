@@ -1,15 +1,22 @@
+const cache = new Map<string, number>()
+
 export default function getFontScale(fontFamily, fontWeight = 400) {
-  let textContainer = document.createElement('span')
+  if (cache.has(fontFamily)) return cache.get(fontFamily)
+
+  const textContainer = document.createElement('span')
+  const fontSize = 10
   textContainer.appendChild(document.createTextNode('height'))
   textContainer.style.cssText = `
     opacity: 0;
     font-family: ${fontFamily};
-    font-size: 100px;
+    font-size: ${fontSize}px;
     font-weight: ${fontWeight};
     white-space: nowrap;
     display: inline;`
   document.body.appendChild(textContainer)
-  let height = textContainer.offsetHeight
+  const result = textContainer.offsetHeight / fontSize
   document.body.removeChild(textContainer)
-  return height / 100
+
+  cache.set(fontFamily, result)
+  return result
 }
