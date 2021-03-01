@@ -3,6 +3,7 @@ import { h } from 'preact'
 import VerticalNav, { INavItem } from '@/components/controls/VerticalNav'
 import assets from '@/assets'
 import { useState } from 'preact/hooks'
+import NumberInput from '@/components/controls/NumberInput'
 
 const InstrumentsPanel = () => {
   const tabs: INavItem[] = [
@@ -31,7 +32,9 @@ const InstrumentsPanel = () => {
 
   return (
     <div class="instruments-panel">
-      <div class="instruments-panel__content"></div>
+      <div class="instruments-panel__content">
+        <NumberInput prepend="Number input" />
+      </div>
       <VerticalNav items={tabs} selectedItemIndex={tabIndex} onChange={onChange} />
     </div>
   )
