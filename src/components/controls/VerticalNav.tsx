@@ -7,13 +7,13 @@ export interface INavItem {
   icon: string
 }
 
-interface VerticalNavProps {
+interface IVerticalNavProps {
   items: INavItem[]
   selectedItemIndex?: number
   onChange?: (newIndex: number) => void
 }
 
-const VerticalNav = (props: VerticalNavProps) => {
+const VerticalNav = (props: IVerticalNavProps) => {
   const renderItem = function (item: INavItem, index: number) {
     const itemClasses = ['vertical-nav__item']
     if (index === props.selectedItemIndex) itemClasses.push('vertical-nav__item_selected')

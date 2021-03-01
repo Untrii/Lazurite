@@ -1,11 +1,10 @@
 import './NumberInput.scss'
 import { h, JSX } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useRef, useState } from 'preact/hooks'
 import Prepend from './Prepend'
-import useForceUpdate from '@/util/useForceUpdate'
 import { useReactiveState } from '@/util/reactivity'
 
-interface NumberInputProps {
+interface INumberInputProps {
   value?: number
   maxValue?: number
   minValue?: number
@@ -13,7 +12,7 @@ interface NumberInputProps {
   prepend?: string
 }
 
-const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.1, prepend }: NumberInputProps) => {
+const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.1, prepend }: INumberInputProps) => {
   const [initialValue] = useState(value)
   const state = useReactiveState({
     value,

@@ -6,7 +6,7 @@ interface IHorizontalNavItem {
   displayName: string
 }
 
-interface HorizontalNavProps {
+interface IHorizontalNavProps {
   prepend?: string
   items: IHorizontalNavItem[]
   selectedItemIndex?: number
@@ -14,7 +14,7 @@ interface HorizontalNavProps {
   className?: string
 }
 
-const HorizontalNav = (props: HorizontalNavProps) => {
+const HorizontalNav = (props: IHorizontalNavProps) => {
   const renderItem = function (item: IHorizontalNavItem, index: number) {
     const itemClasses = ['horizontal-nav__item']
     if (index === props.selectedItemIndex) itemClasses.push('horizontal-nav__item_selected')

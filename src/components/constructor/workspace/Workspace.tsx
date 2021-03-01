@@ -4,11 +4,11 @@ import render from '@/slideRenderer'
 import store from '@/store'
 import Slide from '../Slide'
 
-interface WorkspaceProps {
+interface IWorkspaceProps {
   width: number
 }
 
-const Workspace = (props: WorkspaceProps) => {
+const Workspace = (props: IWorkspaceProps) => {
   const currentTab = store.currentTab
   const presentation = currentTab.openedPresentation
 

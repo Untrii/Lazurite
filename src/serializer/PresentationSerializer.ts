@@ -1,7 +1,7 @@
 import Presentation from '@/models/presentation/Presentation'
 import info from './info'
 
-interface ModelConstructor {
+interface IModelConstructor {
   new (): object
 }
 
@@ -16,11 +16,11 @@ function codeFilesFilter(value: string) {
 }
 
 function getConstructors(ctx: __WebpackModuleApi.RequireContext, paths: string[]) {
-  let result = {} as { [constructorName: string]: ModelConstructor }
+  let result = {} as { [constructorName: string]: IModelConstructor }
   for (const path of paths) {
     let requireResult = ctx(path).default
     if (typeof requireResult == 'function') {
-      let ctor = requireResult as ModelConstructor
+      let ctor = requireResult as IModelConstructor
       result[ctor.name] = ctor
     }
   }

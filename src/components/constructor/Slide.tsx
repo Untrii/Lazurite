@@ -4,14 +4,14 @@ import render from '@/slideRenderer'
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 
-interface SlideProps {
+interface ISlideProps {
   width: number
   height: number
   presentation: Presentation
   index: number
 }
 
-const Slide = (props: SlideProps) => {
+const Slide = (props: ISlideProps) => {
   const canvas = useRef(null)
 
   let canvasWidth = props.width

@@ -2,7 +2,7 @@ import { useReactiveState } from '@/util/reactivity'
 import { h, JSX } from 'preact'
 import './Tabs.scss'
 
-interface TabsProps {
+interface ITabsProps {
   names: string[]
   openedTabIndex?: number
   onReplaced?: (prevIndex: number, newIndex: number) => void
@@ -10,7 +10,7 @@ interface TabsProps {
   onAddClick?: () => void
 }
 
-const Tabs = (props: TabsProps) => {
+const Tabs = (props: ITabsProps) => {
   const state = useReactiveState({
     draggingTabIndex: -1,
     draggingTabStartX: -1,
