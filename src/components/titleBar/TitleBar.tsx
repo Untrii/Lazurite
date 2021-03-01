@@ -38,13 +38,6 @@ const TitleBar = () => {
   const dragAreaClasses = ['title-bar__drag-area']
   if (state.isMaximized) dragAreaClasses.push('title-bar__drag-area_window-maximized')
 
-  useEffect(() => {
-    console.log('body')
-    return () => {
-      console.log('exit')
-    }
-  })
-
   return (
     <div class="title-bar">
       <div class="title-bar__logo">
