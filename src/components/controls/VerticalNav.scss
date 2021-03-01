@@ -1,0 +1,31 @@
+@import '@/css/variables.scss';
+
+.vertical-nav {
+  width: 40px;
+  height: 100%;
+  background: $blue-500;
+  overflow: hidden;
+
+  &__button {
+    box-sizing: border-box;
+
+    &_selected {
+      border: none !important;
+    }
+    &_before-selected {
+      border-bottom-left-radius: 4px;
+    }
+    &_after-selected {
+      border-top-left-radius: 4px;
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__empty-space {
+    width: 100%;
+  }
+}

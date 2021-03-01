@@ -1,0 +1,16 @@
+@import '@/css/variables.scss';
+
+.instruments-panel {
+  width: 240px;
+  height: 100%;
+  background: $blue-400;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 200px 40px;
+  overflow: scroll;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
