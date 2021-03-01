@@ -5,4 +5,11 @@
   overflow: hidden;
   width: 200px;
   background: $blue-400;
+
+  &__slide {
+    margin: 16px 16px 0 16px;
+    border: 1px solid white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
 }
