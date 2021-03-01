@@ -13,7 +13,7 @@ async function startRenderer() {
 let manualRestart = false
 let electronProcess = null
 function startElectron() {
-  var args = [path.join(__dirname, '../src-main/index.dev.js')]
+  var args = [path.join(__dirname, '../src-main/index.dev.js'), '--remote-debugging-port=9222']
 
   electronProcess = spawn(electron, args)
 
