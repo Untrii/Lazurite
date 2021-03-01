@@ -1,7 +1,8 @@
 import './VerticalNav.scss'
 import { h } from 'preact'
 
-interface INavItem {
+export interface INavItem {
+  displayName: string
   name: string
   icon: string
 }
@@ -9,23 +10,33 @@ interface INavItem {
 interface VerticalNavProps {
   items: INavItem[]
   selectedItemIndex?: number
-  onSelected?: (newIndex: number) => void
+  onChange?: (newIndex: number) => void
 }
 
 const VerticalNav = (props: VerticalNavProps) => {
   const renderItem = function (item: INavItem, index: number) {
     const itemClasses = ['vertical-nav__item']
+    if (index === props.selectedItemIndex) itemClasses.push('vertical-nav__item_selected')
     if (index - 1 === props.selectedItemIndex) itemClasses.push('vertical-nav__item_after-selected')
     if (index + 1 === props.selectedItemIndex) itemClasses.push('vertical-nav__item_before-selected')
 
     return (
-      <div class={itemClasses.join(' ')} onClick={() => props.onSelected(index)}>
-        <img src={item.icon} alt={item.name} />
+      <div class={itemClasses.join(' ')} onClick={() => props?.onChange(index)}>
+        <img src={item.icon} alt={item.displayName} />
       </div>
     )
   }
 
-  return <div class="vertical-nav">{props.items.map((item, index) => renderItem(item, index))}</div>
+  const emptySpaceStyles = {
+    borderTopLeftRadius: props.items.length - 1 === props.selectedItemIndex ? '4px' : 'none',
+  }
+
+  return (
+    <div class="vertical-nav">
+      {props.items.map((item, index) => renderItem(item, index))}
+      <div class="vertical-nav__empty-space" style={emptySpaceStyles}></div>
+    </div>
+  )
 }
 
 export default VerticalNav

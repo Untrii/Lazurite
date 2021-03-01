@@ -3,20 +3,44 @@
 .vertical-nav {
   width: 40px;
   height: 100%;
-  background: $blue-500;
+  background: $blue-400;
   overflow: hidden;
 
-  &__button {
+  &__item {
     box-sizing: border-box;
+    background: $blue-500;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    cursor: pointer;
+
+    &:hover {
+      background: $blue-600;
+      transition: 0.3s;
+    }
+    &:not(:hover) {
+      background: $blue-500;
+      transition: 0.3s;
+    }
 
     &_selected {
       border: none !important;
+      background: $blue-400 !important;
+      transition: 0.1s !important;
+      cursor: default;
+      &:hover {
+        background: $blue-400 !important;
+      }
     }
     &_before-selected {
       border-bottom-left-radius: 4px;
+      transition: 0.1s;
     }
     &_after-selected {
       border-top-left-radius: 4px;
+      transition: 0.1s;
     }
 
     img {
@@ -26,6 +50,8 @@
   }
 
   &__empty-space {
-    width: 100%;
+    width: 40px;
+    height: 100%;
+    background: $blue-500;
   }
 }

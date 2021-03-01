@@ -1,0 +1,33 @@
+.horizontal-nav {
+  &__prepend {
+    font-weight: 500;
+    color: white;
+    user-select: none;
+  }
+  &__item {
+    margin-right: 16px;
+    color: rgba($color: white, $alpha: 0.8);
+    border-bottom: 1px dashed rgba($color: white, $alpha: 0.8);
+    cursor: pointer;
+
+    &:hover {
+      color: rgba($color: white, $alpha: 1);
+      transition: 0.3s;
+    }
+    &:not(:hover) {
+      color: rgba($color: white, $alpha: 0.8);
+      transition: 0.3s;
+    }
+
+    &:last-child {
+      margin-right: 0 !important;
+    }
+
+    &_selected {
+      color: white !important;
+      border-bottom: none;
+      user-select: none;
+      cursor: initial;
+    }
+  }
+}
