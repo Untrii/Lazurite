@@ -1,6 +1,6 @@
 import './UpperPanel.scss'
 import { h } from 'preact'
-import LzButton from '../controls/LzButton'
+import Button from '../controls/Button'
 import assets from '@/assets/index'
 import HorizontalNav from '../controls/HorizontalNav'
 import store from '@/store'
@@ -29,13 +29,8 @@ const UpperPanel = () => {
         onChange={onChange}
       />
       <div class="upper-panel__buttons">
-        <LzButton
-          className="upper-panel__button"
-          icon={assets.play}
-          text="Launch from this slide"
-          colorName="blue-500"
-        />
-        <LzButton className="upper-panel__button" icon={assets.menu} colorName="blue-500" />
+        <Button className="upper-panel__button" icon={assets.play} text="Launch from this slide" colorName="blue-500" />
+        <Button className="upper-panel__button" icon={assets.menu} colorName="blue-500" />
       </div>
     </div>
   )
