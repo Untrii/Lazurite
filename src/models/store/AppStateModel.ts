@@ -1,5 +1,5 @@
 import Presentation from '../presentation/Presentation'
-import TabStateModel from './TabState.Model'
+import TabStateModel from './TabStateModel'
 
 export default class AppStateModel {
   tabs = [new TabStateModel()]
