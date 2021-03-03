@@ -13,9 +13,29 @@
     text-align: right;
     cursor: text;
 
-    * {
+    &:hover {
+      input {
+        border-bottom: 1px solid white;
+      }
+    }
+
+    input {
       float: right;
+      border: none;
+      padding: 0 !important;
       width: min-content;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: 'Roboto';
+      color: white;
+      background: none;
+      text-align: center;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
 
       &:focus {
         outline: none;

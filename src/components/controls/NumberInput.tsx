@@ -1,8 +1,10 @@
 import './NumberInput.scss'
 import { h, JSX } from 'preact'
-import { useRef, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import Prepend from './Prepend'
 import { useReactiveState } from '@/util/reactivity'
+import getTextWidth from '@/util/getTextWidth'
+import TextStyle from '@/models/presentation/slideObjects/base/TextStyle'
 
 interface INumberInputProps {
   value?: number
@@ -12,57 +14,51 @@ interface INumberInputProps {
   prepend?: string
 }
 
-const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.1, prepend }: INumberInputProps) => {
+const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.001, prepend }: INumberInputProps) => {
   const [initialValue] = useState(value)
   const state = useReactiveState({
     value,
+    lastSymbol: '',
   })
   const box = useRef(null)
 
-  const rerenderInput = function (text: string) {
-    box.current.innerText = text
-    document.getSelection().setPosition(box.current, 1)
+  const rerenderInput = function (value: number | string) {
+    box.current.value = value
+
+    const textStyle = new TextStyle()
+    textStyle.fontFamily = 'Roboto'
+    textStyle.fontSize = 12
+    textStyle.fontWeight = 700
+    box.current.style.width = getTextWidth(textStyle, value.toString()) + 4 + 'px'
   }
 
-  const applyRange = function (value: number) {
-    if (value == 0) return 0
-    return Math.min(maxValue, Math.max(minValue, value))
+  const applyRange = function (value: string) {
+    let parsedNum = parseFloat(value)
+    if (parsedNum > maxValue) return maxValue.toString()
+    if (parsedNum < minValue) return minValue.toString()
+    return value
   }
 
-  const applyStep = function (value: number) {
+  const applyStep = function (value: string) {
     const fractionsCount = Math.round(Math.log10(1 / step))
-    const valueString = value.toString()
-    const dividerIndex = valueString.indexOf('.')
-    if (dividerIndex != -1) return valueString.substring(0, dividerIndex + fractionsCount + 1)
-    return valueString
+    const dividerIndex = value.indexOf('.')
+    let result = value
+    if (dividerIndex != -1) result = value.substring(0, dividerIndex + fractionsCount + 1)
+    if (result != value) return result
+    return value
   }
 
   const onKeyPress = function (event: KeyboardEvent) {
-    const text: string = (event.target as any).innerText
-
-    const isAllowedKey = function () {
-      let result = false
-      const { key } = event
-
-      if (key >= '0' && key <= '9') result = true
-      if ((key == ',' || key == '.' || key == '-') && !(text.includes('.') || text.includes(','))) result = true
-      if (key.startsWith('Arrow')) result = true
-      if (key == 'Delete' || event.key == 'Backspace') result = true
-      if (event.ctrlKey) result = true
-      return result
-    }
-
-    if (isAllowedKey()) return
-    else event.preventDefault()
+    state.lastSymbol = event.key
   }
 
   const processText = function (text: string | number) {
     if (typeof text == 'number') return processText(text.toString())
 
     let parsedText = parseFloat(text.replace(',', '.'))
-    if (isNaN(parsedText)) parsedText = 0
+    if (isNaN(parsedText)) text = '0'
 
-    let processedText = applyStep(applyRange(parsedText))
+    let processedText = applyStep(applyRange(text))
     if (text.endsWith(',') || text.endsWith('.')) processedText += '.'
 
     if (text.startsWith('0') && text.length > 1) {
@@ -75,33 +71,44 @@ const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.1, p
   }
 
   const onInput: JSX.GenericEventHandler<HTMLDivElement> = function (event) {
-    const target = event.target as HTMLDivElement
-    const text: string = target.innerText
-    const processedText = processText(text)
+    const target = event.target as HTMLInputElement
+    const text: string = target.value
+    if (text == '' && state.lastSymbol == '.') return
 
-    if (text != processedText) rerenderInput(processedText)
+    const processedText = processText(text)
+    rerenderInput(processedText)
 
     state.value = parseFloat(processedText)
   }
 
   const onWheel = function (event: WheelEvent) {
+    event.preventDefault()
     state.value += event.deltaY / 10
-    rerenderInput(processText(state.value))
+    const rounding = 1 / step
+    state.value = Math.round(state.value * rounding) / rounding
+    rerenderInput(state.value)
   }
+
+  useEffect(() => {
+    rerenderInput(state.value)
+  })
 
   return (
     <div class="number-input">
       {prepend ? <Prepend>{prepend}</Prepend> : null}
       <div class="number-input__edit-box" onClick={() => box.current.focus()} onWheel={onWheel}>
-        <div
+        <input
+          lang="en"
+          type="number"
+          step={step}
+          min={minValue}
+          max={maxValue}
+          value={initialValue}
           ref={box}
-          contentEditable={true}
           onClick={(event) => event.stopPropagation()}
           onInput={onInput}
           onKeyDown={onKeyPress}
-        >
-          {initialValue}
-        </div>
+        ></input>
       </div>
     </div>
   )
