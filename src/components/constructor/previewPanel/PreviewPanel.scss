@@ -7,9 +7,11 @@
   background: $blue-400;
 
   &__slide {
+    width: 166px;
+    height: 93px;
     margin: 16px 16px 0 16px;
     border: 1px solid white;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow: hidden;
   }
 }
