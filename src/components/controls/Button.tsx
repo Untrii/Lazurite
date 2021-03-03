@@ -10,7 +10,7 @@ interface IButtonProps {
 }
 
 const LzButton = ({ blockLevel = false, colorName = 'blue-400', text = '', icon, className }: IButtonProps) => {
-  let buttonClasses = ['lz-button', 'lz-button_color-' + colorName]
+  let buttonClasses = ['lz-button', 'control-bg_' + colorName]
   if (blockLevel) buttonClasses.push('lz-button_block')
   if (text.length == 0) buttonClasses.push('lz-button_no-text')
   if (className) buttonClasses.push(className)

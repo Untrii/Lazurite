@@ -15,3 +15,22 @@ $blue-shades: ($blue-100 $blue-200 $blue-300 $blue-400 $blue-500 $blue-600 $blue
     background-color: nth($list: $blue-shades, $n: $i);
   }
 }
+
+@for $i from 3 through 6 {
+  .control-bg_blue-#{$i}00 {
+    background: nth($list: $blue-shades, $n: $i);
+    &:hover {
+      background: nth($list: $blue-shades, $n: $i + 1);
+      transition: 0.3s;
+    }
+    &:not(:hover) {
+      background: nth($list: $blue-shades, $n: $i);
+      transition: 0.3s;
+    }
+  }
+
+  .pressed-control-bg_blue-#{$i}00 {
+    background: nth($list: $blue-shades, $n: $i - 2) !important;
+    transition: none !important;
+  }
+}
