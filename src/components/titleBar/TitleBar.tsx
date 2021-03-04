@@ -3,9 +3,10 @@ import { h } from 'preact'
 import assets from '@/assets/index'
 import Tabs from './Tabs'
 import WindowControls from './WindowControls'
-import { reactiveComponent, useReactiveState } from '@/util/reactivity'
+import { useReactiveState } from '@/util/reactivity'
 import { remote } from 'electron'
-import { useEffect, useState } from 'preact/hooks'
+import store from '@/store'
+import * as navigation from '@/store/actions/navigation'
 
 const TitleBar = () => {
   const state = useReactiveState(() => {
@@ -20,19 +21,20 @@ const TitleBar = () => {
     return {
       isMaximized: remote.getCurrentWindow().isMaximized(),
       tabs: ['Sample tab', 'Sample tab 2', 'Sample tab 3', 'Sample tab 4'],
-      openedIndex: 1,
+      openedIndex: 0,
     }
   })
 
+  const getTabNames = function () {
+    return store.tabs.map((tab) => tab.name)
+  }
+
   const onTabOpened = function (index: number) {
-    console.log(state)
-    state.openedIndex = index
+    navigation.openTab(index)
   }
 
   const onReplaced = function (prevIndex: number, newIndex: number) {
-    let currentIndexValue = state.tabs.splice(prevIndex, 1)
-    state.tabs.splice(newIndex, 0, currentIndexValue[0])
-    state.openedIndex = newIndex
+    navigation.replaceTab(prevIndex, newIndex)
   }
 
   const dragAreaClasses = ['title-bar__drag-area']
@@ -43,7 +45,12 @@ const TitleBar = () => {
       <div class="title-bar__logo">
         <img src={assets.logo} alt="" />
       </div>
-      <Tabs names={state.tabs} openedTabIndex={state.openedIndex} onTabOpened={onTabOpened} onReplaced={onReplaced} />
+      <Tabs
+        names={getTabNames()}
+        openedTabIndex={store.selectedTabIndex}
+        onTabOpened={onTabOpened}
+        onReplaced={onReplaced}
+      />
       <div class={dragAreaClasses.join(' ')}></div>
       <WindowControls />
     </div>
