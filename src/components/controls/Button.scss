@@ -9,13 +9,18 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: fit-content;
   overflow: hidden;
   cursor: pointer;
+  box-sizing: border-box;
+
+  &_size_large {
+    line-height: 40px !important;
+    height: 40px !important;
+  }
 
   &_block {
     width: 100%;
-    text-align: center;
+    justify-content: space-around;
   }
 
   img {
