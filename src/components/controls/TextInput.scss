@@ -1,0 +1,41 @@
+.text-input {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: fit-content;
+  justify-content: space-between;
+
+  &__edit-box {
+    margin-left: 16px;
+    color: white;
+    flex-grow: 1;
+    text-align: right;
+    cursor: text;
+    overflow: hidden;
+
+    &:hover {
+      input {
+        border-bottom: 1px solid white;
+      }
+    }
+
+    input {
+      float: right;
+      border: none;
+      padding: 0 !important;
+      width: min-content;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: 'Roboto';
+      color: white;
+      background: none;
+      text-align: center;
+
+      &:focus {
+        outline: none;
+        border-bottom: 1px solid white;
+      }
+    }
+  }
+}
