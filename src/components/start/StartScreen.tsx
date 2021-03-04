@@ -100,7 +100,7 @@ const StartScreen = () => {
 
         <div class={buttonsClasses.join(' ')}>
           {state.buttonsState.startsWith('main')
-            ? buttons.map((button) => (
+            ? buttons.map((button, index) => (
                 <Button
                   colorName="blue-500"
                   text={button.name}
@@ -108,6 +108,7 @@ const StartScreen = () => {
                   blockLevel
                   className="start-screen__button"
                   onClick={button.onCLick}
+                  key={index}
                 />
               ))
             : null}

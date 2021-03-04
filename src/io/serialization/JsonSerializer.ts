@@ -43,6 +43,13 @@ export default class JsonSerializer {
 
     if (typeof obj[typeKeyword] == 'string') {
       const type = obj[typeKeyword]
+
+      if (type == 'Date') return new Date(obj['time'])
+      if (type == 'Object') {
+        delete obj[typeKeyword]
+        return obj
+      }
+
       if (!modelConstructors[type]) console.error('Parse error.\nUnknown type ' + type)
       else result = new modelConstructors[type]()
       for (const key in obj) {
@@ -57,6 +64,9 @@ export default class JsonSerializer {
 
   private static toObject(obj: object, isRoot = false): object {
     let result: { [key: string]: any } = {}
+    if (obj instanceof Date) {
+      result = { time: obj.getTime() }
+    }
     if (Array.isArray(obj)) {
       result = new Array(obj.length)
       for (let i = 0; i < (obj as any[]).length; i++) {

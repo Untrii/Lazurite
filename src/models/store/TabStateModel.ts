@@ -4,6 +4,7 @@ import Slide from '../presentation/Slide'
 export type EditorWindowName = 'constructor' | 'design' | 'start'
 
 export default class TabStateModel {
+  presentationPath: string
   openedPresentation: Presentation
   selectedSlideIndex = 0
   openedEditorWindow = 'constructor' as EditorWindowName

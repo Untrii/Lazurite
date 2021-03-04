@@ -13,6 +13,8 @@ export default abstract class IoManager {
   abstract savePresentation(id: string, presentation: Presentation): Promise<void>
   abstract saveUserBackgrounds(colors: Background[]): Promise<void>
 
+  abstract createNewPresentaiton(name: string, author: string): Promise<[Presentation, string]>
+
   private validateArray<T>(parsedJson: any, itemValidator: (arrayEntry: any) => boolean): [T[], boolean] {
     const validatedResult: T[] = []
     let isVlaid = true

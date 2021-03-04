@@ -4,6 +4,9 @@ import { existsSync, promises } from 'fs'
 import path from 'path'
 import JsonSerializer from './serialization/JsonSerializer'
 import Background from '@/models/presentation/theme/Background'
+import { remote } from 'electron'
+
+const { dialog } = remote
 
 const { mkdir, readFile, writeFile } = promises
 
@@ -89,17 +92,20 @@ export default class ElectronIO extends IoManager {
 
   fileCache = new Map<string, any>()
   private writeSchedule = new Set<string>()
-  private async writeFileSchedulled(path: string) {
+  private async writeFileSchedulled(path: string, immediately: boolean) {
     if (this.writeSchedule.has(path)) return
     else {
       this.writeSchedule.add(path)
-      setTimeout(async () => {
-        const writePath = path.replace('local://', '')
-        const data = JsonSerializer.toJSON(this.fileCache.get(path))
-        await writeFile(writePath, data)
+      setTimeout(
+        async () => {
+          const writePath = path.replace('local://', '')
+          const data = JsonSerializer.toJSON(this.fileCache.get(path))
+          await writeFile(writePath, data)
 
-        this.writeSchedule.delete(path)
-      }, 5000)
+          this.writeSchedule.delete(path)
+        },
+        immediately ? 0 : 5000
+      )
     }
   }
   async loadPresentation(path: string) {
@@ -116,11 +122,12 @@ export default class ElectronIO extends IoManager {
       throw new Error('Presentation file is not available')
     }
   }
-  async savePresentation(path: string, presentation: Presentation) {
+  async savePresentation(path: string, presentation: Presentation, immediately = false) {
+    presentation.lastEditDate = new Date()
     if (path.startsWith('https://')) throw new Error('Web presentations not supported at this moment')
     else if (path.startsWith('local://')) {
       this.fileCache.set(path, presentation)
-      this.writeFileSchedulled(path)
+      this.writeFileSchedulled(path, immediately)
     }
   }
 
@@ -136,5 +143,29 @@ export default class ElectronIO extends IoManager {
   async saveUserBackgrounds(bgs: Background[]) {
     const filePath = await this.getUserBackgroundsFile()
     await writeFile(filePath, JsonSerializer.toJSON(bgs))
+  }
+
+  async createNewPresentaiton(name: string, author: string) {
+    const dialogResult = await dialog.showOpenDialog({
+      title: 'Choose folder to save presentation project',
+      properties: ['openDirectory'],
+    })
+
+    if (dialogResult.filePaths.length == 0) throw new Error('Folder not selected')
+    const folderPath = dialogResult.filePaths[0]
+
+    const projectFolderPath = path.join(folderPath, name)
+    const resourcesPath = path.join(projectFolderPath, 'resources')
+    const projectPath = path.join(projectFolderPath, 'project.json')
+
+    await mkdir(projectFolderPath)
+    await mkdir(resourcesPath)
+
+    const presentation = new Presentation()
+    presentation.name = name
+    presentation.author = author
+    const lPath = 'local://' + projectPath
+    await this.savePresentation(lPath, presentation, true)
+    return [presentation, lPath] as [Presentation, string]
   }
 }
