@@ -10,4 +10,5 @@ export default class Presentation {
   }
   name = 'My presentation'
   author = 'Lazurite dev'
+  lastEditDate = new Date()
 }

@@ -1,8 +1,13 @@
 import Presentation from '../presentation/Presentation'
+import Background from '../presentation/theme/Background'
 import TabStateModel from './TabStateModel'
 
 export default class AppStateModel {
-  tabs = [new TabStateModel()]
+  isLoaded = false
+
+  tabs: TabStateModel[] = []
+  recentPresentations: Presentation[] = []
+  userBackgrounds: Background[] = []
 
   selectedTabIndex = 0
 
