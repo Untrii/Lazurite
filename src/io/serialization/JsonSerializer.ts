@@ -1,4 +1,3 @@
-import Presentation from '@/models/presentation/Presentation'
 import info from './info'
 
 interface IModelConstructor {
@@ -27,11 +26,11 @@ function getConstructors(ctx: __WebpackModuleApi.RequireContext, paths: string[]
   return result
 }
 
-const modelsContext = require.context('../models')
+const modelsContext = require.context('@/models')
 const modelFiles = modelsContext.keys().filter(codeFilesFilter)
 const modelConstructors = getConstructors(modelsContext, modelFiles)
 
-export default class PresentationSerializer {
+export default class JsonSerializer {
   private static toNewVersion(version: string, object: object) {
     return object
   }
@@ -56,7 +55,7 @@ export default class PresentationSerializer {
     return result
   }
 
-  private static toObject(obj: object): object {
+  private static toObject(obj: object, isRoot = false): object {
     let result: { [key: string]: any } = {}
     if (Array.isArray(obj)) {
       result = new Array(obj.length)
@@ -70,16 +69,19 @@ export default class PresentationSerializer {
       if (typeof obj[key] == 'object') result[key] = this.toObject(obj[key])
       else result[key] = obj[key]
     }
-    if (obj instanceof Presentation) result[versionKeyword] = currentVersion
+    if (isRoot) result[versionKeyword] = currentVersion
     if (obj.constructor.name) result[typeKeyword] = obj.constructor.name
     return result
   }
 
-  public static toJSON(presentation: Presentation): string {
-    console.log('here')
-    return JSON.stringify(this.toObject(presentation))
+  public static toJSON<T extends object>(data: T): string {
+    return JSON.stringify(this.toObject(data, true))
   }
-  public static fromJSON(presentation: string): Presentation {
-    return this.fromObject(JSON.parse(presentation)) as Presentation
+  public static fromJSON<T extends object>(data: string): T {
+    try {
+      return this.fromObject(JSON.parse(data)) as T
+    } catch {
+      return null
+    }
   }
 }
