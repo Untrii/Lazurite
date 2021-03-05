@@ -15,7 +15,7 @@ const Tabs = (props: ITabsProps) => {
     draggingTabIndex: -1,
     draggingTabStartX: -1,
     draggingTabCurrentX: -1,
-    startOffsetX: -1,
+    startOffsetX: 0,
     tabSize: 200,
   })
 
@@ -28,6 +28,7 @@ const Tabs = (props: ITabsProps) => {
     if (target.clientWidth) state.tabSize = target.clientWidth + 1
     if (tabIndex != props.openedTabIndex && props.onTabOpened) props.onTabOpened(tabIndex)
     state.draggingTabIndex = tabIndex
+    state.startOffsetX = 0
 
     let mouseUpListener = (event: MouseEvent) => {
       let delta = getDraggingTabDelta()
