@@ -109,6 +109,8 @@ export default class ElectronIO extends IoManager {
     }
   }
   async loadPresentation(path: string) {
+    if (this.fileCache.has(path)) return this.fileCache.get(path)
+
     try {
       let text = await (await fetch(path)).text()
       let presentation = JsonSerializer.fromJSON<Presentation>(text)
