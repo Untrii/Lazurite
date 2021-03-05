@@ -19,8 +19,9 @@ export default class TabStateModel {
     else return this.openedPresentation.name
   }
 
-  constructor(presentation = new Presentation()) {
+  constructor(presentation = new Presentation(), path = null) {
     this.openedPresentation = presentation
+    this.presentationPath = path
   }
 
   static get startScreen() {

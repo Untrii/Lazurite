@@ -6,6 +6,8 @@ import { useEffect } from 'preact/hooks'
 import Button from '../controls/Button'
 import { useReactiveState } from '@/util/reactivity'
 import CreateDialog from './CreateDialog'
+import { PresentationFile } from '@/models/store/AppStateModel'
+import * as navigation from '@/store/actions/navigation'
 
 type ButtonsState =
   | 'mainAppearing'
@@ -56,6 +58,10 @@ const StartScreen = () => {
     }, 250)
   }
 
+  const openPresentation = function (file: PresentationFile) {
+    navigation.openPresentation(file)
+  }
+
   const buttons = [
     {
       name: 'Create',
@@ -82,14 +88,14 @@ const StartScreen = () => {
           <div class="start-screen__recent">
             <div class="start-screen__recent-header">Recent:</div>
             <div class="start-screen__recent-cards">
-              {store.recentPresentations.map((presentation) => (
-                <div class="start-screen__recent-card">
+              {store.recentPresentations.map((file) => (
+                <div class="start-screen__recent-card" onClick={() => openPresentation(file)}>
                   <div class="start-screen__recent-image"></div>
                   <div class="start-screen__recent-description">
-                    <div class="start-screen__recent-name">{presentation.name}</div>
-                    <div class="start-screen__recent-author">by {presentation.author}</div>
+                    <div class="start-screen__recent-name">{file.presentation.name}</div>
+                    <div class="start-screen__recent-author">by {file.presentation.author}</div>
                     <div class="start-screen__recent-date">
-                      last edited: {formatElapsedTime(presentation.lastEditDate)} ago
+                      last edited: {formatElapsedTime(file.presentation.lastEditDate)} ago
                     </div>
                   </div>
                 </div>

@@ -1,6 +1,9 @@
 import { useReactiveState } from '@/util/reactivity'
 import { h, JSX } from 'preact'
 import './Tabs.scss'
+import { openStartPage } from '@/store/actions/navigation'
+import assets from '@/assets'
+import * as navigation from '@/store/actions/navigation'
 
 interface ITabsProps {
   names: string[]
@@ -25,6 +28,11 @@ const Tabs = (props: ITabsProps) => {
 
   const onMousedown = function (tabIndex: number, event: MouseEvent) {
     const target: any = event.target
+    if (event.shiftKey) {
+      navigation.closeTab(tabIndex)
+      return
+    }
+
     if (target.clientWidth) state.tabSize = target.clientWidth + 1
     if (tabIndex != props.openedTabIndex && props.onTabOpened) props.onTabOpened(tabIndex)
     state.draggingTabIndex = tabIndex
@@ -107,6 +115,16 @@ const Tabs = (props: ITabsProps) => {
     return result
   }
 
-  return <div class="tabs">{renderTabs()}</div>
+  const addButtonStyle =
+    state.draggingTabIndex != -1 ? { opacity: '0', transition: '0.3s' } : { opacity: '1', transition: '0.3s' }
+
+  return (
+    <div class="tabs">
+      {renderTabs()}
+      <div class="tabs__add-button" onClick={openStartPage} style={addButtonStyle}>
+        <img src={assets.addSmall} alt="" />
+      </div>
+    </div>
+  )
 }
 export default Tabs
