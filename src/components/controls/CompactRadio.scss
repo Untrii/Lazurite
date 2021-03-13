@@ -40,9 +40,3 @@
     }
   }
 }
-
-@for $i from 2 to 6 {
-  .border-dark_blue-#{$i + 1}00 {
-    border-color: nth($list: $blue-shades, $n: $i);
-  }
-}

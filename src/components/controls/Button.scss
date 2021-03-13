@@ -12,6 +12,14 @@
   overflow: hidden;
   cursor: pointer;
   box-sizing: border-box;
+  border: none;
+  font-family: 'Roboto';
+  font-size: 12px;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px white;
+  }
 
   &_size_large {
     line-height: 40px !important;
