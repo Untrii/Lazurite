@@ -1,0 +1,110 @@
+@import '@/css/variables.scss';
+
+$outline-filter: drop-shadow(1px 0px 0px rgba(255, 255, 255, 1)) drop-shadow(-1px 0px 0px rgba(255, 255, 255, 1))
+  drop-shadow(0px 1px 0px rgba(255, 255, 255, 1)) drop-shadow(0px -1px 0px rgba(255, 255, 255, 1));
+
+.lz-dd-button {
+  color: white;
+  line-height: 24px;
+  height: 24px;
+  border-radius: 4px;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-family: 'Roboto';
+  font-size: 12px;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px white;
+  }
+
+  &_block {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  &_with-default {
+    height: 49px !important;
+    padding: 0 !important;
+    display: block !important;
+    overflow: visible;
+
+    button {
+      width: 100%;
+      height: 24px;
+      padding: 0 12px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-family: 'Roboto';
+      font-size: 12px;
+      color: white;
+      justify-content: space-around;
+      box-shadow: none !important;
+
+      &:focus {
+        z-index: 10;
+        outline: none;
+        animation: focus-anim 0.3s;
+        filter: $outline-filter;
+
+        outline: none;
+        box-shadow: none !important;
+      }
+      &:not(:focus) {
+        filter: none;
+        transition: none !important;
+        //animation: focus-anim 0.3s reverse;
+      }
+    }
+  }
+
+  &__default {
+    border-bottom: 1px solid;
+    height: 25px !important;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+
+    &:focus {
+      border-bottom-color: rgba($color: #000000, $alpha: 0) !important;
+    }
+  }
+
+  &__dropdown {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border: none;
+  }
+
+  img {
+    max-width: 12px;
+    max-height: 12px;
+    margin-right: 12px;
+  }
+
+  &_no-text {
+    width: 24px;
+    padding: 0 !important;
+    img {
+      margin: auto !important;
+    }
+  }
+}
+
+@keyframes focus-anim {
+  from {
+    filter: drop-shadow(1px 0px 0px rgba(255, 255, 255, 0)) drop-shadow(-1px 0px 0px rgba(255, 255, 255, 0))
+      drop-shadow(0px 1px 0px rgba(255, 255, 255, 0)) drop-shadow(0px -1px 0px rgba(255, 255, 255, 0));
+  }
+  to {
+    filter: $outline-filter;
+  }
+}
