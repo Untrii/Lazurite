@@ -1,4 +1,5 @@
 import './App.scss'
+import '@/css/global.scss'
 import { h, Fragment } from 'preact'
 import TitleBar from './titleBar/TitleBar'
 import UpperPanel from './upperPanel/UpperPanel'
