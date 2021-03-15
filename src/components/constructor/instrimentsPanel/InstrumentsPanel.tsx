@@ -4,22 +4,21 @@ import VerticalNav, { INavItem } from '@/components/controls/VerticalNav'
 import assets from '@/assets'
 import { useState } from 'preact/hooks'
 import NumberInput from '@/components/controls/NumberInput'
+import DropdownButton from '@/components/controls/DropdownButton'
+import CompactRadio from '@/components/controls/CompactRadio'
 
 const InstrumentsPanel = () => {
   const tabs: INavItem[] = [
     {
       icon: assets.add,
-      name: 'add',
       displayName: 'Add',
     },
     {
       icon: assets.edit,
-      name: 'edit',
       displayName: 'Edit',
     },
     {
       icon: assets.history,
-      name: 'history',
       displayName: 'History',
     },
   ]
@@ -34,6 +33,15 @@ const InstrumentsPanel = () => {
     <div class="instruments-panel">
       <div class="instruments-panel__content">
         <NumberInput prepend="Number input" />
+
+        <CompactRadio
+          prepend="Abracadabra: "
+          colorName="blue-500"
+          variants={[
+            { displayName: '1', icon: assets.add },
+            { displayName: '2', icon: assets.add },
+          ]}
+        />
       </div>
       <VerticalNav items={tabs} selectedItemIndex={tabIndex} onChange={onChange} />
     </div>

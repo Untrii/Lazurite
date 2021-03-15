@@ -24,7 +24,7 @@ const UpperPanel = () => {
     <div class="upper-panel">
       <HorizontalNav
         className="upper-panel__workspace-selector"
-        items={navItems}
+        items={navItems.map((item) => item.displayName)}
         selectedItemIndex={selectedItemIndex}
         onChange={onChange}
       />
