@@ -3,7 +3,6 @@ import { h } from 'preact'
 
 export interface INavItem {
   displayName: string
-  name: string
   icon: string
 }
 
