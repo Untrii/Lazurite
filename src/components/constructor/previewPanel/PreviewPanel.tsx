@@ -2,6 +2,8 @@ import './PreviewPanel.scss'
 import { h } from 'preact'
 import Slide from '../Slide'
 import store from '@/store'
+import * as constructor from '@/store/actions/constructor'
+import DropdownButton from '@/components/controls/DropdownButton'
 
 const PreviewPanel = () => {
   const slideWidth = 166
@@ -16,6 +18,16 @@ const PreviewPanel = () => {
           <Slide width={slideWidth} height={slideHeight} index={index} presentation={presentation} />
         </div>
       ))}
+
+      <div class="preview-panel__buttons">
+        <DropdownButton
+          colorName="blue-500"
+          variants={new Array(7).fill(0).map((item, index) => 'Template ' + index)}
+          defaultVariant="New slide"
+          groupName="Create from template"
+          onDefaultClick={() => constructor.createSlide()}
+        />
+      </div>
     </div>
   )
 }
