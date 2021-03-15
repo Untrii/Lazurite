@@ -1,8 +1,11 @@
 .horizontal-nav {
+  display: inline-flex;
+
   &__prepend {
     font-weight: 500;
     color: white;
     user-select: none;
+    margin-right: 16px;
   }
   &__item {
     margin-right: 16px;

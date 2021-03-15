@@ -1,26 +1,21 @@
 import './HorizontalNav.scss'
 import { h } from 'preact'
 
-interface IHorizontalNavItem {
-  name: string
-  displayName: string
-}
-
 interface IHorizontalNavProps {
   prepend?: string
-  items: IHorizontalNavItem[]
+  items: string[]
   selectedItemIndex?: number
   onChange?: (newIndex: number) => void
   className?: string
 }
 
 const HorizontalNav = (props: IHorizontalNavProps) => {
-  const renderItem = function (item: IHorizontalNavItem, index: number) {
+  const renderItem = function (item: string, index: number) {
     const itemClasses = ['horizontal-nav__item']
     if (index === props.selectedItemIndex) itemClasses.push('horizontal-nav__item_selected')
     return (
       <div class={itemClasses.join(' ')} onClick={() => props?.onChange(index)}>
-        {item.displayName}
+        {item}
       </div>
     )
   }
