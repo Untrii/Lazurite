@@ -12,7 +12,7 @@ export default {
   },
   devtool: 'source-map',
   devServer: {
-    port: 9090,
+    port: 3535,
   },
   target: 'electron-renderer',
   resolve: {

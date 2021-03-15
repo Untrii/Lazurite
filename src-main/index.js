@@ -8,7 +8,7 @@ function loadRoute(window, route) {
   let url
 
   if (is.development) {
-    url = `http://localhost:9090/`
+    url = `http://localhost:3535/`
   } else {
     url = `file:///${app.getAppPath()}/dist/index.html#${route}`
   }
