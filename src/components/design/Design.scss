@@ -1,0 +1,7 @@
+@import '@/css/variables.scss';
+
+.design-tab {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  background-color: $blue-400;
+}

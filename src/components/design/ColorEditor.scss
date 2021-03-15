@@ -1,0 +1,23 @@
+@import '@/css/variables.scss';
+
+.color-editor {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: max-content 1px 1fr;
+
+  &__nav {
+    padding: 16px;
+  }
+
+  &__palettes {
+    margin: 16px;
+  }
+
+  &__separator {
+    width: 1px;
+    height: calc(100% - 32px);
+    margin: 16px 0;
+    background: $blue-800;
+  }
+}

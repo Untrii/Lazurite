@@ -1,0 +1,13 @@
+.palette-group {
+  &__title {
+    font-size: 12px;
+    font-weight: 400;
+    color: white;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  &__grid {
+    display: grid;
+  }
+}
