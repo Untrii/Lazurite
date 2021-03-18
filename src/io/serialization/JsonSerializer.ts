@@ -45,18 +45,20 @@ export default class JsonSerializer {
       const type = obj[typeKeyword]
 
       if (type == 'Date') return new Date(obj['time'])
-      if (type == 'Object') {
-        delete obj[typeKeyword]
-        return obj
-      }
-
-      if (!modelConstructors[type]) console.error('Parse error.\nUnknown type ' + type)
+      if (type == 'Object') delete obj[typeKeyword]
+      else if (!modelConstructors[type]) console.error('Parse error.\nUnknown type ' + type)
       else result = new modelConstructors[type]()
+
       for (const key in obj) {
         if (!reservedKeys.includes(key)) {
           if (typeof obj[key] == 'object') result[key] = this.fromObject(obj[key])
           else result[key] = obj[key]
         }
+      }
+    }
+    if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        if (typeof obj[i] == 'object') result[i] = this.fromObject(obj[i])
       }
     }
     return result
