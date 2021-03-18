@@ -68,6 +68,6 @@ export default class Color {
   }
 
   public static get black() {
-    return Color.fromRgb(255, 255, 255)
+    return Color.fromRgb(0, 0, 0)
   }
 }
