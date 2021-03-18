@@ -32,7 +32,7 @@ const TextInput = ({ value = '', prepend, maxLength = 32, onChange, placeHolder 
   const onInput = function (event) {
     const value = event.target.value
     resizeInput(value)
-    if (onChange) onChange(value)
+    onChange?.(value)
   }
 
   useEffect(() => {

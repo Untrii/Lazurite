@@ -47,10 +47,7 @@ const DropdownButton = ({
 
     return (
       <div class={buttonClasses.join(' ')}>
-        <button
-          class={upperClasses.join(' ') + ' border-dark_' + colorName}
-          onClick={() => (onDefaultClick ? onDefaultClick() : null)}
-        >
+        <button class={upperClasses.join(' ') + ' border-dark_' + colorName} onClick={() => onDefaultClick?.()}>
           {defaultVariant}
         </button>
         <button class={bottomClassses.join(' ')} onClick={onDropdownClick}>
@@ -62,7 +59,7 @@ const DropdownButton = ({
           variants={variants}
           colorName={colorName}
           visible={isDropdownOpened}
-          onClick={(index) => (onClick ? onClick(index, variants[index]) : null)}
+          onClick={(index) => onClick?.(index, variants[index])}
         />
       </div>
     )

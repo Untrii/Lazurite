@@ -34,7 +34,7 @@ const Tabs = (props: ITabsProps) => {
     }
 
     if (target.clientWidth) state.tabSize = target.clientWidth + 1
-    if (tabIndex != props.openedTabIndex && props.onTabOpened) props.onTabOpened(tabIndex)
+    if (tabIndex != props.openedTabIndex) props?.onTabOpened(tabIndex)
     state.draggingTabIndex = tabIndex
     state.startOffsetX = 0
 

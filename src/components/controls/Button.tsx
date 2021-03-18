@@ -27,7 +27,7 @@ const Button = ({
   if (className) buttonClasses.push(className)
 
   return (
-    <button class={buttonClasses.join(' ')} onClick={() => (onClick ? onClick() : null)}>
+    <button class={buttonClasses.join(' ')} onClick={() => onClick?.()}>
       {icon ? <img src={icon} alt="" /> : null}
       {text}
     </button>

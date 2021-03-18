@@ -26,7 +26,7 @@ const CompactRadio = ({
     const variantClasses: string[] = ['compact-radio__variant', 'control-bg_' + colorName, 'border-dark_' + colorName]
     if (index == selectedVariantIndex) variantClasses.push('pressed-control-bg_' + colorName)
     return (
-      <div class={variantClasses.join(' ')} onClick={() => onSelected(index)}>
+      <div class={variantClasses.join(' ')} onClick={() => onSelected?.(index)}>
         <img src={variant.icon} alt={variant.displayName} />
       </div>
     )
