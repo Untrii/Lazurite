@@ -1,0 +1,122 @@
+@import '@/css/variables.scss';
+
+.color-picker {
+  animation: color-picker-height 0.5s, color-picker-width 0.3s;
+  width: 168px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid white;
+  box-sizing: border-box;
+
+  &__main-box {
+    overflow: hidden;
+    width: 166px;
+    height: 166px;
+    user-select: none;
+
+    &-saturation {
+      height: 100%;
+      background: linear-gradient(to right, white 600/166%, red 100 - 600/166%);
+    }
+
+    &-value {
+      height: 100%;
+      background: linear-gradient(to bottom, rgba($color: black, $alpha: 0) 3.75%, black 96.25%);
+    }
+  }
+
+  &__edit-box {
+    padding: 8px;
+    background-color: $blue-500;
+  }
+
+  &__hue-selector {
+    $gradMg: 4%;
+    $gradColRange: (100% - $gradMg * 2) / 6;
+
+    margin-top: 4px;
+    height: 12px;
+    background: linear-gradient(
+      to right,
+      red $gradMg,
+      yellow $gradMg + $gradColRange,
+      lime $gradMg + $gradColRange * 2,
+      cyan $gradMg + $gradColRange * 3,
+      blue $gradMg + $gradColRange * 4,
+      magenta $gradMg + $gradColRange * 5,
+      red 100% - $gradMg
+    );
+    border-radius: 6px;
+    user-select: none;
+  }
+
+  &__pointer {
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+    border: 1px solid $blue-900;
+    box-shadow: 0 0 0 1px black;
+    box-sizing: border-box;
+    background-color: red;
+    user-select: none;
+  }
+
+  &__inputs {
+    margin-top: 10px;
+  }
+
+  &__input {
+    margin-top: 2px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: max-content;
+  }
+
+  &__bottom-panel {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  &__preview {
+    height: 60px;
+    width: 60px;
+    box-sizing: border-box;
+    border: 1px solid white;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+
+  &__buttons {
+    height: 60px;
+    width: 60px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+
+  &__button {
+    align-self: flex-end;
+  }
+}
+
+@keyframes color-picker-height {
+  0% {
+    height: 0px;
+  }
+  100% {
+    height: 374px;
+  }
+}
+
+@keyframes color-picker-width {
+  0% {
+    width: 0px;
+  }
+  100% {
+    width: 168px;
+  }
+}
