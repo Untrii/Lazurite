@@ -18,6 +18,7 @@ const Workspace = (props: IWorkspaceProps) => {
   const rootStyle = {
     marginTop: '16px',
     marginLeft: '16px',
+    width: slideWidth + 'px',
   }
   return (
     <div style={rootStyle}>
