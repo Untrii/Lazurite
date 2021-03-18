@@ -13,6 +13,8 @@ interface IPaletteGroupProps {
   onSelected?: (index: number) => void
   onAddButtonClick?: (event: MouseEvent) => void
   addButtonPopper?: JSX.Element
+  deleteable?: boolean
+  onDelete?: (index: number) => void
 }
 
 const PaletteGroup = ({
@@ -22,6 +24,8 @@ const PaletteGroup = ({
   onSelected,
   onAddButtonClick,
   addButtonPopper,
+  deleteable,
+  onDelete,
 }: IPaletteGroupProps) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   useEffect(() => {
@@ -60,12 +64,15 @@ const PaletteGroup = ({
         {tiles.map((item, index) => (
           <div class="palette-group__tile" style={calculateStyle(index)}>
             <PaletteTile
+              key={item.displayValue}
               value={item}
               height={tileSize}
               width={tileSize}
+              deleteable={deleteable}
               onClick={() => {
                 onSelected?.(index)
               }}
+              onDelete={() => onDelete?.(index)}
             />
           </div>
         ))}

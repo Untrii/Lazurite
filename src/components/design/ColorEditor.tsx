@@ -8,7 +8,7 @@ import Background, { BackgroundType } from '@/models/presentation/theme/Backgrou
 import backgrounds from '@/presets/backgrounds'
 import ColorPicker from '../dialogs/ColorPicker'
 import Color from '@/models/common/Color'
-import { addUserBackground, changeBackground, changeDefaultColor } from '@/store/actions/design'
+import { addUserBackground, changeBackground, changeDefaultColor, deleteUserBackground } from '@/store/actions/design'
 import DefaultsGroup from './DefaultsGroup'
 
 const ColorEditor = () => {
@@ -131,6 +131,10 @@ const ColorEditor = () => {
     changeBackground(backgrounds[tabs[currentTabIndex].name][index])
   }
 
+  const onBackgroundDelete = function (tileIndex: number) {
+    deleteUserBackground(tabs[currentTabIndex].name, tileIndex)
+  }
+
   return (
     <div class="color-editor">
       <div class="color-editor__palette" ref={paletteBlock}>
@@ -150,6 +154,8 @@ const ColorEditor = () => {
             title="User colors"
             tiles={store.userBackgrounds[tabs[currentTabIndex].name]}
             onSelected={onUserBackgroundSelected}
+            deleteable={true}
+            onDelete={onBackgroundDelete}
           />
           <div class="color-editor__palette-gap"></div>
           <PaletteGroup

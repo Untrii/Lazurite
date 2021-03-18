@@ -1,5 +1,58 @@
+@import '@/css/variables.scss';
+
 .palette-tile {
   border-radius: 4px;
   border: 1px solid white;
   box-sizing: border-box;
+
+  &:hover &__delete {
+    animation: palette-tile-appear 0.15s;
+    opacity: 1;
+    display: flex;
+  }
+
+  &:not(:hover) &__delete {
+    animation: palette-tile-disappear 0.15s;
+  }
+
+  &__delete {
+    width: 20px;
+    height: 20px;
+    float: right;
+    display: flex;
+    opacity: 0;
+    justify-content: space-around;
+    align-items: center;
+
+    &_hidden {
+      transform: scale(0) !important;
+    }
+
+    img {
+      filter: drop-shadow(-1px 0px 0px $blue-300) drop-shadow(1px 0px 0px $blue-300) drop-shadow(0px -1px 0px $blue-300)
+        drop-shadow(0px 1px 0px $blue-300);
+    }
+  }
+}
+
+@keyframes palette-tile-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes palette-tile-disappear {
+  0% {
+    opacity: 1;
+    display: flex;
+  }
+  99% {
+    opacity: 0;
+    display: flex;
+  }
+  100% {
+    display: none;
+  }
 }

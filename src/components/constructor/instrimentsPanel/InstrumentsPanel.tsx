@@ -6,6 +6,7 @@ import { useState } from 'preact/hooks'
 import NumberInput from '@/components/controls/NumberInput'
 import DropdownButton from '@/components/controls/DropdownButton'
 import CompactRadio from '@/components/controls/CompactRadio'
+import ColorPicker from '@/components/dialogs/ColorPicker'
 
 const InstrumentsPanel = () => {
   const tabs: INavItem[] = [
@@ -42,6 +43,8 @@ const InstrumentsPanel = () => {
             { displayName: '2', icon: assets.add },
           ]}
         />
+
+        <ColorPicker />
       </div>
       <VerticalNav items={tabs} selectedItemIndex={tabIndex} onChange={onChange} />
     </div>
