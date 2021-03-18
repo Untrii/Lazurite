@@ -2,6 +2,37 @@ import Background from '@/models/presentation/theme/Background'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import { requireFile } from './dataLoader'
 
+function parseGradient(gradient: string) {
+  const result = {
+    angle: 0,
+    colors: [] as { stop: number; value: string }[],
+  }
+
+  const parts = gradient.split(',').map((item) => item.trim())
+  result.angle = parseFloat(parts[0])
+  for (let i = 1; i < parts.length; i++) {
+    const [value, stop] = parts[i].split(' ')
+    result.colors.push({ value, stop: parseFloat(stop) / 100 })
+  }
+  return result
+}
+
+function getGradientCoords(resolution: RendererResolution, angle: number): [number, number, number, number] {
+  angle = angle % 360
+  const rads = (angle / 180) * Math.PI
+  const centerX = resolution.targetWidth / 2
+  const centerY = resolution.targetHeight / 2
+
+  const segmentLength = Math.min(centerX / Math.cos(rads), centerY / Math.cos(Math.PI - rads))
+
+  return [
+    centerX - Math.cos(rads) * segmentLength,
+    centerY + Math.sin(rads) * segmentLength,
+    centerX + Math.cos(rads) * segmentLength,
+    centerY - Math.sin(rads) * segmentLength,
+  ]
+}
+
 export default function renderBackground(
   ctx: CanvasRenderingContext2D,
   resolution: RendererResolution,
@@ -15,10 +46,20 @@ export default function renderBackground(
       }
       break
     case 'gradicolor':
-    case 'gradient':
       {
         console.error('Rendering gradient background...\nNot implemented')
       }
+      break
+    case 'gradient':
+      const gradientValue = parseGradient(background.value)
+      const gradientCoords = getGradientCoords(resolution, gradientValue.angle)
+      const gradient = ctx.createLinearGradient(...gradientCoords)
+
+      for (const color of gradientValue.colors) {
+        gradient.addColorStop(color.stop, color.value)
+      }
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, resolution.targetWidth, resolution.targetHeight)
       break
     case 'image':
       {
