@@ -55,7 +55,10 @@ const PaletteTile = (props: IPaletteTileProps) => {
       {props.deleteable ? (
         <div
           class={'palette-tile__delete' + (animationActive ? '' : ' palette-tile__delete_hidden')}
-          onClick={() => props.onDelete?.()}
+          onClick={(event) => {
+            event.stopPropagation()
+            props.onDelete?.()
+          }}
         >
           <img src={assets.delete} alt="" />
         </div>
