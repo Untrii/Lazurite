@@ -12,17 +12,26 @@ interface INumberInputProps {
   minValue?: number
   step?: number
   prepend?: string
+  onChange?: (newValue: number) => void
 }
 
-const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.001, prepend }: INumberInputProps) => {
-  const [initialValue] = useState(value)
+const NumberInput = ({
+  value = 0,
+  minValue = -1e9,
+  maxValue = 1e9,
+  step = 0.001,
+  prepend,
+  onChange,
+}: INumberInputProps) => {
   const state = useReactiveState({
     value,
     lastSymbol: '',
   })
+
   const box = useRef(null)
 
   const rerenderInput = function (value: number | string) {
+    if (typeof value == 'string') value = parseFloat(value)
     box.current.value = value
 
     const textStyle = new TextStyle()
@@ -32,14 +41,15 @@ const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.001,
     box.current.style.width = getTextWidth(textStyle, value.toString()) + 4 + 'px'
   }
 
-  const applyRange = function (value: string) {
-    let parsedNum = parseFloat(value)
-    if (parsedNum > maxValue) return maxValue.toString()
-    if (parsedNum < minValue) return minValue.toString()
+  const applyRange = function (value: string | number): number {
+    if (typeof value == 'string') return applyRange(parseFloat(value))
+    if (value > maxValue) return maxValue
+    if (value < minValue) return minValue
     return value
   }
 
-  const applyStep = function (value: string) {
+  const applyStep = function (value: string | number): string {
+    if (typeof value == 'number') return applyStep(value.toString())
     const fractionsCount = Math.round(Math.log10(1 / step))
     const dividerIndex = value.indexOf('.')
     let result = value
@@ -47,6 +57,8 @@ const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.001,
     if (result != value) return result
     return value
   }
+
+  if (value != state.value) state.value = parseFloat(applyStep(applyRange(value)))
 
   const onKeyPress = function (event: KeyboardEvent) {
     state.lastSymbol = event.key
@@ -79,13 +91,17 @@ const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.001,
     rerenderInput(processedText)
 
     state.value = parseFloat(processedText)
+    onChange?.(state.value)
   }
 
   const onWheel = function (event: WheelEvent) {
     event.preventDefault()
-    state.value += event.deltaY / 10
-    const rounding = 1 / step
-    state.value = Math.round(state.value * rounding) / rounding
+    let delta = 0
+    if (event.deltaY < 0) delta = 10
+    if (event.deltaY > 0) delta = -10
+
+    state.value = applyRange(state.value + delta)
+    onChange?.(state.value)
     rerenderInput(state.value)
   }
 
@@ -103,7 +119,7 @@ const NumberInput = ({ value = 0, minValue = -1e9, maxValue = 1e9, step = 0.001,
           step={step}
           min={minValue}
           max={maxValue}
-          value={initialValue}
+          value={value}
           ref={box}
           onClick={(event) => event.stopPropagation()}
           onInput={onInput}
