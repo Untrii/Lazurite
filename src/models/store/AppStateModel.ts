@@ -1,5 +1,5 @@
 import Presentation from '../presentation/Presentation'
-import Background from '../presentation/theme/Background'
+import Background, { BackgroundCollection } from '../presentation/theme/Background'
 import TabStateModel from './TabStateModel'
 
 export type PresentationFile = { path: string; presentation: Presentation }
@@ -9,7 +9,13 @@ export default class AppStateModel {
 
   tabs: TabStateModel[] = []
   recentPresentations: PresentationFile[] = []
-  userBackgrounds: Background[] = []
+  userBackgrounds: BackgroundCollection = {
+    color: [],
+    gradient: [],
+    gradicolor: [],
+    pattern: [],
+    image: [],
+  }
 
   selectedTabIndex = 0
 

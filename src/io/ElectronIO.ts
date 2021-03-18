@@ -1,9 +1,9 @@
 import Presentation from '@/models/presentation/Presentation'
-import IoManager from './IoManager'
+import IoManager from './IOManager'
 import { existsSync, promises } from 'fs'
 import path from 'path'
 import JsonSerializer from './serialization/JsonSerializer'
-import Background from '@/models/presentation/theme/Background'
+import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
 import { remote } from 'electron'
 
 const { dialog } = remote
@@ -108,6 +108,7 @@ export default class ElectronIO extends IoManager {
       )
     }
   }
+
   async loadPresentation(path: string) {
     if (this.fileCache.has(path)) return this.fileCache.get(path)
 
@@ -142,7 +143,8 @@ export default class ElectronIO extends IoManager {
     if (!isValid) await writeFile(filePath, JsonSerializer.toJSON(result))
     return result
   }
-  async saveUserBackgrounds(bgs: Background[]) {
+
+  async saveUserBackgrounds(bgs: BackgroundCollection) {
     const filePath = await this.getUserBackgroundsFile()
     await writeFile(filePath, JsonSerializer.toJSON(bgs))
   }
