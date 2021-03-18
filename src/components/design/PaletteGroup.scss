@@ -1,3 +1,5 @@
+@import '@/css/variables.scss';
+
 .palette-group {
   &__title {
     font-size: 12px;
@@ -9,5 +11,40 @@
 
   &__grid {
     display: grid;
+  }
+
+  &__add-button {
+    height: 72px;
+    width: 72px;
+    border: 1px solid white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+    background: $blue-500;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      background: $blue-600;
+      transition: 0.3s;
+    }
+
+    &:not(:hover) {
+      background: $blue-500;
+      transition: 0.3s;
+    }
+  }
+
+  &__popper {
+    z-index: 10;
+    position: relative;
+    width: 0px;
+    height: 0px;
+  }
+
+  &__popper-content {
+    position: absolute;
   }
 }

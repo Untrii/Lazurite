@@ -10,8 +10,24 @@
     padding: 16px;
   }
 
+  &__palette {
+    display: grid;
+    grid-template-rows: max-content 1fr;
+    height: 100%;
+  }
+
+  &__palette-gap {
+    height: 16px;
+  }
+
   &__palettes {
-    margin: 16px;
+    margin: 0 16px 0px;
+    overflow: scroll;
+    height: calc(100vh - 117px);
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
   }
 
   &__separator {
@@ -19,5 +35,12 @@
     height: calc(100% - 32px);
     margin: 16px 0;
     background: $blue-800;
+  }
+
+  &__picked-title {
+    margin: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
   }
 }

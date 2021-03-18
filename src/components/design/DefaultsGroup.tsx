@@ -1,0 +1,33 @@
+import './DefaultsGroup.scss'
+import Color from '@/models/common/Color'
+import Background from '@/models/presentation/theme/Background'
+import { h } from 'preact'
+import PaletteTile from './PaletteTile'
+
+interface ITile {
+  title: string
+  value: Background | Color
+  onChange?: (color: Color) => void
+}
+
+interface IDefaultsGroupProps {
+  title: string
+  tiles: ITile[]
+  tileSize: number
+}
+
+const DefaultsGroup = ({ title, tiles, tileSize }: IDefaultsGroupProps) => {
+  return (
+    <div class="defaults-group">
+      <h3 class="defaults-group__title">{title}</h3>
+      <div class="defaults-group__tiles">
+        {tiles.map((tile) => (
+          <div class="defaults-group__tile">
+            <PaletteTile value={tile.value} height={tileSize} width={tileSize} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+export default DefaultsGroup

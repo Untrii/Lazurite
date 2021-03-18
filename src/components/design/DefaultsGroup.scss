@@ -1,0 +1,22 @@
+.defaults-group {
+  margin: 0 16px;
+  &__title {
+    font-size: 12px;
+    font-weight: 400;
+    color: white;
+    margin: 0px 0px 8px 0;
+  }
+
+  &__tile {
+    &:not(:last-child) {
+      margin-right: 16px;
+    }
+  }
+
+  &__tiles {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-bottom: 16px;
+  }
+}
