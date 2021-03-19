@@ -11,14 +11,14 @@ type LoadedResource = HTMLImageElement | HTMLVideoElement | HTMLStyleElement
 type RequireManyResult = { [sourceName: string]: LoadedResource } | undefined
 
 export function startLoading(source: string) {
-  requireFile(source)
+  requireResource(source)
 }
 
 export function requireMany(sources: string[]): RequireManyResult {
-  let result: RequireManyResult
+  const result: RequireManyResult = {}
 
   for (const item of sources) {
-    const resource = requireFile(item)
+    const resource = requireResource(item)
     if (!resource) return
     result[item] = resource
   }
@@ -26,37 +26,39 @@ export function requireMany(sources: string[]): RequireManyResult {
   return result
 }
 
-export function requireFile(source: string): LoadedResource | undefined {
+export function requireResource(source: string): LoadedResource | undefined {
   if (!loadedResources.get(source)) {
-    waitForFile(source)
+    requireResourceAsync(source)
     return
   } else return loadedResources.get(source)
 }
 
-export async function waitForFile(source: string): Promise<LoadedResource> {
+export async function requireResourceAsync(source: string): Promise<LoadedResource> {
   if (loadedResources.get(source)) return loadedResources.get(source)
-  let startTime = performance.now()
+  const startTime = performance.now()
   if (!pendingResources.has(source)) {
     pendingResources.set(
       source,
       new Promise(async (resolve, reject) => {
-        let extension = source.split('.').pop()
+        const fileName = source.split('/').pop()
+        const extension = fileName.split('.').pop()
+        if (fileName == extension) reject('Files without extension is not allowed')
 
-        let onLoad = (element: LoadedResource) => {
+        const onLoad = (element: LoadedResource) => {
           loadedResources.set(source, element)
           pendingResources.delete(source)
           resolve()
         }
 
-        let handleMedia = (tagName: string) => {
-          let el = document.createElement(tagName) as HTMLImageElement | HTMLVideoElement
+        const handleMedia = (tagName: string) => {
+          const el = document.createElement(tagName) as HTMLImageElement | HTMLVideoElement
           el.src = source
           if (tagName == 'img') el.onload = () => onLoad(el)
           else el.onloadedmetadata = () => onLoad(el)
         }
 
-        let handleFont = async () => {
-          let getFormat = (extension: string) => {
+        const handleFont = async () => {
+          const getFormat = (extension: string) => {
             switch (extension) {
               case 'ttf':
                 return 'truetype'
@@ -68,14 +70,14 @@ export async function waitForFile(source: string): Promise<LoadedResource> {
             return 'unknown'
           }
 
-          let res = await fetch(source)
-          let blob = await res.blob()
+          const res = await fetch(source)
+          const blob = await res.blob()
 
-          let reader = new FileReader()
+          const reader = new FileReader()
           reader.readAsDataURL(blob) // конвертирует Blob в base64 и вызывает onload
 
           reader.onload = function () {
-            let style = document.createElement('style')
+            const style = document.createElement('style')
             style.innerHTML = `@font-face {
               font-family: "${getFontFamilyName(source)}";
               src: url('${reader.result}') format('${getFormat(extension)}');

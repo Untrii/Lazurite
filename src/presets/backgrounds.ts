@@ -1,18 +1,11 @@
+import { promises as fs, existsSync } from 'fs'
+import path from 'path'
+
 import Color from '@/models/common/Color'
 import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
-
-function getMedianColor(gradient: string) {
-  let cols = gradient.split(' ')
-
-  let col0 = Color.fromHex(cols[1])
-  let col1 = Color.fromHex(cols[3])
-
-  return Color.fromRgb(
-    Math.floor((col0.r + col1.r) / 2),
-    Math.floor((col0.g + col1.g) / 2),
-    Math.floor((col0.b + col1.b) / 2)
-  )
-}
+import isElectron from '@/util/isElectron'
+import getMedianColor from '@/util/getMedianColor'
+import getMedianColorSync from '@/util/getMedianColorSync'
 
 const colors = [
   '#FFFFFF',
@@ -102,7 +95,7 @@ const gradients = [
   background.value = item
   background.type = 'gradient'
 
-  background.medianColor = getMedianColor(item)
+  background.medianColor = getMedianColorSync('gradient', item)
   return background
 })
 
@@ -112,6 +105,68 @@ const result: BackgroundCollection = {
   gradicolor: [],
   pattern: [],
   image: [],
+}
+
+const createBackgrounds = async function (
+  type: 'image' | 'pattern',
+  sources: string[],
+  previewSources: Map<string, string> = new Map()
+) {
+  const result: Background[] = []
+  for (let source of sources) {
+    try {
+      const background = new Background()
+      background.value = source
+      if (previewSources.has(source)) background.displayValue = previewSources.get(source)
+      else background.displayValue = source
+      background.type = type
+
+      background.medianColor = await getMedianColor(type, background.displayValue)
+      result.push(background)
+    } catch {}
+  }
+  return result
+}
+
+export let isLoaded = false
+if (isElectron()) {
+  ;(async () => {
+    const basePath = process.cwd()
+    const paths = {
+      data: path.join(basePath, 'data'),
+      patterns: path.join(basePath, 'data/patterns'),
+      images: path.join(basePath, 'data/images'),
+      bgPreview: path.join(basePath, 'data/images/preview'),
+    }
+
+    const convertToWebPaths = function (...paths: string[]) {
+      return paths.map((path) => 'local://' + path.replaceAll('\\', '/'))
+    }
+
+    const joinWebPath = function (...paths) {
+      return convertToWebPaths(path.join(...paths))[0]
+    }
+
+    try {
+      for (const pathName in paths) if (!existsSync(paths[pathName])) fs.mkdir(paths[pathName])
+
+      const patterns = await fs.readdir(paths.patterns)
+      const fullPatternPaths = patterns.map((item) => joinWebPath(paths.patterns, item))
+      const images = await fs.readdir(paths.images)
+      const fullImagePaths = images.map((item) => joinWebPath(paths.images, item))
+      const imagePreviews = new Set(await fs.readdir(paths.bgPreview))
+
+      const previewsMap = new Map<string, string>()
+      for (const image of images) {
+        if (imagePreviews.has(image))
+          previewsMap.set(joinWebPath(paths.images, image), joinWebPath(paths.bgPreview, image))
+      }
+
+      result.pattern = await createBackgrounds('pattern', fullPatternPaths)
+      result.image = await createBackgrounds('image', fullImagePaths, previewsMap)
+    } catch {}
+    isLoaded = true
+  })()
 }
 
 export default result

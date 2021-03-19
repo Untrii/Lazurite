@@ -1,6 +1,6 @@
 import Background from '@/models/presentation/theme/Background'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
-import { requireFile } from './dataLoader'
+import { requireResource } from '../dataLoader'
 
 function parseGradient(gradient: string) {
   const result = {
@@ -63,7 +63,7 @@ export default function renderBackground(
       break
     case 'image':
       {
-        const image = requireFile(background.value) as HTMLImageElement
+        const image = requireResource(background.value) as HTMLImageElement
         if (image) {
           const { naturalWidth, naturalHeight } = image
           const { targetWidth, targetHeight } = resolution
@@ -80,7 +80,7 @@ export default function renderBackground(
       break
     case 'pattern':
       {
-        const image = requireFile(background.value) as HTMLImageElement
+        const image = requireResource(background.value) as HTMLImageElement
         if (image) {
           const { scale } = resolution
           const { naturalWidth, naturalHeight } = image

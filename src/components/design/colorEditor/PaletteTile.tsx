@@ -25,8 +25,9 @@ const PaletteTile = (props: IPaletteTileProps) => {
       case 'color':
         return { backgroundColor: displayValue }
       case 'image':
-      case 'pattern':
         return { backgroundImage: `url(${displayValue})`, backgroundSize: 'cover' }
+      case 'pattern':
+        return { backgroundImage: `url(${displayValue})` }
       case 'gradient':
         return { background: `linear-gradient(${displayValue})` }
       default:
