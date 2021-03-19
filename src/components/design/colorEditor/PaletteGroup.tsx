@@ -7,6 +7,7 @@ import assets from '@/assets'
 import * as design from '@/store/actions/design'
 
 interface IPaletteGroupProps {
+  width: number
   title: string
   tiles: { type: BackgroundType; displayValue: string }[]
   addButton?: boolean
@@ -18,6 +19,7 @@ interface IPaletteGroupProps {
 }
 
 const PaletteGroup = ({
+  width,
   title,
   tiles,
   addButton,
@@ -27,18 +29,9 @@ const PaletteGroup = ({
   deleteable,
   onDelete,
 }: IPaletteGroupProps) => {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-  useEffect(() => {
-    const listener = () => setWindowWidth(window.innerWidth)
-    window.addEventListener('resize', listener)
-    return () => window.removeEventListener('resize', listener)
-  })
-
-  const navSize = 40
   const gapSize = 16
   const tileSize = 76
-  const currentBlockSize = ((windowWidth - navSize) / 3) * 2 - gapSize
-  const columnCount = Math.floor(currentBlockSize / (tileSize + gapSize))
+  const columnCount = Math.floor((width - gapSize) / (tileSize + gapSize))
   const rowCount = Math.ceil((tiles.length + (addButton ? 1 : 0)) / columnCount)
 
   const gridStyle = {

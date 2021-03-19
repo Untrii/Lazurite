@@ -13,6 +13,13 @@
     }
   }
 
+  &__tile-caption {
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+  }
+
   &__tiles {
     display: flex;
     flex-direction: row;

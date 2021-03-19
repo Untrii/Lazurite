@@ -24,6 +24,7 @@ const DefaultsGroup = ({ title, tiles, tileSize }: IDefaultsGroupProps) => {
         {tiles.map((tile) => (
           <div class="defaults-group__tile">
             <PaletteTile value={tile.value} height={tileSize} width={tileSize} />
+            <div class="defaults-group__tile-caption">{tile.title}</div>
           </div>
         ))}
       </div>

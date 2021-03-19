@@ -3,7 +3,7 @@ import { h, Fragment } from 'preact'
 import VerticalNav from '../controls/VerticalNav'
 import assets from '@/assets'
 import { useState } from 'preact/hooks'
-import ColorEditor from './ColorEditor'
+import ColorEditor from './colorEditor/ColorEditor'
 
 const Design = () => {
   const tabs = [

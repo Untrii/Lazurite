@@ -1,12 +1,12 @@
 import './ColorEditor.scss'
 import { h } from 'preact'
-import HorizontalNav from '../controls/HorizontalNav'
+import HorizontalNav from '@/components/controls/HorizontalNav'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import PaletteGroup from './PaletteGroup'
 import store from '@/store'
 import Background, { BackgroundType } from '@/models/presentation/theme/Background'
 import backgrounds from '@/presets/backgrounds'
-import ColorPicker from '../dialogs/ColorPicker'
+import ColorPicker from '@/components/dialogs/ColorPicker'
 import Color from '@/models/common/Color'
 import { addUserBackground, changeBackground, changeDefaultColor, deleteUserBackground } from '@/store/actions/design'
 import DefaultsGroup from './DefaultsGroup'
@@ -58,20 +58,6 @@ const ColorEditor = () => {
     changeTabIndex(index)
     togglePopper(false)
   }
-
-  const paletteBlock = useRef<HTMLDivElement>(null)
-  const [pickedBlockWidth, setPickedBlockWidth] = useState(0)
-  useEffect(() => {
-    setPickedBlockWidth(window.innerWidth - paletteBlock.current.clientWidth - 41)
-    const onResize = () => {
-      setPickedBlockWidth(window.innerWidth - paletteBlock.current.clientWidth - 41)
-    }
-
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  })
-
-  const presetTileSize = (pickedBlockWidth - 80) / 4
 
   const theme = store.currentTab.openedPresentation.theme
   const { background, defaults } = theme
@@ -135,9 +121,26 @@ const ColorEditor = () => {
     deleteUserBackground(tabs[currentTabIndex].name, tileIndex)
   }
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  useEffect(() => {
+    const listener = () => setWindowWidth(window.innerWidth)
+    window.addEventListener('resize', listener)
+    return () => window.removeEventListener('resize', listener)
+  })
+  const navSize = 40
+  const gapSize = 16
+  const paletteGroupTileSize = 76
+  const maxPaletteGroupWidth = windowWidth - (paletteGroupTileSize * 4 + gapSize * 5 + navSize + 1)
+  const paletteGroupColumnCount = Math.floor(
+    (Math.min((windowWidth - navSize) * 0.66, maxPaletteGroupWidth) - gapSize) / (gapSize + paletteGroupTileSize)
+  )
+  const paletteGroupWidth = gapSize + paletteGroupColumnCount * (paletteGroupTileSize + gapSize)
+  const defaultsWidth = windowWidth - navSize - paletteGroupWidth - 1
+  const defaultsTileSize = (defaultsWidth - gapSize * 5) / 4
+
   return (
     <div class="color-editor">
-      <div class="color-editor__palette" ref={paletteBlock}>
+      <div class="color-editor__palette" style={{ width: paletteGroupWidth }}>
         <nav class="color-editor__nav">
           <HorizontalNav
             prepend="Background:"
@@ -156,12 +159,14 @@ const ColorEditor = () => {
             onSelected={onUserBackgroundSelected}
             deleteable={true}
             onDelete={onBackgroundDelete}
+            width={paletteGroupWidth}
           />
           <div class="color-editor__palette-gap"></div>
           <PaletteGroup
             title="Standart colors"
             tiles={backgrounds[tabs[currentTabIndex].name]}
             onSelected={onStandartBackgroundSelected}
+            width={paletteGroupWidth}
           />
           <div class="color-editor__palette-gap"></div>
         </div>
@@ -170,7 +175,7 @@ const ColorEditor = () => {
       <div class="color-editor__picked">
         <h2 class="color-editor__picked-title">Defaults</h2>
         {presetTiles.map((presetGroup) => (
-          <DefaultsGroup title={presetGroup.title} tiles={presetGroup.tiles} tileSize={presetTileSize} />
+          <DefaultsGroup title={presetGroup.title} tiles={presetGroup.tiles} tileSize={defaultsTileSize} />
         ))}
       </div>
     </div>
