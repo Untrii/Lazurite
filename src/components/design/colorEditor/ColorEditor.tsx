@@ -10,6 +10,7 @@ import ColorPicker from '@/components/dialogs/ColorPicker'
 import Color from '@/models/common/Color'
 import { addUserBackground, changeBackground, changeDefaultColor, deleteUserBackground } from '@/store/actions/design'
 import DefaultsGroup from './DefaultsGroup'
+import Slide from '@/components/constructor/Slide'
 
 const ColorEditor = () => {
   const [currentTabIndex, changeTabIndex] = useState(0)
@@ -137,6 +138,10 @@ const ColorEditor = () => {
   const paletteGroupWidth = gapSize + paletteGroupColumnCount * (paletteGroupTileSize + gapSize)
   const defaultsWidth = windowWidth - navSize - paletteGroupWidth - 1
   const defaultsTileSize = (defaultsWidth - gapSize * 5) / 4
+  const previewWidth = defaultsWidth - 34
+  const previewHeight = (previewWidth / 16) * 9
+  const presentation = store.currentTab.openedPresentation
+  const previewSlide = []
 
   return (
     <div class="color-editor">
@@ -177,6 +182,9 @@ const ColorEditor = () => {
         {presetTiles.map((presetGroup) => (
           <DefaultsGroup title={presetGroup.title} tiles={presetGroup.tiles} tileSize={defaultsTileSize} />
         ))}
+        <div class="color-editor__preview">
+          <Slide width={previewWidth} height={previewHeight} presentation={presentation} slide={previewSlide} />
+        </div>
       </div>
     </div>
   )

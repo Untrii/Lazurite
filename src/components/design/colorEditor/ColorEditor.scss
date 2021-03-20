@@ -41,6 +41,20 @@
     background: $blue-800;
   }
 
+  &__picked {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  &__preview {
+    margin: auto 16px 16px;
+    border-radius: 4px;
+    border: 1px solid white;
+    overflow: hidden;
+  }
+
   &__picked-title {
     margin: 16px;
     font-size: 12px;

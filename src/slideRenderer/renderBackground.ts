@@ -75,7 +75,7 @@ export default function renderBackground(
           const offsetY = (targetHeight - imageHeight) / 2
 
           ctx.drawImage(image, 0, 0, naturalWidth, naturalHeight, offsetX, offsetY, imageWidth, imageHeight)
-        }
+        } else throw new Error('Resource not loaded')
       }
       break
     case 'pattern':
@@ -110,7 +110,7 @@ export default function renderBackground(
           const pattern = ctx.createPattern(patternCanvas, 'repeat')
           ctx.fillStyle = pattern
           ctx.fillRect(0, 0, resolution.targetWidth, resolution.targetHeight)
-        }
+        } else throw new Error('Resource not loaded')
       }
       break
   }

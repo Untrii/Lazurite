@@ -3,6 +3,7 @@ import store from '@/store'
 import io from '@/io'
 import Color from '@/models/common/Color'
 import { saveCurrentPresentation } from './util'
+import { requireResourceAsync } from '@/dataLoader'
 
 type DefaultsName = keyof typeof store.currentTab.openedPresentation.theme.defaults
 
@@ -32,6 +33,7 @@ export function changeDefaultColor(defaultName: DefaultsName, color: Color) {
 export function changeBackground(bg: Background) {
   const theme = getCurrentTheme()
   theme.background = bg
+  if (bg.type == 'image') requireResourceAsync(bg.value)
   saveCurrentPresentation()
 }
 
