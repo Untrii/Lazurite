@@ -5,24 +5,27 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import renderText from './objectRenderers/renderText'
 import renderBackground from './renderBackground'
 
-export default function render(ctx: CanvasRenderingContext2D, presentation: Presentation, slideIndex: number) {
-  let targetWidth = ctx.canvas.width
-  let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
-  resolution.targetWidth = targetWidth
+export default function render(ctx: CanvasRenderingContext2D, presentation: Presentation, slide: Slide) {
+  try {
+    let targetWidth = ctx.canvas.width
+    let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
+    resolution.targetWidth = targetWidth
 
-  if (targetWidth < 4) return
+    if (targetWidth < 4) return
 
-  renderBackground(ctx, resolution, presentation.theme.background)
+    renderBackground(ctx, resolution, presentation.theme.background)
 
-  let slide = presentation.slides[slideIndex]
-  for (const objectID in slide) {
-    const object = slide[objectID]
-    switch (object.type) {
-      case TextSlideObject.name:
-        renderText(ctx, resolution, object as TextSlideObject)
-        break
-      default:
-        console.error('Missing renderer for ' + object.type)
+    for (const objectID in slide) {
+      const object = slide[objectID]
+      switch (object.type) {
+        case TextSlideObject.name:
+          renderText(ctx, resolution, object as TextSlideObject)
+          break
+        default:
+          console.error('Missing renderer for ' + object.type)
+      }
     }
+  } catch {
+    requestAnimationFrame(() => render(ctx, presentation, slide))
   }
 }

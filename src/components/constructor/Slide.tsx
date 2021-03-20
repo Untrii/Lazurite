@@ -3,12 +3,13 @@ import Presentation from '@/models/presentation/Presentation'
 import render from '@/slideRenderer'
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
+import SlideModel from '@/models/presentation/Slide'
 
 interface ISlideProps {
   width: number
   height: number
   presentation: Presentation
-  index: number
+  slide: SlideModel
 }
 
 const Slide = (props: ISlideProps) => {
@@ -21,7 +22,7 @@ const Slide = (props: ISlideProps) => {
     let canvasElement = canvas.current
     canvasElement.width = canvasWidth
     canvasElement.height = canvasHeight
-    render(canvasElement.getContext('2d'), props.presentation, props.index)
+    render(canvasElement.getContext('2d'), props.presentation, props.slide)
   })
 
   let canvasStyle = {

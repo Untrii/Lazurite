@@ -15,7 +15,7 @@ const PreviewPanel = () => {
     <div className="preview-panel">
       {presentation.slides.map((slide, index) => (
         <div class="preview-panel__slide">
-          <Slide width={slideWidth} height={slideHeight} index={index} presentation={presentation} />
+          <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} />
         </div>
       ))}
 
