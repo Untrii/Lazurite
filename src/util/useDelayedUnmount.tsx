@@ -1,16 +1,22 @@
 import { JSX } from 'preact'
 import { useState } from 'preact/hooks'
+import { useReactiveState } from './reactivity'
 
 export default function useDelayedUnmount(component: JSX.Element, isShown: boolean, delay = 500) {
-  const [isRendering, setIsRendering] = useState(isShown)
+  const state = useReactiveState({
+    isRendering: isShown,
+    lastState: isShown,
+  })
+  state.lastState = isShown
+  console.log('hook')
 
-  if (isShown) setIsRendering(true)
+  if (isShown) state.isRendering = true
   else {
     setTimeout(() => {
-      setIsRendering(false)
+      if (!state.lastState) state.isRendering = false
     }, delay)
   }
 
-  if (isRendering) return component
+  if (state.isRendering) return component
   else return null
 }
