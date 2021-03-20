@@ -11,9 +11,9 @@ import Color from '@/models/common/Color'
 import { addUserBackground, changeBackground, changeDefaultColor, deleteUserBackground } from '@/store/actions/design'
 import DefaultsGroup from './DefaultsGroup'
 import Slide from '@/components/constructor/Slide'
+import useDelayedUnmount from '@/util/useDelayedUnmount'
 
 const ColorEditor = () => {
-  const [currentTabIndex, changeTabIndex] = useState(0)
   const tabs: { displayName: string; name: BackgroundType }[] = [
     {
       displayName: 'Color',
@@ -36,6 +36,10 @@ const ColorEditor = () => {
       name: 'image',
     },
   ]
+  const presentation = store.currentTab.openedPresentation
+  const [currentTabIndex, changeTabIndex] = useState(
+    tabs.findIndex((item) => item.name == presentation.theme.background.type)
+  )
 
   const [isPopperShown, togglePopper] = useState(false)
 
@@ -48,8 +52,11 @@ const ColorEditor = () => {
     bg.type = 'color'
     addUserBackground(bg)
   }
-
-  const addButtonPopper = <ColorPicker onCancel={() => togglePopper(false)} onColorPicked={onColorPicked} />
+  const addButtonPopper = useDelayedUnmount(
+    <ColorPicker onCancel={() => togglePopper(false)} onColorPicked={onColorPicked} isHiding={!isPopperShown} />,
+    isPopperShown,
+    500
+  )
 
   const onAddButtonClick = function (event: MouseEvent) {
     if (tabs[currentTabIndex].name == 'color') togglePopper(!isPopperShown)
@@ -140,7 +147,6 @@ const ColorEditor = () => {
   const defaultsTileSize = (defaultsWidth - gapSize * 5) / 4
   const previewWidth = defaultsWidth - 34
   const previewHeight = (previewWidth / 16) * 9
-  const presentation = store.currentTab.openedPresentation
   const previewSlide = []
 
   return (
@@ -158,7 +164,7 @@ const ColorEditor = () => {
           <PaletteGroup
             addButton
             onAddButtonClick={onAddButtonClick}
-            addButtonPopper={isPopperShown ? addButtonPopper : null}
+            addButtonPopper={addButtonPopper}
             title="User colors"
             tiles={store.userBackgrounds[tabs[currentTabIndex].name]}
             onSelected={onUserBackgroundSelected}

@@ -9,12 +9,14 @@ import { hsvToRgb, rgbToHsv } from '@/util/colorConvertion'
 import Prepend from '../controls/Prepend'
 import Button from '../controls/Button'
 import NumberInput from '../controls/NumberInput'
+import { useEffect } from 'preact/hooks'
 
 interface IColorPickerProps {
   onCancel?: () => void
   onColorPicked?: (color: Color) => void
   mode?: 'color' | 'gradient'
   initialColor?: Color
+  isHiding?: boolean
 }
 
 const ColorPicker = ({
@@ -22,10 +24,13 @@ const ColorPicker = ({
   onColorPicked: onColorPicked,
   mode = 'color',
   initialColor = Color.fromRgb(255, 0, 0),
+  isHiding,
 }: IColorPickerProps) => {
   const state = useReactiveState(() => {
     const { r, g, b } = initialColor
     const [hue, saturation, value] = rgbToHsv(r, g, b)
+    requestAnimationFrame(() => state.rootClasses.push('color-picker_visible'))
+
     return {
       hue,
       saturation,
@@ -33,6 +38,8 @@ const ColorPicker = ({
       red: r,
       green: g,
       blue: b,
+
+      rootClasses: ['color-picker'],
     }
   })
 
@@ -232,8 +239,12 @@ const ColorPicker = ({
     )
   }
 
+  if (isHiding) {
+    state.rootClasses = ['color-picker', 'color-picker_hidden']
+  }
+
   return (
-    <div class="color-picker">
+    <div class={state.rootClasses.join(' ')}>
       {renderMainBox()}
       <div class="color-picker__edit-box">
         {renderHueSelector()}

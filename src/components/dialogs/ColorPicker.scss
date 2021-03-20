@@ -1,12 +1,24 @@
 @import '@/css/variables.scss';
 
 .color-picker {
-  animation: color-picker-height 0.5s, color-picker-width 0.3s;
-  width: 168px;
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid white;
   box-sizing: border-box;
+  height: 1px;
+  width: 1px;
+
+  &_visible {
+    height: 374px;
+    width: 168px;
+    transition: height 0.5s, width 0.3s;
+  }
+
+  &_hidden {
+    height: 1px;
+    width: 1px;
+    transition: height 0.3s, width 0.5s;
+  }
 
   &__main-box {
     overflow: hidden;
