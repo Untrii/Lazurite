@@ -2,7 +2,7 @@
 import Presentation from '@/models/presentation/Presentation'
 import render from '@/slideRenderer'
 import { h } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { useLayoutEffect, useRef } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
 
 interface ISlideProps {
@@ -18,7 +18,7 @@ const Slide = (props: ISlideProps) => {
   let canvasWidth = props.width
   let canvasHeight = props.height
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let canvasElement = canvas.current
     canvasElement.width = canvasWidth
     canvasElement.height = canvasHeight
