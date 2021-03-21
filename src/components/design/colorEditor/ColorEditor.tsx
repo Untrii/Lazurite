@@ -41,7 +41,16 @@ const ColorEditor = () => {
     tabs.findIndex((item) => item.name == presentation.theme.background.type)
   )
 
-  const [isPopperShown, togglePopper] = useState(false)
+  const [isPopperShown, setIsPopperShown] = useState(false)
+  const [lastChangeTime, setLastChangeTime] = useState(new Date(0))
+
+  const togglePopper = function (val: boolean) {
+    if (isPopperShown != val)
+      if (new Date().getTime() - lastChangeTime.getTime() > 500) {
+        if (tabs[currentTabIndex].name == 'color') setIsPopperShown(val)
+        setLastChangeTime(new Date())
+      }
+  }
 
   const onColorPicked = function (color: Color) {
     togglePopper(false)
@@ -58,8 +67,12 @@ const ColorEditor = () => {
     500
   )
 
+  // const addButtonPopper = (
+  //   <ColorPicker onCancel={() => togglePopper(false)} onColorPicked={onColorPicked} isHiding={!isPopperShown} />
+  // )
+
   const onAddButtonClick = function (event: MouseEvent) {
-    if (tabs[currentTabIndex].name == 'color') togglePopper(!isPopperShown)
+    togglePopper(!isPopperShown)
   }
 
   const onTabChange = function (index: number) {

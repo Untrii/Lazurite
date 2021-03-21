@@ -5,13 +5,13 @@
   border: 1px solid white;
   box-sizing: border-box;
 
-  &:hover &__delete {
+  &_animated:hover &__delete {
     animation: palette-tile-appear 0.15s;
     opacity: 1;
     display: flex;
   }
 
-  &:not(:hover) &__delete {
+  &_animated:not(:hover) &__delete {
     animation: palette-tile-disappear 0.15s;
   }
 
@@ -23,10 +23,7 @@
     opacity: 0;
     justify-content: space-around;
     align-items: center;
-
-    &_hidden {
-      transform: scale(0) !important;
-    }
+    user-select: none;
 
     img {
       filter: drop-shadow(-1px 0px 0px $blue-300) drop-shadow(1px 0px 0px $blue-300) drop-shadow(0px -1px 0px $blue-300)

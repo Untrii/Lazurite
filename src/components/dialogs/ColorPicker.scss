@@ -11,7 +11,7 @@
   &_visible {
     height: 374px;
     width: 168px;
-    transition: height 0.5s, width 0.3s;
+    animation: color-picker-height 0.5s, color-picker-width 0.3s;
   }
 
   &_hidden {

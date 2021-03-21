@@ -29,7 +29,6 @@ const ColorPicker = ({
   const state = useReactiveState(() => {
     const { r, g, b } = initialColor
     const [hue, saturation, value] = rgbToHsv(r, g, b)
-    requestAnimationFrame(() => state.rootClasses.push('color-picker_visible'))
 
     return {
       hue,
@@ -39,7 +38,7 @@ const ColorPicker = ({
       green: g,
       blue: b,
 
-      rootClasses: ['color-picker'],
+      rootClasses: ['color-picker', 'color-picker_visible'],
     }
   })
 
@@ -240,7 +239,10 @@ const ColorPicker = ({
   }
 
   if (isHiding) {
+    console.log('hiding')
     state.rootClasses = ['color-picker', 'color-picker_hidden']
+  } else {
+    state.rootClasses = ['color-picker', 'color-picker_visible']
   }
 
   return (
