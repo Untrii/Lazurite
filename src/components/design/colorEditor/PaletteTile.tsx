@@ -35,17 +35,10 @@ const PaletteTile = (props: IPaletteTileProps) => {
     }
   }
 
-  const [animationActive, activateAnimation] = useState(false)
-  useEffect(() => {
-    if (!animationActive)
-      setTimeout(() => {
-        activateAnimation(true)
-      }, 200)
-  })
-
   return (
     <div
       class="palette-tile"
+      onMouseEnter={(event) => (event.target as any).classList.add('palette-tile_animated')}
       onClick={() => props?.onClick?.()}
       style={{
         height: props.height + 'px',
@@ -55,7 +48,7 @@ const PaletteTile = (props: IPaletteTileProps) => {
     >
       {props.deleteable ? (
         <div
-          class={'palette-tile__delete' + (animationActive ? '' : ' palette-tile__delete_hidden')}
+          class="palette-tile__delete"
           onClick={(event) => {
             event.stopPropagation()
             props.onDelete?.()
