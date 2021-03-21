@@ -13,9 +13,58 @@
     border: 1px solid white;
     border-radius: 4px;
     overflow: hidden;
+
+    &_animated:hover &-delete {
+      animation: preview-panel-appear 0.15s;
+      opacity: 1;
+      display: flex;
+    }
+
+    &_animated:not(:hover) &-delete {
+      animation: preview-panel-disappear 0.15s;
+    }
   }
 
   &__buttons {
     margin: 16px;
+  }
+
+  &__slide-delete {
+    width: 20px;
+    height: 20px;
+    float: right;
+    display: flex;
+    margin-bottom: -100%;
+    opacity: 0;
+    justify-content: space-around;
+    align-items: center;
+    user-select: none;
+
+    img {
+      filter: drop-shadow(-1px 0px 0px $blue-300) drop-shadow(1px 0px 0px $blue-300) drop-shadow(0px -1px 0px $blue-300)
+        drop-shadow(0px 1px 0px $blue-300);
+    }
+  }
+}
+
+@keyframes preview-panel-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes preview-panel-disappear {
+  0% {
+    opacity: 1;
+    display: flex;
+  }
+  99% {
+    opacity: 0;
+    display: flex;
+  }
+  100% {
+    display: none;
   }
 }
