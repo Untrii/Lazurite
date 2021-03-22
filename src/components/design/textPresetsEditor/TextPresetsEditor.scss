@@ -11,7 +11,7 @@
     grid-template-rows: max-content 1fr;
 
     &-searchbox {
-      padding: 16px;
+      padding: 16px 0 16px 32px;
       display: grid;
       grid-template-columns: minmax(max-content, 300px) max-content;
 
@@ -44,14 +44,14 @@
   }
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 1200px) and (max-width: 1599px) {
   .text-presets-editor {
-    grid-template-columns: 3fr 1px 2fr;
+    grid-template-columns: 1fr 1px 1fr;
   }
 }
 
-@media (min-width: 1366px) {
+@media (max-width: 1199px) {
   .text-presets-editor {
-    grid-template-columns: 1fr 1px 1fr;
+    grid-template-columns: 3fr 1px 2fr;
   }
 }

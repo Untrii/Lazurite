@@ -1,0 +1,19 @@
+.preset-list {
+  &__upper {
+    display: grid;
+    margin: 16px;
+    grid-template-columns: max-content 1fr;
+  }
+  &__title {
+    font-weight: 500;
+    color: white;
+    line-height: 24px;
+  }
+  &__buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  &__button {
+    margin-left: 16px;
+  }
+}

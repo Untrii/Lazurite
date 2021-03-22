@@ -200,11 +200,7 @@ export default class ElectronIO extends IoManager {
       }
 
       if (!fonts.has(fontName)) {
-        fonts.set(fontName, {
-          name: fontName,
-          variants: [],
-          previewSource: '',
-        })
+        fonts.set(fontName, new Font(fontName))
       }
       const font = fonts.get(fontName)
       font.variants.push(variant)

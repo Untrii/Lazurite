@@ -10,17 +10,17 @@
   .control-bg_blue-#{$i}00 {
     background: nth($list: $blue-shades, $n: $i);
     &:hover {
-      background: nth($list: $blue-shades, $n: $i + 1);
-      transition: 0.3s;
+      background-color: nth($list: $blue-shades, $n: $i + 1);
+      transition: background-color 0.3s;
     }
     &:not(:hover) {
-      background: nth($list: $blue-shades, $n: $i);
-      transition: 0.3s;
+      background-color: nth($list: $blue-shades, $n: $i);
+      transition: background-color 0.3s;
     }
   }
 
   .pressed-control-bg_blue-#{$i}00 {
-    background: nth($list: $blue-shades, $n: $i - 2) !important;
+    background-color: nth($list: $blue-shades, $n: $i - 2) !important;
     transition: none !important;
   }
 }

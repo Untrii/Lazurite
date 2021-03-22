@@ -7,8 +7,30 @@ export interface FontVariant {
   source: string
 }
 
-export default interface Font {
+export default class Font {
   name: string
   variants: FontVariant[]
   previewSource: string
+
+  get types() {
+    const result = new Set<string>()
+    for (const variant of this.variants) {
+      result.add(variant.type)
+    }
+    return Array.from(result)
+  }
+
+  get weights() {
+    const result = new Set<number>()
+    for (const variant of this.variants) {
+      result.add(variant.weight)
+    }
+    return Array.from(result)
+  }
+
+  constructor(name?: string, variants?: FontVariant[], previewSource?: string) {
+    this.name = name ?? 'null-font'
+    this.variants = variants ?? []
+    this.previewSource = previewSource ?? 'null://fontPreview'
+  }
 }

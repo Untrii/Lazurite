@@ -1,0 +1,67 @@
+@import '@/css/variables.scss';
+
+.preset-card {
+  padding: 16px;
+  padding-bottom: 10px;
+  margin: 16px;
+  border-radius: 4px;
+
+  &__upper {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    margin-bottom: 9px;
+    width: 100%;
+  }
+
+  &__inscription {
+    opacity: 0;
+    text-align: right;
+    color: $blue-800;
+    cursor: pointer;
+  }
+
+  &:hover &__inscription {
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
+
+  &:not(:hover) &__inscription {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &__name {
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: white;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
+    }
+  }
+
+  &__input {
+    margin-top: 2px;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-sizing: border-box;
+    width: calc(50% - 16px);
+
+    &:nth-child(even) {
+      margin-right: 16px;
+    }
+    &:nth-child(odd) {
+      margin-left: 16px;
+    }
+  }
+}

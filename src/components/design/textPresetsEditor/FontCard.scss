@@ -1,9 +1,12 @@
 @import '@/css/variables.scss';
 .font-card {
   padding: 16px;
+  margin: 0 16px 16px 16px;
+  border-radius: 4px;
 
   &__bottom {
     display: grid;
+    margin-top: -28px;
     grid-template-columns: max-content 1fr;
   }
   &__description {
@@ -44,6 +47,7 @@
 
     justify-content: flex-end;
     align-items: flex-end;
+    flex-direction: column;
   }
 
   &__button {
@@ -51,14 +55,20 @@
     width: max-content;
     margin-left: 16px;
   }
+
+  img {
+    height: 48px;
+  }
 }
 
-@media (max-width: 1200px) {
-  .font-card__buttons {
-    flex-direction: column;
-  }
+@media (min-width: 1600px) {
+  .font-card {
+    display: inline-block;
+    width: calc(50% - 24px);
+    box-sizing: border-box;
 
-  .font-card__bottom {
-    margin-top: -28px;
+    &:nth-child(even) {
+      margin-left: 0;
+    }
   }
 }

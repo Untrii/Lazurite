@@ -8,6 +8,9 @@ import FontCard from './FontCard'
 import SearchBox from '@/components/controls/SearchBox'
 import { useState } from 'preact/hooks'
 import Searcher from '@/util/Searcher'
+import PresetCard from './PresetCard'
+import Button from '@/components/controls/Button'
+import PresetList from './PresetList'
 
 async function preloadFontPreviews() {
   const startTime = Date.now()
@@ -30,22 +33,6 @@ const TextPresetsEditor = () => {
       setSearcher(new Searcher(result, (element) => element.name.toLowerCase()))
     })
 
-  const getFontVariants = function (font: Font) {
-    const result = new Set<string>()
-    for (const variant of font.variants) {
-      result.add(variant.type)
-    }
-    return Array.from(result)
-  }
-
-  const getFontWeights = function (font: Font) {
-    const result = new Set<number>()
-    for (const variant of font.variants) {
-      result.add(variant.weight)
-    }
-    return Array.from(result)
-  }
-
   const [searcher, setSearcher] = useState(new Searcher<Font>([]))
   const visibleElements = searcher.search(state.query)
 
@@ -62,8 +49,8 @@ const TextPresetsEditor = () => {
               <FontCard
                 key={font.name}
                 preview={font.previewSource}
-                variants={getFontVariants(font)}
-                weights={getFontWeights(font)}
+                variants={font.types}
+                weights={font.weights}
                 onSelectForAll={() => {}}
                 onSelectForCurrent={() => {}}
               />
@@ -72,7 +59,7 @@ const TextPresetsEditor = () => {
         </div>
       </div>
       <div class="text-presets-editor__separator"></div>
-      <div class="text-presets-editor__preset-list"></div>
+      <PresetList fonts={state.fonts} />
     </div>
   )
 }
