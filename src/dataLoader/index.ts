@@ -26,14 +26,14 @@ export function requireMany(sources: string[]): RequireManyResult {
   return result
 }
 
-export function requireResource(source: string): LoadedResource | undefined {
+export function requireResource(source: string, overrideExtension?: string): LoadedResource | undefined {
   if (!loadedResources.get(source)) {
     requireResourceAsync(source)
     return
   } else return loadedResources.get(source)
 }
 
-export async function requireResourceAsync(source: string): Promise<LoadedResource> {
+export async function requireResourceAsync(source: string, overrideExtension?: string): Promise<LoadedResource> {
   if (loadedResources.get(source)) return loadedResources.get(source)
   const startTime = performance.now()
   if (!pendingResources.has(source)) {
@@ -41,7 +41,7 @@ export async function requireResourceAsync(source: string): Promise<LoadedResour
       source,
       new Promise(async (resolve, reject) => {
         const fileName = source.split('/').pop()
-        const extension = fileName.split('.').pop()
+        const extension = overrideExtension ? overrideExtension : fileName.split('.').pop()
         if (fileName == extension) reject('Files without extension is not allowed')
 
         const onLoad = (element: LoadedResource) => {
@@ -98,6 +98,5 @@ export async function requireResourceAsync(source: string): Promise<LoadedResour
     )
   }
   await pendingResources.get(source)
-  console.log(`Loaded resource in ${performance.now() - startTime}ms`)
   return loadedResources.get(source)
 }
