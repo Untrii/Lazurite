@@ -12,6 +12,18 @@
 
     &-searchbox {
       padding: 16px;
+      display: grid;
+      grid-template-columns: minmax(max-content, 300px) max-content;
+
+      input {
+        max-width: 300px;
+      }
+
+      &-count {
+        line-height: 24px;
+        margin: 0 16px;
+        color: white;
+      }
     }
 
     &-items {
@@ -29,5 +41,17 @@
     height: calc(100% - 32px);
     background: $blue-800;
     margin: 16px 0;
+  }
+}
+
+@media (min-width: 1000px) {
+  .text-presets-editor {
+    grid-template-columns: 3fr 1px 2fr;
+  }
+}
+
+@media (min-width: 1366px) {
+  .text-presets-editor {
+    grid-template-columns: 1fr 1px 1fr;
   }
 }

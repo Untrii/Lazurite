@@ -1,7 +1,7 @@
 @import '@/css/variables.scss';
 
 @for $i from 1 through 9 {
-  .bg-blue-#{$i}00 {
+  .bg_blue-#{$i}00 {
     background-color: nth($list: $blue-shades, $n: $i);
   }
 }
