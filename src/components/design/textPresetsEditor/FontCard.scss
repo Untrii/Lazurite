@@ -1,0 +1,64 @@
+@import '@/css/variables.scss';
+.font-card {
+  padding: 16px;
+
+  &__bottom {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+  }
+  &__description {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  &__list {
+    margin: 8px 0 0 0;
+    padding: 0;
+    &-caption {
+      color: $blue-800;
+      margin-right: 16px;
+      display: inline;
+    }
+    &-item {
+      color: white;
+      margin-left: 8px;
+      display: inline;
+    }
+  }
+
+  &:hover &__buttons {
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
+
+  &:not(:hover) &__buttons {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &__buttons {
+    opacity: 0;
+    display: flex;
+
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+
+  &__button {
+    margin-top: 16px;
+    width: max-content;
+    margin-left: 16px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .font-card__buttons {
+    flex-direction: column;
+  }
+
+  .font-card__bottom {
+    margin-top: -28px;
+  }
+}

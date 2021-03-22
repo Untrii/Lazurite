@@ -5,8 +5,6 @@ import { promises as fs, existsSync } from 'fs'
 import crypto from 'crypto'
 import createFontPreview from './createFontPreview'
 
-//const { app, protocol, globalShortcut, BrowserWindow } = electron
-
 function loadRoute(window, route) {
   let url
 
@@ -26,6 +24,8 @@ function createMainWindow() {
   let newMainWindow = new BrowserWindow({
     width: 1600,
     height: 900,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -62,6 +62,7 @@ protocol.registerSchemesAsPrivileged([
     },
   },
 ])
+
 function createSafeFileProtocol(protocolName) {
   protocol.registerFileProtocol(protocolName, (request, callback) => {
     const url = request.url.replace(`${protocolName}://`, '')
@@ -72,18 +73,19 @@ function createSafeFileProtocol(protocolName) {
     }
   })
 }
+
 async function createFontPreviewProtocol() {
-  protocol.registerFileProtocol('font-preview', (request, callback) => {
-    const url = request.url.replace(`font-preview://`, '')
-    const hash = crypto.createHmac('sha256', url)
+  protocol.registerFileProtocol('font-preview', async (request, callback) => {
+    const [fontPath, fontName] = request.url.replace(`font-preview://`, '').split('::')
+    const hash = crypto.createHmac('sha256', 'font').update(request.url).digest('hex')
 
     const previewFolder = path.join(app.getPath('userData'), 'Lazurite', 'FontPreview')
-    const previewFile = path.join(previewFolder, `${hash}.svg`)
-    if (!existsSync(previewFile)) {
-      //createFontPreview()
-    }
+    if (!existsSync(previewFolder)) fs.mkdir(previewFolder)
 
-    const previewCacheFolder = ''
+    const previewFile = path.join(previewFolder, `${hash}.svg`)
+    if (!existsSync(previewFile)) await createFontPreview(fontName, fontPath, previewFile)
+
+    return callback(previewFile)
   })
 }
 
@@ -96,9 +98,5 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   createMainWindow()
   createSafeFileProtocol('local')
-  // globalShortcut.register('CommandOrControl+R', () => {
-  //   let oldMainWindow = mainWindow
-  //   createMainWindow()
-  //   oldMainWindow.destroy()
-  // })
+  createFontPreviewProtocol()
 })

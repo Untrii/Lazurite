@@ -5,10 +5,11 @@ import path from 'path'
 import JsonSerializer from './serialization/JsonSerializer'
 import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
 import { remote } from 'electron'
+import Font, { FontVariant, FontWeight } from '@/models/common/Font'
 
 const { dialog, app } = remote
 
-const { mkdir, readFile, writeFile } = promises
+const { mkdir, readFile, writeFile, readdir } = promises
 
 const fileNames = {
   openedPresentations: 'opndpres.json',
@@ -168,5 +169,49 @@ export default class ElectronIO extends IoManager {
     const lPath = 'local://' + projectPath
     await this.savePresentation(lPath, presentation, true)
     return [presentation, lPath] as [Presentation, string]
+  }
+
+  private _fontsCache: Map<string, Font>
+  async getFonts() {
+    if (this._fontsCache) return Array.from(this._fontsCache.values())
+
+    const fontsPath = path.join(process.cwd(), 'data', 'fonts')
+    const fontFiles = await readdir(fontsPath)
+    const result = []
+    const fonts = new Map<string, Font>()
+    this._fontsCache = fonts
+
+    for (const file of fontFiles) {
+      const [fileName, extension] = file.split('.')
+      const [fontName, fontWeight] = fileName.split('__')
+      const isItalic = fontWeight.includes('italic')
+
+      let parsedWeight = parseInt(fontWeight)
+      if (isNaN(parsedWeight)) parsedWeight = 400
+
+      const normalizedFileName = path.join(fontsPath, file).replaceAll('\\', '/')
+      const source = 'local://' + normalizedFileName
+      const previewSource = `font-preview://${normalizedFileName}::${fontName}`
+
+      const variant: FontVariant = {
+        type: isItalic ? 'italic' : 'normal',
+        weight: parsedWeight as FontWeight,
+        source,
+      }
+
+      if (!fonts.has(fontName)) {
+        fonts.set(fontName, {
+          name: fontName,
+          variants: [],
+          previewSource: '',
+        })
+      }
+      const font = fonts.get(fontName)
+      font.variants.push(variant)
+      if (parsedWeight == 400 && !isItalic) font.previewSource = previewSource
+      else if (font.previewSource == '') font.previewSource = previewSource
+    }
+
+    return Array.from(fonts.values())
   }
 }

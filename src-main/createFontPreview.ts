@@ -7,7 +7,13 @@ export default function createFontPreview(text, pathToFont, pathToResult) {
       if (error) {
         reject('Cannot create font preview')
       } else {
-        const svg = converter.getSVG(text)
+        const svg = converter.getSVG(text, {
+          anchor: 'left top',
+          fontSize: 36,
+          attributes: {
+            fill: 'white',
+          },
+        })
         try {
           await fs.writeFile(pathToResult, svg)
           resolve()

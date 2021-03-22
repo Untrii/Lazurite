@@ -1,4 +1,5 @@
 import Color from '@/models/common/Color'
+import Font from '@/models/common/Font'
 import Presentation from '@/models/presentation/Presentation'
 import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
 
@@ -14,6 +15,8 @@ export default abstract class IOManager {
   abstract saveUserBackgrounds(colors: BackgroundCollection): Promise<void>
 
   abstract createNewPresentaiton(name: string, author: string): Promise<[Presentation, string]>
+
+  abstract getFonts(): Promise<Font[]>
 
   private validateArray<T>(parsedJson: any, itemValidator: (arrayEntry: any) => boolean): [T[], boolean] {
     const validatedResult: T[] = []

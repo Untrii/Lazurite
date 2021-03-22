@@ -7,6 +7,7 @@ import NumberInput from '@/components/controls/NumberInput'
 import DropdownButton from '@/components/controls/DropdownButton'
 import CompactRadio from '@/components/controls/CompactRadio'
 import ColorPicker from '@/components/dialogs/ColorPicker'
+import SearchBox from '@/components/controls/SearchBox'
 
 const InstrumentsPanel = () => {
   const tabs: INavItem[] = [
@@ -45,6 +46,7 @@ const InstrumentsPanel = () => {
         />
 
         <ColorPicker />
+        <SearchBox />
       </div>
       <VerticalNav items={tabs} selectedItemIndex={tabIndex} onChange={onChange} />
     </div>
