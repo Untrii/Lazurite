@@ -6,7 +6,7 @@ import JsonSerializer from './serialization/JsonSerializer'
 import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
 import { remote } from 'electron'
 
-const { dialog } = remote
+const { dialog, app } = remote
 
 const { mkdir, readFile, writeFile } = promises
 
@@ -36,17 +36,14 @@ export default class ElectronIO extends IoManager {
 
   private isAppdataPathCreated = false
   private async getAppDataPath() {
-    if (process.platform == 'win32') {
-      const result = process.env.APPDATA.split('\\').join('/') + '/Lazurite'
+    const result = app.getPath('userData') + '/Lazurite'
 
-      if (!this.isAppdataPathCreated) {
-        if (!existsSync(result)) await mkdir(result)
-        this.isAppdataPathCreated = true
-      }
-
-      return result
+    if (!this.isAppdataPathCreated) {
+      if (!existsSync(result)) await mkdir(result)
+      this.isAppdataPathCreated = true
     }
-    throw new Error('There is no default app data path for this OS')
+
+    return result
   }
 
   private async mustExist(filePath: string): Promise<string> {
