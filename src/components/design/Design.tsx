@@ -4,6 +4,7 @@ import VerticalNav from '../controls/VerticalNav'
 import assets from '@/assets'
 import { useState } from 'preact/hooks'
 import ColorEditor from './colorEditor/ColorEditor'
+import TextPresetsEditor from './textPresetsEditor/TextPresetsEditor'
 
 const Design = () => {
   const tabs = [
@@ -17,6 +18,8 @@ const Design = () => {
     switch (index) {
       case 0:
         return <ColorEditor />
+      case 1:
+        return <TextPresetsEditor />
       default:
         return <></>
     }

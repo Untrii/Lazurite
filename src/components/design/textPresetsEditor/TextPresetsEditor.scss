@@ -1,0 +1,14 @@
+@import '@/css/variables.scss';
+
+.text-presets-editor {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 2fr 1px 1fr;
+
+  &__separator {
+    height: calc(100% - 32px);
+    background: $blue-800;
+    margin: 16px 0;
+  }
+}
