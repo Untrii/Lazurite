@@ -1,4 +1,4 @@
-import { EditorWindowName } from '@/models/store/TabStateModel'
+import { DesignTab, EditorWindowName } from '@/models/store/TabStateModel'
 import store from '@/store'
 import Presentation from '@/models/presentation/Presentation'
 import io from '@/io'
@@ -63,4 +63,8 @@ export async function closeTab(index: number) {
   store.tabs.splice(index, 1)
   if (store.tabs.length == 0) store.tabs.push(TabStateModel.startScreen)
   await updateOpenedPresentaitons(store.tabs)
+}
+
+export function changeDesignTab(tab: DesignTab) {
+  store.currentTab.openededDesignTab = tab
 }

@@ -2,11 +2,15 @@ import Presentation from '../presentation/Presentation'
 import Slide from '../presentation/Slide'
 
 export type EditorWindowName = 'constructor' | 'design' | 'start'
+export type DesignTab = 'color' | 'typography'
+export type ConstructorTab = 'add' | 'edit'
 
 export default class TabStateModel {
   presentationPath: string
   openedPresentation: Presentation
   selectedSlideIndex = 0
+  openededDesignTab = 'color' as DesignTab
+  openedConstructorTab = 'add' as ConstructorTab
   openedEditorWindow = 'constructor' as EditorWindowName
   isStartScreen = false
 
