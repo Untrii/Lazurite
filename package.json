@@ -4,15 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
     "devbuild": "webpack --mode development",
+    "buildmain": "webpack --config webpack.electron.config.ts --mode development",
     "devserver": "webpack-dev-server --mode development",
     "serve": "node .serve-util/serve"
   },
   "author": "Azullon",
   "license": "ISC",
   "devDependencies": {
+    "@types/text-to-svg": "^3.1.0",
     "@types/webpack-env": "^1.16.0",
     "chokidar": "^3.5.1",
     "css-loader": "^5.0.2",
@@ -38,7 +39,8 @@
     "electron-util": "^0.14.2",
     "jimp": "^0.16.1",
     "js-sha256": "^0.9.0",
-    "preact": "^10.5.12"
+    "preact": "^10.5.12",
+    "text-to-svg": "^3.1.5"
   },
   "alias": {
     "preact": "./node_modules/preact/dist/preact.min.js"

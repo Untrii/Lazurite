@@ -1,8 +1,10 @@
 const chokidar = require('chokidar')
 const debounce = require('lodash.debounce')
 const electron = require('electron')
+const webpack = require('webpack')
+const webpackDevServer = require('webpack-dev-server')
 const path = require('path')
-const { exec, spawn } = require('child_process')
+const { exec, execSync, spawn, spawnSync } = require('child_process')
 
 async function startRenderer() {
   let proc = exec('npm run devserver')
@@ -13,7 +15,8 @@ async function startRenderer() {
 let manualRestart = false
 let electronProcess = null
 function startElectron() {
-  var args = [path.join(__dirname, '../src-main/index.dev.js'), '--remote-debugging-port=9222']
+  execSync('npm run buildmain')
+  const args = [path.join(__dirname, '../dist/main/main.js'), '--remote-debugging-port=9222']
 
   electronProcess = spawn(electron, args)
 

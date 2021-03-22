@@ -1,6 +1,6 @@
-const { app, session } = require('electron')
-const path = require('path')
-const os = require('os')
+import { app, session } from 'electron'
+import path from 'path'
+import os from 'os'
 
 const extensionID = 'ilcajpmogmhpliinlbcdebhbcanbghmd'
 const extensionVersion = '1.3.0_0'

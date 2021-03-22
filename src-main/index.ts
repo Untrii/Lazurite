@@ -1,8 +1,11 @@
-const { BrowserWindow } = require('electron')
-const electron = require('electron')
-const { is } = require('electron-util')
+import { app, protocol, globalShortcut, BrowserWindow } from 'electron'
+import { is } from 'electron-util'
+import path from 'path'
+import { promises as fs, existsSync } from 'fs'
+import crypto from 'crypto'
+import createFontPreview from './createFontPreview'
 
-const { app, protocol, globalShortcut } = electron
+//const { app, protocol, globalShortcut, BrowserWindow } = electron
 
 function loadRoute(window, route) {
   let url
@@ -20,7 +23,7 @@ function loadRoute(window, route) {
 let mainWindow
 
 function createMainWindow() {
-  let newMainWindow = new electron.BrowserWindow({
+  let newMainWindow = new BrowserWindow({
     width: 1600,
     height: 900,
     webPreferences: {
@@ -50,6 +53,14 @@ protocol.registerSchemesAsPrivileged([
       secure: true,
     },
   },
+  {
+    scheme: 'font-preview',
+    privileges: {
+      supportFetchAPI: true,
+      bypassCSP: true,
+      secure: true,
+    },
+  },
 ])
 function createSafeFileProtocol(protocolName) {
   protocol.registerFileProtocol(protocolName, (request, callback) => {
@@ -59,6 +70,20 @@ function createSafeFileProtocol(protocolName) {
     } catch (error) {
       return null
     }
+  })
+}
+async function createFontPreviewProtocol() {
+  protocol.registerFileProtocol('font-preview', (request, callback) => {
+    const url = request.url.replace(`font-preview://`, '')
+    const hash = crypto.createHmac('sha256', url)
+
+    const previewFolder = path.join(app.getPath('userData'), 'Lazurite', 'FontPreview')
+    const previewFile = path.join(previewFolder, `${hash}.svg`)
+    if (!existsSync(previewFile)) {
+      //createFontPreview()
+    }
+
+    const previewCacheFolder = ''
   })
 }
 
