@@ -41,9 +41,13 @@ const NumberInput = ({
     box.current.style.width = getTextWidth(textStyle, value.toString()) + 4 + 'px'
   }
 
-  const applyRange = function (value: string | number): number {
-    if (typeof value == 'string') return applyRange(parseFloat(value))
+  const applyMaxValue = function (value: string | number): number {
+    if (typeof value == 'string') return applyMaxValue(parseFloat(value))
     if (value > maxValue) return maxValue
+    return value
+  }
+
+  const applyMinValue = function (value: number) {
     if (value < minValue) return minValue
     return value
   }
@@ -58,7 +62,7 @@ const NumberInput = ({
     return value
   }
 
-  if (value != state.value) state.value = parseFloat(applyStep(applyRange(value)))
+  if (value != state.value && value != minValue) state.value = parseFloat(applyStep(applyMaxValue(value)))
 
   const onKeyPress = function (event: KeyboardEvent) {
     state.lastSymbol = event.key
@@ -70,7 +74,7 @@ const NumberInput = ({
     let parsedText = parseFloat(text.replace(',', '.'))
     if (isNaN(parsedText)) text = '0'
 
-    let processedText = applyStep(applyRange(text))
+    let processedText = applyStep(applyMaxValue(text))
     if (text.endsWith(',') || text.endsWith('.')) processedText += '.'
 
     if (text.startsWith('0') && text.length > 1) {
@@ -85,13 +89,16 @@ const NumberInput = ({
   const onInput: JSX.GenericEventHandler<HTMLDivElement> = function (event) {
     const target = event.target as HTMLInputElement
     const text: string = target.value
-    if (text == '' && state.lastSymbol == '.') return
+    if (text == '') {
+      onChange?.(minValue)
+      return
+    }
 
     const processedText = processText(text)
     rerenderInput(processedText)
 
     state.value = parseFloat(processedText)
-    onChange?.(state.value)
+    onChange?.(state.value < minValue ? minValue : state.value)
   }
 
   const onWheel = function (event: WheelEvent) {
@@ -100,8 +107,8 @@ const NumberInput = ({
     if (event.deltaY < 0) delta = 10
     if (event.deltaY > 0) delta = -10
 
-    state.value = applyRange(state.value + delta)
-    onChange?.(state.value)
+    state.value = applyMinValue(applyMaxValue(state.value + delta))
+    onChange?.(state.value < minValue ? minValue : state.value)
     rerenderInput(state.value)
   }
 
@@ -119,7 +126,7 @@ const NumberInput = ({
           step={step}
           min={minValue}
           max={maxValue}
-          value={value}
+          value={state.value}
           ref={box}
           onClick={(event) => event.stopPropagation()}
           onInput={onInput}
