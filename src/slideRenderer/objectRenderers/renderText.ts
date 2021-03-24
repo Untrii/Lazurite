@@ -17,6 +17,7 @@ export default function renderText(
 
   context.font = `normal ${fontWeight} ${fontSize * resolution.scale}px ${fontFamily}`
   context.fillStyle = object.style.color.toHex()
+  context.textBaseline = 'top'
 
   let blockOffsetY = object.top
 
