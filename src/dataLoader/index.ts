@@ -1,4 +1,5 @@
 import getFontFamilyName from '@/util/getFontFamilyName'
+import warmupFont from '@/util/warmupFont'
 
 const imageExtensions = ['jpg', 'jpeg', 'png', 'svg', 'gif']
 const videoExtensions = ['mp4', 'mkv', 'avi']
@@ -70,25 +71,18 @@ export async function requireResourceAsync(source: string, overrideExtension?: s
             return 'unknown'
           }
 
-          const res = await fetch(source)
-          const blob = await res.blob()
+          const fontFamily = getFontFamilyName(source)
+          const style = document.createElement('style')
+          style.innerHTML = `@font-face {
+            font-family: "${fontFamily}";
+            src: url('${source}') format('${getFormat(extension)}');
+          }`
 
-          const reader = new FileReader()
-          reader.readAsDataURL(blob) // конвертирует Blob в base64 и вызывает onload
+          const head = document.querySelector('head')
+          head.appendChild(style)
+          warmupFont(fontFamily)
 
-          reader.onload = function () {
-            const style = document.createElement('style')
-            style.innerHTML = `@font-face {
-              font-family: "${getFontFamilyName(source)}";
-              src: url('${reader.result}') format('${getFormat(extension)}');
-            }`
-
-            const head = document.querySelector('head')
-            head.appendChild(style)
-            onLoad(style)
-
-            reader.result
-          }
+          document.fonts.ready.then(() => onLoad(style))
         }
 
         if (imageExtensions.includes(extension)) handleMedia('img')
@@ -99,4 +93,36 @@ export async function requireResourceAsync(source: string, overrideExtension?: s
   }
   await pendingResources.get(source)
   return loadedResources.get(source)
+}
+
+type CSSOMString = string
+type FontFaceLoadStatus = 'unloaded' | 'loading' | 'loaded' | 'error'
+type FontFaceSetStatus = 'loading' | 'loaded'
+
+interface FontFace {
+  family: CSSOMString
+  style: CSSOMString
+  weight: CSSOMString
+  stretch: CSSOMString
+  unicodeRange: CSSOMString
+  variant: CSSOMString
+  featureSettings: CSSOMString
+  variationSettings: CSSOMString
+  display: CSSOMString
+  readonly status: FontFaceLoadStatus
+  readonly loaded: Promise<FontFace>
+  load(): Promise<FontFace>
+}
+
+interface FontFaceSet {
+  readonly status: FontFaceSetStatus
+  readonly ready: Promise<FontFaceSet>
+  check(font: string, text?: string): Boolean
+  load(font: string, text?: string): Promise<FontFace[]>
+}
+
+declare global {
+  interface Document {
+    fonts: FontFaceSet
+  }
 }
