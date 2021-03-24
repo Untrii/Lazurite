@@ -5,6 +5,8 @@ import Color from '@/models/common/Color'
 import { saveCurrentPresentation } from './util'
 import { requireResourceAsync } from '@/dataLoader'
 import FontPreset from '@/models/presentation/theme/FontPreset'
+import Theme from '@/models/presentation/theme/Theme'
+import Font from '@/models/common/Font'
 
 type DefaultsName = keyof typeof store.currentTab.openedPresentation.theme.defaults
 
@@ -68,13 +70,55 @@ export async function addFontPreset() {
   saveCurrentPresentation()
 }
 
-export function changePresetName(index: number, newName: string) {
+function changePreset(index: number, changer: (preset: FontPreset) => void) {
   const theme = getCurrentTheme()
 
-  if (index > 0 && index < theme.fontPresets.length) {
-    theme.fontPresets[index].name = newName
+  if (index >= 0 && index < theme.fontPresets.length) {
+    changer(theme.fontPresets[index])
     saveCurrentPresentation()
   }
+}
+
+export function changePresetName(index: number, newName: string) {
+  changePreset(index, (preset) => {
+    preset.name = newName
+  })
+}
+
+export function changePresetFontSize(index: number, newSize: number) {
+  changePreset(index, (preset) => {
+    preset.size = newSize
+  })
+}
+
+export function changePresetFontSource(index: number, newFontSource: string) {
+  changePreset(index, (preset) => {
+    preset.fontSource = newFontSource
+  })
+}
+
+export function selectPresetFont(font: Font, presetIndex = -1) {
+  if (presetIndex == -1) {
+    const theme = getCurrentTheme()
+    for (let i = 0; i < theme.fontPresets.length; i++) {
+      selectPresetFont(font, i)
+    }
+    return
+  }
+
+  changePreset(presetIndex, (preset) => {
+    const defaultVariant = font.defaultVariant
+    if (!font.weights.includes(preset.weight) || !font.types.includes(preset.fontType)) {
+      preset.weight = defaultVariant.weight
+      preset.fontType = defaultVariant.type
+      preset.fontSource = defaultVariant.source
+    } else {
+      preset.fontSource = font.variants.find(
+        (variant) => variant.type == preset.fontType && variant.weight == preset.weight
+      ).source
+    }
+    preset.fontName = font.name
+  })
 }
 
 window['addUserBackground'] = addUserBackground
