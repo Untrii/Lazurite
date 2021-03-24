@@ -1,6 +1,6 @@
 const cache = new Map<string, number>()
 
-export default function getFontScale(fontFamily, fontWeight = 400) {
+export default function getFontScale(fontFamily, fontWeight = 400, makeCache = true) {
   if (cache.has(fontFamily)) return cache.get(fontFamily)
 
   const textContainer = document.createElement('span')
@@ -17,6 +17,9 @@ export default function getFontScale(fontFamily, fontWeight = 400) {
   const result = textContainer.offsetHeight / fontSize
   document.body.removeChild(textContainer)
 
-  cache.set(fontFamily, result)
+  if (makeCache && !cache.has(fontFamily))
+    document.fonts.ready.then(() => {
+      cache.set(fontFamily, getFontScale(fontFamily, fontWeight, false))
+    })
   return result
 }
