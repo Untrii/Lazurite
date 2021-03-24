@@ -5,13 +5,16 @@ import PresetCard from './PresetCard'
 import store from '@/store'
 import Font from '@/models/common/Font'
 import * as design from '@/store/actions/design'
+import getFontFamilyName from '@/util/getFontFamilyName'
+import { requireResource } from '@/dataLoader'
 
 interface IPresetListProps {
   onPresetSelect?: (index: number) => void
+  selectedIndex: number
   fonts: Font[]
 }
 
-const PresetList = ({ onPresetSelect, fonts }: IPresetListProps) => {
+const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) => {
   const presets = store.currentTab.openedPresentation.theme.fontPresets
 
   const renderUpper = function () {
@@ -42,18 +45,27 @@ const PresetList = ({ onPresetSelect, fonts }: IPresetListProps) => {
       design.changePresetName(index, newName)
     }
 
+    const onSizeChange = function (index: number, newSize: number) {
+      design.changePresetFontSize(index, newSize)
+    }
+
     return presets.map((preset, index) => {
       const font = getFontByName(preset.fontName)
+      requireResource(preset.fontSource)
 
       return (
         <PresetCard
-          onSelect={() => onPresetSelect(index)}
+          key={index}
+          onSelect={() => onPresetSelect?.(index)}
+          selected={index == selectedIndex}
           onNameChange={(name) => onNameChange(index, name)}
           name={preset.name}
           fontName={preset.fontName}
+          fontSource={preset.fontSource}
           variants={font.types}
           selectedVariant={preset.fontType}
-          size={48}
+          size={preset.size}
+          onSizeChange={(size) => onSizeChange(index, size)}
           weights={font.weights}
           selectedWeight={preset.weight}
         />

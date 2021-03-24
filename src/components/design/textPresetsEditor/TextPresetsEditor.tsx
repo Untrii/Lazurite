@@ -11,6 +11,9 @@ import Searcher from '@/util/Searcher'
 import PresetCard from './PresetCard'
 import Button from '@/components/controls/Button'
 import PresetList from './PresetList'
+import FontList from './FontList'
+import * as design from '@/store/actions/design'
+import store from '@/store'
 
 async function preloadFontPreviews() {
   const startTime = Date.now()
@@ -22,44 +25,33 @@ async function preloadFontPreviews() {
 preloadFontPreviews()
 
 const TextPresetsEditor = () => {
-  const state = useReactiveState({
-    fonts: [] as Font[],
-    query: '',
-  })
+  const [fonts, setFonts] = useState([] as Font[])
+  const [selectedPresetIndex, setSelectedPresetIndex] = useState(
+    store.currentTab.openedPresentation.theme.fontPresets.length > 0 ? 0 : -1
+  )
 
-  if (state.fonts.length == 0)
+  if (fonts.length == 0)
     io.getFonts().then((result) => {
-      state.fonts = result
-      setSearcher(new Searcher(result, (element) => element.name.toLowerCase()))
+      setFonts(result)
     })
 
-  const [searcher, setSearcher] = useState(new Searcher<Font>([]))
-  const visibleElements = searcher.search(state.query)
+  const onFontSelect = function (index: number, forAll = false) {
+    if (forAll) {
+      design.selectPresetFont(fonts[index])
+    } else {
+      if (selectedPresetIndex != -1) design.selectPresetFont(fonts[index], selectedPresetIndex)
+    }
+  }
 
   return (
     <div class="text-presets-editor">
-      <div class="text-presets-editor__font-list">
-        <div class="text-presets-editor__font-list-searchbox">
-          <SearchBox onInput={(value) => (state.query = value)} placeholder="Search for font" />
-          <span class="text-presets-editor__font-list-searchbox-count">Found: {visibleElements.size}</span>
-        </div>
-        <div class="text-presets-editor__font-list-items">
-          {state.fonts.map((font, index) =>
-            visibleElements.has(index) ? (
-              <FontCard
-                key={font.name}
-                preview={font.previewSource}
-                variants={font.types}
-                weights={font.weights}
-                onSelectForAll={() => {}}
-                onSelectForCurrent={() => {}}
-              />
-            ) : null
-          )}
-        </div>
-      </div>
+      <FontList
+        fonts={fonts}
+        onSelect={(index) => onFontSelect(index)}
+        onSelectForAll={(index) => onFontSelect(index, true)}
+      />
       <div class="text-presets-editor__separator"></div>
-      <PresetList fonts={state.fonts} />
+      <PresetList fonts={fonts} onPresetSelect={setSelectedPresetIndex} selectedIndex={selectedPresetIndex} />
     </div>
   )
 }

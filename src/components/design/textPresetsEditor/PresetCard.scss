@@ -17,7 +17,6 @@
     opacity: 0;
     text-align: right;
     color: $blue-800;
-    cursor: pointer;
   }
 
   &:hover &__inscription {
@@ -63,5 +62,32 @@
     &:nth-child(odd) {
       margin-left: 16px;
     }
+  }
+
+  &__loader {
+    width: 50%;
+    line-height: 200%;
+    border-radius: 4px;
+    background-color: $blue-600;
+    animation: preset-card-pulse 1s infinite;
+  }
+}
+
+@keyframes preset-card-pulse {
+  from {
+    background: $blue-600;
+  }
+  50% {
+    background: $blue-700;
+  }
+  to {
+    background: $blue-600;
+  }
+}
+
+@media (max-width: 1000px) {
+  .preset-card__inscription {
+    width: 0;
+    opacity: 0 !important;
   }
 }

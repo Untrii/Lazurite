@@ -13,7 +13,9 @@ interface IFontCardProps {
 const FontCard = ({ preview, variants, weights, onSelectForCurrent, onSelectForAll }: IFontCardProps) => {
   return (
     <div class="font-card control-bg_blue-400">
-      <img src={preview} alt="" />
+      <div class="font-card__preview">
+        <img src={preview} alt="" />
+      </div>
       <div class="font-card__bottom">
         <div class="font-card__description">
           <ul class="font-card__list">
@@ -30,8 +32,13 @@ const FontCard = ({ preview, variants, weights, onSelectForCurrent, onSelectForA
           </ul>
         </div>
         <div class="font-card__buttons">
-          <Button text="Select for current preset" className="font-card__button" colorName="blue-600" />
-          <Button text="Select for all presets" className="font-card__button" colorName="blue-600" />
+          <Button
+            text="Select for current"
+            className="font-card__button"
+            colorName="blue-600"
+            onClick={onSelectForCurrent}
+          />
+          <Button text="Select for all" className="font-card__button" colorName="blue-600" onClick={onSelectForAll} />
         </div>
       </div>
     </div>

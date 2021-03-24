@@ -6,7 +6,7 @@
 
   &__bottom {
     display: grid;
-    margin-top: -28px;
+    margin-top: -8px;
     grid-template-columns: max-content 1fr;
   }
   &__description {
@@ -51,13 +51,16 @@
   }
 
   &__button {
-    margin-top: 16px;
+    margin-top: 8px;
     width: max-content;
-    margin-left: 16px;
   }
 
-  img {
+  &__preview {
+    display: flex;
     height: 48px;
+    flex-direction: column;
+    justify-content: space-around;
+    width: max-content;
   }
 }
 

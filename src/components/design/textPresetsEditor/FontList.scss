@@ -1,0 +1,30 @@
+.font-list {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+
+  &__searchbox {
+    padding: 16px 0 16px 32px;
+    display: grid;
+    grid-template-columns: minmax(max-content, 300px) max-content;
+
+    input {
+      max-width: 300px;
+    }
+
+    &-count {
+      line-height: 24px;
+      margin: 0 16px;
+      color: white;
+    }
+  }
+
+  &__items {
+    height: calc(100vh - 70px - 56px);
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+  }
+}
