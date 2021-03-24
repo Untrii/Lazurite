@@ -29,6 +29,7 @@ function getConstructors(ctx: __WebpackModuleApi.RequireContext, paths: string[]
 const modelsContext = require.context('@/models')
 const modelFiles = modelsContext.keys().filter(codeFilesFilter)
 const modelConstructors = getConstructors(modelsContext, modelFiles)
+window['models'] = modelConstructors
 
 export default class JsonSerializer {
   private static toNewVersion(version: string, object: object) {
