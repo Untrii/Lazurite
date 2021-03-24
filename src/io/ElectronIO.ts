@@ -205,7 +205,7 @@ export default class ElectronIO extends IoManager {
       const font = fonts.get(fontName)
       font.variants.push(variant)
       if (parsedWeight == 400 && !isItalic) font.previewSource = previewSource
-      else if (font.previewSource == '') font.previewSource = previewSource
+      else if (font.previewSource.startsWith('null')) font.previewSource = previewSource
     }
 
     return Array.from(fonts.values())
