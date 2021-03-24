@@ -1,4 +1,3 @@
-import Color from '@/models/common/Color'
 import Font from '@/models/common/Font'
 import Presentation from '@/models/presentation/Presentation'
 import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'

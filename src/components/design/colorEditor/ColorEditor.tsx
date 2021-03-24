@@ -1,17 +1,20 @@
 import './ColorEditor.scss'
+
 import { h } from 'preact'
-import HorizontalNav from '@/components/controls/HorizontalNav'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import PaletteGroup from './PaletteGroup'
-import store from '@/store'
-import Background, { BackgroundType } from '@/models/presentation/theme/Background'
+import { useEffect, useState } from 'preact/hooks'
+
 import backgrounds from '@/presets/backgrounds'
-import ColorPicker from '@/components/dialogs/ColorPicker'
-import Color from '@/models/common/Color'
+import store from '@/store'
 import { addUserBackground, changeBackground, changeDefaultColor, deleteUserBackground } from '@/store/actions/design'
-import DefaultsGroup from './DefaultsGroup'
-import Slide from '@/components/constructor/Slide'
+import Background, { BackgroundType } from '@/models/presentation/theme/Background'
+import Color from '@/models/common/Color'
 import useDelayedUnmount from '@/util/useDelayedUnmount'
+
+import HorizontalNav from '@/components/controls/HorizontalNav'
+import ColorPicker from '@/components/dialogs/ColorPicker'
+import Slide from '@/components/constructor/Slide'
+import PaletteGroup from './PaletteGroup'
+import DefaultsGroup from './DefaultsGroup'
 
 const ColorEditor = () => {
   const tabs: { displayName: string; name: BackgroundType }[] = [

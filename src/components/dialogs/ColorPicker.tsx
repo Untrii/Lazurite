@@ -9,7 +9,6 @@ import { hsvToRgb, rgbToHsv } from '@/util/colorConvertion'
 import Prepend from '../controls/Prepend'
 import Button from '../controls/Button'
 import NumberInput from '../controls/NumberInput'
-import { useEffect } from 'preact/hooks'
 
 interface IColorPickerProps {
   onCancel?: () => void

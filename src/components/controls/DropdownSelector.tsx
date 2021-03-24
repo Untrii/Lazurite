@@ -1,5 +1,6 @@
 import './DropdownSelector.scss'
-import { h, Fragment, Ref } from 'preact'
+
+import { h, Ref } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 
 interface IDropdownSelectorProps {

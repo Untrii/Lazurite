@@ -1,4 +1,5 @@
 import './VerticalNav.scss'
+
 import { h } from 'preact'
 
 export interface INavItem {

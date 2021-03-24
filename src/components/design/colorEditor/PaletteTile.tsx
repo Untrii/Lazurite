@@ -1,9 +1,10 @@
 import './PaletteTile.scss'
+
 import { h } from 'preact'
-import Background, { BackgroundType } from '@/models/presentation/theme/Background'
+
+import { BackgroundType } from '@/models/presentation/theme/Background'
 import Color from '@/models/common/Color'
 import assets from '@/assets'
-import { useEffect, useState } from 'preact/hooks'
 
 interface IPaletteTileProps {
   height: number

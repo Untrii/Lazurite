@@ -1,10 +1,11 @@
 import './PaletteGroup.scss'
-import Background, { BackgroundType } from '@/models/presentation/theme/Background'
+
 import { h, JSX } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
-import PaletteTile from './PaletteTile'
+
 import assets from '@/assets'
-import * as design from '@/store/actions/design'
+import { BackgroundType } from '@/models/presentation/theme/Background'
+
+import PaletteTile from './PaletteTile'
 
 interface IPaletteGroupProps {
   width: number

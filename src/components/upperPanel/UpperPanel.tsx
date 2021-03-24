@@ -1,11 +1,14 @@
 import './UpperPanel.scss'
+
 import { h } from 'preact'
-import Button from '../controls/Button'
-import assets from '@/assets/index'
-import HorizontalNav from '../controls/HorizontalNav'
+
+import assets from '@/assets'
 import store from '@/store'
 import * as navigation from '@/store/actions/navigation'
 import { EditorWindowName } from '@/models/store/TabStateModel'
+
+import Button from '../controls/Button'
+import HorizontalNav from '../controls/HorizontalNav'
 
 const UpperPanel = () => {
   const navItems = [

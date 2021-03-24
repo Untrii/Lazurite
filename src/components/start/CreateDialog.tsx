@@ -1,10 +1,12 @@
 import './CreateDialog.scss'
+
 import { h } from 'preact'
+import { useState } from 'preact/hooks'
+
+import * as navigation from '@/store/actions/navigation'
+
 import Button from '../controls/Button'
 import TextInput from '../controls/TextInput'
-import { useState } from 'preact/hooks'
-import io from '@/io'
-import * as navigation from '@/store/actions/navigation'
 
 interface ICreateDialogProps {
   onCancel?: () => void

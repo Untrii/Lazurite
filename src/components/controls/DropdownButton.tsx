@@ -1,8 +1,11 @@
 import './DropdownButton.scss'
+
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
-import DropdownSelector from './DropdownSelector'
+
 import assets from '@/assets'
+
+import DropdownSelector from './DropdownSelector'
 
 interface IDropdownButtonProps {
   blockLevel?: boolean

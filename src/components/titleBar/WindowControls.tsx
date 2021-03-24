@@ -1,7 +1,9 @@
 import './WindowControls.scss'
+
 import { h } from 'preact'
-import { useReactiveState } from '@/util/reactivity'
 import { remote } from 'electron'
+
+import { useReactiveState } from '@/util/reactivity'
 
 const WindowControls = () => {
   const state = useReactiveState(() => {

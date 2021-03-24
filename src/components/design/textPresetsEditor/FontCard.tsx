@@ -1,5 +1,7 @@
 import './FontCard.scss'
+
 import { h } from 'preact'
+
 import Button from '@/components/controls/Button'
 
 interface IFontCardProps {

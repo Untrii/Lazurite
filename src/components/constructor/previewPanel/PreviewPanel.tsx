@@ -1,10 +1,13 @@
 import './PreviewPanel.scss'
+
 import { h } from 'preact'
-import Slide from '../Slide'
+
+import assets from '@/assets'
 import store from '@/store'
 import * as constructor from '@/store/actions/constructor'
+
 import DropdownButton from '@/components/controls/DropdownButton'
-import assets from '@/assets'
+import Slide from '../Slide'
 
 const PreviewPanel = () => {
   const slideWidth = 166

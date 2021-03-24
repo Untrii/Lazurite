@@ -1,7 +1,7 @@
 import { h } from 'preact'
-import { useEffect, useMemo, useRef } from 'preact/hooks'
-import render from '@/slideRenderer'
+
 import store from '@/store'
+
 import Slide from '../Slide'
 
 interface IWorkspaceProps {

@@ -1,15 +1,16 @@
 import './PresetCard.scss'
+
 import { h } from 'preact'
+
+import { requireResource, requireResourceAsync } from '@/dataLoader'
+import { useReactiveState } from '@/util/reactivity'
+import getFontFamilyName from '@/util/getFontFamilyName'
+import getFontScale from '@/util/getFontScale'
+import assets from '@/assets'
+
 import Prepend from '@/components/controls/Prepend'
 import NumberInput from '@/components/controls/NumberInput'
-import getFontFamilyName from '@/util/getFontFamilyName'
-import { requireResource, requireResourceAsync } from '@/dataLoader'
-import { useLayoutEffect, useState } from 'preact/hooks'
-import useForceUpdate from '@/util/useForceUpdate'
-import { useReactiveState } from '@/util/reactivity'
-import getFontScale from '@/util/getFontScale'
 import Button from '@/components/controls/Button'
-import assets from '@/assets'
 
 interface IPresetCardProps {
   selected?: boolean

@@ -1,4 +1,5 @@
 import './SearchBox.scss'
+
 import { h } from 'preact'
 
 interface ISearchBoxProps {

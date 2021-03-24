@@ -1,5 +1,7 @@
 import './CompactRadio.scss'
+
 import { h } from 'preact'
+
 import Prepend from './Prepend'
 
 export interface IRadioVariant {

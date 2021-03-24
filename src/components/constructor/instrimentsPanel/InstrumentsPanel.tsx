@@ -1,10 +1,12 @@
 import './InstrumentsPanel.scss'
+
 import { h } from 'preact'
-import VerticalNav, { INavItem } from '@/components/controls/VerticalNav'
-import assets from '@/assets'
 import { useState } from 'preact/hooks'
+
+import assets from '@/assets'
+
+import VerticalNav, { INavItem } from '@/components/controls/VerticalNav'
 import NumberInput from '@/components/controls/NumberInput'
-import DropdownButton from '@/components/controls/DropdownButton'
 import CompactRadio from '@/components/controls/CompactRadio'
 import ColorPicker from '@/components/dialogs/ColorPicker'
 import SearchBox from '@/components/controls/SearchBox'

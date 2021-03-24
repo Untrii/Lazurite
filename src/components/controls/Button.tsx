@@ -1,4 +1,5 @@
 import './Button.scss'
+
 import { h } from 'preact'
 
 interface IButtonProps {

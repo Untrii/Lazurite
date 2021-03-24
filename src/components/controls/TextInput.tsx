@@ -1,10 +1,12 @@
 import './TextInput.scss'
+
 import { h } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
-import Prepend from './Prepend'
-import TextStyle from '@/models/presentation/slideObjects/base/TextStyle'
+import { useEffect, useRef } from 'preact/hooks'
+
 import getTextWidth from '@/util/getTextWidth'
-import { useReactiveState } from '@/util/reactivity'
+import TextStyle from '@/models/presentation/slideObjects/base/TextStyle'
+
+import Prepend from './Prepend'
 
 interface ITextInputProps {
   value?: string

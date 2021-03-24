@@ -1,13 +1,16 @@
 import './TextPresetsEditor.scss'
+
 import { h } from 'preact'
+import { useState } from 'preact/hooks'
+
+import store from '@/store'
+import * as design from '@/store/actions/design'
 import io from '@/io'
 import { requireResourceAsync } from '@/dataLoader'
 import Font from '@/models/common/Font'
-import { useState } from 'preact/hooks'
+
 import PresetList from './PresetList'
 import FontList from './FontList'
-import * as design from '@/store/actions/design'
-import store from '@/store'
 
 async function preloadFontPreviews() {
   const startTime = Date.now()

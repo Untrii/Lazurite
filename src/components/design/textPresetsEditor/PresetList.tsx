@@ -1,12 +1,14 @@
 import './PresetList.scss'
-import Button from '@/components/controls/Button'
+
 import { h } from 'preact'
-import PresetCard from './PresetCard'
-import store from '@/store'
-import Font from '@/models/common/Font'
-import * as design from '@/store/actions/design'
-import getFontFamilyName from '@/util/getFontFamilyName'
+
 import { requireResource } from '@/dataLoader'
+import store from '@/store'
+import * as design from '@/store/actions/design'
+import Font from '@/models/common/Font'
+
+import Button from '@/components/controls/Button'
+import PresetCard from './PresetCard'
 
 interface IPresetListProps {
   onPresetSelect?: (index: number) => void

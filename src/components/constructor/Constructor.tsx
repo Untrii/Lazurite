@@ -1,8 +1,10 @@
 import './Constructor.scss'
+
 import { h } from 'preact'
+import { useEffect, useState } from 'preact/hooks'
+
 import PreviewPanel from './previewPanel/PreviewPanel'
 import Workspace from './workspace/Workspace'
-import { useEffect, useState } from 'preact/hooks'
 import InstrumentsPanel from './instrimentsPanel/InstrumentsPanel'
 
 const Constructor = () => {

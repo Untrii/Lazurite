@@ -1,13 +1,16 @@
 import './StartScreen.scss'
-import { h, Fragment } from 'preact'
-import store from '@/store'
-import useForceUpdate from '@/util/useForceUpdate'
+
+import { h } from 'preact'
 import { useEffect } from 'preact/hooks'
+
+import store from '@/store'
+import * as navigation from '@/store/actions/navigation'
+import { PresentationFile } from '@/models/store/AppStateModel'
+import useForceUpdate from '@/util/useForceUpdate'
+
 import Button from '../controls/Button'
 import { useReactiveState } from '@/util/reactivity'
 import CreateDialog from './CreateDialog'
-import { PresentationFile } from '@/models/store/AppStateModel'
-import * as navigation from '@/store/actions/navigation'
 
 type ButtonsState =
   | 'mainAppearing'

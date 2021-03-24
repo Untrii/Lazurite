@@ -1,11 +1,13 @@
-import Presentation from '@/models/presentation/Presentation'
-import IoManager from './IOManager'
 import { existsSync, promises } from 'fs'
 import path from 'path'
-import JsonSerializer from './serialization/JsonSerializer'
-import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
 import { remote } from 'electron'
+
+import Presentation from '@/models/presentation/Presentation'
+import { BackgroundCollection } from '@/models/presentation/theme/Background'
 import Font, { FontVariant, FontWeight } from '@/models/common/Font'
+
+import IoManager from './IOManager'
+import JsonSerializer from './serialization/JsonSerializer'
 
 const { dialog, app } = remote
 

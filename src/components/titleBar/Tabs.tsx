@@ -1,9 +1,10 @@
-import { useReactiveState } from '@/util/reactivity'
-import { h, JSX } from 'preact'
 import './Tabs.scss'
-import { openStartPage } from '@/store/actions/navigation'
+
+import { h, JSX } from 'preact'
+
+import { useReactiveState } from '@/util/reactivity'
+import { openStartPage, closeTab } from '@/store/actions/navigation'
 import assets from '@/assets'
-import * as navigation from '@/store/actions/navigation'
 
 interface ITabsProps {
   names: string[]
@@ -29,7 +30,7 @@ const Tabs = (props: ITabsProps) => {
   const onMousedown = function (tabIndex: number, event: MouseEvent) {
     const target: any = event.target
     if (event.shiftKey) {
-      navigation.closeTab(tabIndex)
+      closeTab(tabIndex)
       return
     }
 

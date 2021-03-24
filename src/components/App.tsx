@@ -1,10 +1,13 @@
 import './App.scss'
 import '@/css/global.scss'
+
 import { h, Fragment } from 'preact'
+
+import store from '@/store'
+
 import TitleBar from './titleBar/TitleBar'
 import UpperPanel from './upperPanel/UpperPanel'
 import Constructor from './constructor/Constructor'
-import store from '@/store'
 import Design from './design/Design'
 import StartScreen from './start/StartScreen'
 

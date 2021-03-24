@@ -1,12 +1,15 @@
 import './TitleBar.scss'
+
 import { h } from 'preact'
-import assets from '@/assets/index'
-import Tabs from './Tabs'
-import WindowControls from './WindowControls'
-import { useReactiveState } from '@/util/reactivity'
 import { remote } from 'electron'
+
+import assets from '@/assets/index'
+import { useReactiveState } from '@/util/reactivity'
 import store from '@/store'
 import * as navigation from '@/store/actions/navigation'
+
+import Tabs from './Tabs'
+import WindowControls from './WindowControls'
 
 const TitleBar = () => {
   const state = useReactiveState(() => {

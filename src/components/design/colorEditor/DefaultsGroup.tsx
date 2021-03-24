@@ -1,7 +1,10 @@
 import './DefaultsGroup.scss'
+
+import { h } from 'preact'
+
 import Color from '@/models/common/Color'
 import Background from '@/models/presentation/theme/Background'
-import { h } from 'preact'
+
 import PaletteTile from './PaletteTile'
 
 interface ITile {

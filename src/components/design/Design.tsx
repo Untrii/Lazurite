@@ -1,13 +1,15 @@
 import './Design.scss'
+
 import { h, Fragment } from 'preact'
-import VerticalNav from '../controls/VerticalNav'
+
 import assets from '@/assets'
-import { useState } from 'preact/hooks'
+import store from '@/store'
+import * as navigation from '@/store/actions/navigation'
+import { DesignTab } from '@/models/store/TabStateModel'
+
+import VerticalNav from '../controls/VerticalNav'
 import ColorEditor from './colorEditor/ColorEditor'
 import TextPresetsEditor from './textPresetsEditor/TextPresetsEditor'
-import { DesignTab } from '@/models/store/TabStateModel'
-import * as navigation from '@/store/actions/navigation'
-import store from '@/store'
 
 const Design = () => {
   const tabs = [

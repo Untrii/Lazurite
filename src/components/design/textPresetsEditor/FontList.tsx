@@ -1,11 +1,13 @@
 import './FontList.scss'
-import SearchBox from '@/components/controls/SearchBox'
-import Font from '@/models/common/Font'
-import Searcher from '@/util/Searcher'
+
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
+
+import Font from '@/models/common/Font'
+import Searcher from '@/util/Searcher'
+
+import SearchBox from '@/components/controls/SearchBox'
 import FontCard from './FontCard'
-import * as design from '@/store/actions/design'
 
 interface IFontListProps {
   fonts: Font[]

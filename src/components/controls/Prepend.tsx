@@ -1,5 +1,5 @@
 import './Prepend.scss'
-import { h, JSX } from 'preact'
+import { h } from 'preact'
 
 const Prepend = ({ children }) => <span class="prepend">{children}</span>
 export default Prepend
