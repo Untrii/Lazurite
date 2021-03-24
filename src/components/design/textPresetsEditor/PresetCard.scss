@@ -6,9 +6,13 @@
   margin: 16px;
   border-radius: 4px;
 
+  &:first-child {
+    margin-top: 0;
+  }
+
   &__upper {
     display: grid;
-    grid-template-columns: 1fr max-content;
+    grid-template-columns: 1fr max-content max-content;
     margin-bottom: 9px;
     width: 100%;
   }
@@ -17,16 +21,23 @@
     opacity: 0;
     text-align: right;
     color: $blue-800;
+    line-height: 24px;
   }
 
-  &:hover &__inscription {
+  &__delete-button {
+    margin-left: 16px;
+  }
+
+  &:hover &__inscription,
+  &:hover &__delete-button {
     opacity: 1;
-    transition: opacity 0.3s;
+    transition: opacity 0.15s;
   }
 
-  &:not(:hover) &__inscription {
+  &:not(:hover) &__inscription,
+  &:not(:hover) &__delete-button {
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.15s;
   }
 
   &__name {

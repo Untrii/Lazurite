@@ -8,10 +8,13 @@ import { useLayoutEffect, useState } from 'preact/hooks'
 import useForceUpdate from '@/util/useForceUpdate'
 import { useReactiveState } from '@/util/reactivity'
 import getFontScale from '@/util/getFontScale'
+import Button from '@/components/controls/Button'
+import assets from '@/assets'
 
 interface IPresetCardProps {
   selected?: boolean
   onSelect?: () => void
+  onDelete?: () => void
   name: string
   onNameChange?: (name: string) => void
   fontName: string
@@ -29,6 +32,7 @@ interface IPresetCardProps {
 const PresetCard = ({
   selected,
   onSelect,
+  onDelete,
   name,
   onNameChange,
   fontName,
@@ -79,8 +83,13 @@ const PresetCard = ({
           class="preset-card__name"
           onInput={(event) => onNameChange?.((event.target as any).value)}
         />
-
-        <span class="preset-card__inscription">Click to select...</span>
+        {selected ? null : <span class="preset-card__inscription">Click to select...</span>}
+        <Button
+          icon={assets.delete}
+          colorName={selected ? 'blue-300' : 'blue-600'}
+          onClick={onDelete}
+          className="preset-card__delete-button"
+        />
       </div>
     )
   }

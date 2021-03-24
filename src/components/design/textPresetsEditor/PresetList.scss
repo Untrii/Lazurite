@@ -1,4 +1,8 @@
+@import '@/css/variables.scss';
+
 .preset-list {
+  height: inherit;
+
   &__upper {
     display: grid;
     margin: 16px;
@@ -15,5 +19,20 @@
   }
   &__button {
     margin-left: 16px;
+  }
+
+  &__placeholder {
+    color: $blue-800;
+    margin-top: 24px;
+    margin-left: 16px;
+  }
+
+  &__items {
+    height: calc(100% - 56px);
+    overflow: scroll;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
   }
 }

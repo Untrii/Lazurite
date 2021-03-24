@@ -49,6 +49,10 @@ const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) 
       design.changePresetFontSize(index, newSize)
     }
 
+    const onDelete = function (index: number) {
+      design.deleteFontPreset(index)
+    }
+
     return presets.map((preset, index) => {
       const font = getFontByName(preset.fontName)
       requireResource(preset.fontSource)
@@ -57,6 +61,7 @@ const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) 
         <PresetCard
           key={index}
           onSelect={() => onPresetSelect?.(index)}
+          onDelete={() => onDelete(index)}
           selected={index == selectedIndex}
           onNameChange={(name) => onNameChange(index, name)}
           name={preset.name}
@@ -76,7 +81,10 @@ const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) 
   return (
     <div class="preset-list">
       {renderUpper()}
-      {renderPresets()}
+      {presets.length == 0 ? (
+        <div class="preset-list__placeholder">There is no font presets. You can add one using button above</div>
+      ) : null}
+      <div class="preset-list__items">{renderPresets()}</div>
     </div>
   )
 }

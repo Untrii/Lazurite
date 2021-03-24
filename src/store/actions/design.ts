@@ -121,4 +121,13 @@ export function selectPresetFont(font: Font, presetIndex = -1) {
   })
 }
 
+export function deleteFontPreset(index: number) {
+  const theme = getCurrentTheme()
+
+  if (index >= 0 && index < theme.fontPresets.length) {
+    theme.fontPresets.splice(index, 1)
+    saveCurrentPresentation()
+  }
+}
+
 window['addUserBackground'] = addUserBackground
