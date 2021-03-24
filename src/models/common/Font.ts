@@ -25,7 +25,11 @@ export default class Font {
     for (const variant of this.variants) {
       result.add(variant.weight)
     }
-    return Array.from(result)
+    return Array.from(result).sort((a, b) => a - b)
+  }
+
+  get defaultVariant() {
+    return this.variants.find((variant) => variant.weight == 400 && variant.type == 'normal') ?? this.variants[0]
   }
 
   constructor(name?: string, variants?: FontVariant[], previewSource?: string) {
