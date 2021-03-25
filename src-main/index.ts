@@ -1,4 +1,4 @@
-import { app, protocol, globalShortcut, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow } from 'electron'
 import { is } from 'electron-util'
 import path from 'path'
 import { promises as fs, existsSync } from 'fs'
@@ -11,7 +11,7 @@ function loadRoute(window, route) {
   if (is.development) {
     url = `http://localhost:3535/`
   } else {
-    url = `file:///${app.getAppPath()}/dist/index.html#${route}`
+    url = `file:///${app.getAppPath()}/index.html#${route}`
   }
 
   window.loadURL(url)

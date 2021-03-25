@@ -1,5 +1,4 @@
 import { app, session } from 'electron'
-import path from 'path'
 import os from 'os'
 
 const extensionID = 'ilcajpmogmhpliinlbcdebhbcanbghmd'

@@ -16,7 +16,7 @@ let manualRestart = false
 let electronProcess = null
 function startElectron() {
   execSync('npm run buildmain')
-  const args = [path.join(__dirname, '../dist/main/main.js'), '--remote-debugging-port=9222']
+  const args = [path.join(__dirname, '../webpack-dist/main.js'), '--remote-debugging-port=9222']
 
   electronProcess = spawn(electron, args)
 

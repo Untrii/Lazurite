@@ -1,11 +1,13 @@
 const path = require('path')
 
+const devMode = process.env.NODE_ENV != 'production'
+
 module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
-  devtool: 'source-map',
-  entry: './src-main/index.dev.ts',
+  devtool: devMode ? false : 'source-map',
+  entry: devMode ? './src-main/index.dev.ts' : './src-main/index.ts',
   target: 'electron-main',
   module: {
     rules: [
@@ -24,7 +26,7 @@ module.exports = {
     ],
   },
   output: {
-    path: path.resolve(__dirname, './dist/main'),
+    path: path.resolve(__dirname, './webpack-dist'),
     filename: '[name].js',
   },
 }

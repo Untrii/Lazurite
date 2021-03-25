@@ -5,12 +5,14 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 const srcPath = resolve(__dirname, 'src')
 const distPath = resolve(__dirname, 'dist')
 
+const devMode = process.env.NODE_ENV != 'production'
+
 export default {
   context: srcPath,
   entry: {
     main: ['./main.tsx'],
   },
-  devtool: 'source-map',
+  devtool: devMode ? false : 'source-map',
   devServer: {
     port: 3535,
   },
@@ -41,7 +43,14 @@ export default {
       },
       {
         test: /\.(png|jpg|svg|gif|ttf|woff|woff2|eot)$/,
-        use: ['file-loader'],
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+            },
+          },
+        ],
       },
     ],
   },
@@ -50,4 +59,8 @@ export default {
       template: './index.html',
     }),
   ],
+  output: {
+    path: resolve(__dirname, './webpack-dist'),
+    filename: 'renderer.js',
+  },
 } as Configuration
