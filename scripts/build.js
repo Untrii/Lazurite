@@ -1,7 +1,7 @@
 const electronBuilder = require('electron-builder')
 const path = require('path')
 const { readdirSync, unlinkSync, copyFileSync } = require('fs')
-const { moveSync } = require('fs-extra')
+const { moveSync, copySync, removeSync } = require('fs-extra')
 
 const webpackOutputPath = './webpack-dist'
 
@@ -25,4 +25,5 @@ electronBuilder
       overwrite: true,
     })
     unlinkSync(webpackOutputPath + '/package.json')
+    copySync('./data', './dist/win-unpacked/data', { overwrite: true })
   })

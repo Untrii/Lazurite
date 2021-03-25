@@ -30,9 +30,10 @@ const PaletteTile = (props: IPaletteTileProps) => {
       case 'pattern':
         return { backgroundImage: `url("${displayValue}")` }
       case 'gradient':
+      case 'gradicolor':
         return { background: `linear-gradient(${displayValue})` }
       default:
-        throw new Error('gradient not implemented')
+        return {}
     }
   }
 

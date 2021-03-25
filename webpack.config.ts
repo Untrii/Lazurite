@@ -1,6 +1,7 @@
 import { join, resolve } from 'path'
 import { Configuration } from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
 
 const srcPath = resolve(__dirname, 'src')
 const distPath = resolve(__dirname, 'dist')
@@ -59,6 +60,16 @@ export default {
       template: './index.html',
     }),
   ],
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        terserOptions: {
+          keep_classnames: true,
+        },
+      }),
+    ],
+  },
   output: {
     path: resolve(__dirname, './webpack-dist'),
     filename: 'renderer.js',
