@@ -1,7 +1,7 @@
 import './NumberInput.scss'
 
 import { h, JSX } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { useLayoutEffect, useRef } from 'preact/hooks'
 
 import { useReactiveState } from '@/util/reactivity'
 import getTextWidth from '@/util/getTextWidth'
@@ -27,21 +27,24 @@ const NumberInput = ({
   onChange,
 }: INumberInputProps) => {
   const state = useReactiveState({
+    prevPropsValue: NaN,
     value,
-    lastSymbol: '',
+    prevValue: value,
+    emptyValue: false,
   })
+
+  if (isNaN(value)) value = minValue
 
   const box = useRef(null)
 
   const rerenderInput = function (value: number | string) {
-    if (typeof value == 'string') value = parseFloat(value)
-    box.current.value = value
+    if (typeof value == 'number') return rerenderInput(value.toString())
 
     const textStyle = new TextStyle()
     textStyle.fontFamily = 'Roboto'
     textStyle.fontSize = 12
     textStyle.fontWeight = 700
-    box.current.style.width = getTextWidth(textStyle, value.toString()) + 4 + 'px'
+    box.current.style.width = getTextWidth(textStyle, value) + 4 + 'px'
   }
 
   const applyMaxValue = function (value: string | number): number {
@@ -65,10 +68,9 @@ const NumberInput = ({
     return value
   }
 
-  if (value != state.value && value != minValue) state.value = parseFloat(applyStep(applyMaxValue(value)))
-
-  const onKeyPress = function (event: KeyboardEvent) {
-    state.lastSymbol = event.key
+  if (value != state.prevPropsValue) {
+    state.value = parseFloat(applyStep(applyMaxValue(value)))
+    state.prevPropsValue = value
   }
 
   const processText = function (text: string | number) {
@@ -93,12 +95,15 @@ const NumberInput = ({
     const target = event.target as HTMLInputElement
     const text: string = target.value
     if (text == '') {
+      state.prevPropsValue = minValue
+      state.prevValue = state.value
+      state.emptyValue = true
       onChange?.(minValue)
       return
     }
+    state.emptyValue = false
 
     const processedText = processText(text)
-    rerenderInput(processedText)
 
     state.value = parseFloat(processedText)
     onChange?.(state.value < minValue ? minValue : state.value)
@@ -112,10 +117,9 @@ const NumberInput = ({
 
     state.value = applyMinValue(applyMaxValue(state.value + delta))
     onChange?.(state.value < minValue ? minValue : state.value)
-    rerenderInput(state.value)
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     rerenderInput(state.value)
   })
 
@@ -129,11 +133,10 @@ const NumberInput = ({
           step={step}
           min={minValue}
           max={maxValue}
-          value={state.value}
+          value={state.emptyValue ? '' : state.value}
           ref={box}
           onClick={(event) => event.stopPropagation()}
           onInput={onInput}
-          onKeyDown={onKeyPress}
         ></input>
       </div>
     </div>
