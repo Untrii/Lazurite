@@ -1,3 +1,5 @@
+import './Workspace.scss'
+
 import { h } from 'preact'
 
 import store from '@/store'
@@ -23,7 +25,13 @@ const Workspace = (props: IWorkspaceProps) => {
   }
   return (
     <div style={rootStyle}>
-      <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} />
+      {slide ? (
+        <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} />
+      ) : (
+        <div class="workspace__placeholder" style={{ height: slideHeight }}>
+          There is no slides
+        </div>
+      )}
     </div>
   )
 }

@@ -1,2 +1,12 @@
+@import '@/css/variables.scss';
+
 .workspace {
+  &__placeholder {
+    background-color: $blue-700;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    color: white;
+    font-weight: 500;
+  }
 }
