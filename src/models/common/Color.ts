@@ -17,7 +17,7 @@ export default class Color {
     const hexNum = parseInt(hex, 16)
 
     result.r = Math.floor(hexNum / 0x10000)
-    result.g = Math.floor(hexNum % 0x10000) / 0x100
+    result.g = Math.floor((hexNum % 0x10000) / 0x100)
     result.b = Math.floor(hexNum % 0x100)
 
     return result
