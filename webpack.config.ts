@@ -13,7 +13,7 @@ export default {
   entry: {
     main: ['./main.tsx'],
   },
-  devtool: devMode ? false : 'source-map',
+  devtool: devMode ? 'source-map' : false,
   devServer: {
     port: 3535,
   },
