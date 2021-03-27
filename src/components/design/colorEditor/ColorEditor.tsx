@@ -15,6 +15,7 @@ import ColorPicker from '@/components/dialogs/ColorPicker'
 import Slide from '@/components/constructor/Slide'
 import PaletteGroup from './PaletteGroup'
 import DefaultsGroup from './DefaultsGroup'
+import getMedianColorSync from '@/util/getMedianColorSync'
 
 const ColorEditor = () => {
   const tabs: { displayName: string; name: BackgroundType }[] = [
@@ -50,7 +51,8 @@ const ColorEditor = () => {
   const togglePopper = function (val: boolean) {
     if (isPopperShown != val)
       if (new Date().getTime() - lastChangeTime.getTime() > 500) {
-        if (tabs[currentTabIndex].name == 'color') setIsPopperShown(val)
+        const tabName = tabs[currentTabIndex].name
+        if (tabName == 'color' || tabName == 'gradient') setIsPopperShown(val)
         setLastChangeTime(new Date())
       }
   }
@@ -64,15 +66,28 @@ const ColorEditor = () => {
     bg.type = 'color'
     addUserBackground(bg)
   }
+
+  const onGradientPicked = function (gradient: string) {
+    togglePopper(false)
+    const bg = new Background()
+    bg.value = gradient
+    bg.displayValue = gradient
+    bg.medianColor = getMedianColorSync('gradient', gradient)
+    bg.type = 'gradient'
+    addUserBackground(bg)
+  }
+
   const addButtonPopper = useDelayedUnmount(
-    <ColorPicker onCancel={() => togglePopper(false)} onColorPicked={onColorPicked} isHiding={!isPopperShown} />,
+    <ColorPicker
+      onCancel={() => togglePopper(false)}
+      onColorPicked={onColorPicked}
+      onGradientPicked={onGradientPicked}
+      isHiding={!isPopperShown}
+      mode={tabs[currentTabIndex].name as any}
+    />,
     isPopperShown,
     500
   )
-
-  // const addButtonPopper = (
-  //   <ColorPicker onCancel={() => togglePopper(false)} onColorPicked={onColorPicked} isHiding={!isPopperShown} />
-  // )
 
   const onAddButtonClick = function (event: MouseEvent) {
     togglePopper(!isPopperShown)

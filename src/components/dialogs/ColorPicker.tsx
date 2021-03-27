@@ -1,6 +1,6 @@
 import './ColorPicker.scss'
 
-import { h } from 'preact'
+import { h, JSX } from 'preact'
 
 import Color from '@/models/common/Color'
 import { useReactiveState } from '@/util/reactivity'
@@ -9,18 +9,54 @@ import { hsvToRgb, rgbToHsv } from '@/util/colorConvertion'
 import Prepend from '../controls/Prepend'
 import Button from '../controls/Button'
 import NumberInput from '../controls/NumberInput'
+import useForceUpdate from '@/util/useForceUpdate'
+import { useEffect } from 'preact/hooks'
+
+interface IColor {
+  r: number
+  g: number
+  b: number
+}
+
+type ColorStop = {
+  position: number
+  value: IColor | 'current'
+}
 
 interface IColorPickerProps {
   onCancel?: () => void
   onColorPicked?: (color: Color) => void
+  onGradientPicked?: (gradient: string) => void
   mode?: 'color' | 'gradient'
   initialColor?: Color
   isHiding?: boolean
 }
 
+function createDrag(handler: (startEvent: MouseEvent, currentEvent: MouseEvent) => void) {
+  let startEvent = null as MouseEvent
+  return function (event: MouseEvent) {
+    startEvent = event
+    event.stopPropagation()
+    handler(event, event)
+
+    const onMouseMove = function (event: MouseEvent) {
+      handler(startEvent, event)
+    }
+
+    const onMouseUp = function (event: MouseEvent) {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }
+}
+
 const ColorPicker = ({
   onCancel,
-  onColorPicked: onColorPicked,
+  onColorPicked,
+  onGradientPicked,
   mode = 'color',
   initialColor = Color.fromRgb(255, 0, 0),
   isHiding,
@@ -36,8 +72,14 @@ const ColorPicker = ({
       red: r,
       green: g,
       blue: b,
-
-      rootClasses: ['color-picker', 'color-picker_visible'],
+      stops: [
+        {
+          position: 0.5,
+          value: 'current',
+        },
+      ] as ColorStop[],
+      gradientAngle: 135,
+      isAnyStopFocused: false,
     }
   })
 
@@ -52,8 +94,25 @@ const ColorPicker = ({
 
   const clearColor = hsvToRgb(state.hue, 100, 100)
 
-  const onChange = function (fieldName: keyof typeof state, value) {
-    state[fieldName] = value
+  const getStopColor = function (stop: ColorStop) {
+    if (stop.value == 'current') return `rgb(${state.red}, ${state.green}, ${state.blue})`
+    else return `rgb(${Object.values(stop.value).join(',')})`
+  }
+
+  const getGradient = function (ignoreAngle = false, compact = false) {
+    const stops = state.stops
+    const firstStop = stops[0]
+    const lastStop = stops[stops.length - 1]
+    const stopSrings = state.stops.map((item) => `${getStopColor(item)} ${item.position * 100}%`)
+    const angle = ignoreAngle ? 'to right' : state.gradientAngle + 'deg'
+    const compactVaraint = `${angle}, ${getStopColor(firstStop)} 0%, ${stopSrings}, ${getStopColor(lastStop)} 100%`
+
+    if (compact) return compactVaraint
+    else return `linear-gradient(${compactVaraint})`
+  }
+
+  const onChange = function (fieldName: keyof typeof state, value: any) {
+    ;(state as any)[fieldName] = value
     switch (fieldName) {
       case 'blue':
       case 'green':
@@ -81,15 +140,16 @@ const ColorPicker = ({
   const renderMainBox = function () {
     const svDragSize = 154
 
-    const onSvSelectorPress = function (event: MouseEvent) {
-      const startX = event.clientX
-      const startY = event.clientY
-      const startSaturation = state.saturation
-      const startValue = state.value
+    let startSaturation = 0
+    let startValue = 0
+    const onSvSelectorPress = createDrag((startEvent, event) => {
+      if (startEvent === event) {
+        startSaturation = state.saturation
+        startValue = state.value
+      } else {
+        const startX = startEvent.clientX
+        const startY = startEvent.clientY
 
-      event.stopPropagation()
-
-      const onMouseMove = function (event: MouseEvent) {
         const deltaX = event.clientX - startX
         const deltaY = event.clientY - startY
         const deltaValue = (deltaY / svDragSize) * 100
@@ -101,15 +161,7 @@ const ColorPicker = ({
         onChange('value', value)
         onChange('saturation', saturation)
       }
-
-      const onMouseUp = function (event: MouseEvent) {
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup', onMouseUp)
-      }
-
-      document.addEventListener('mousemove', onMouseMove)
-      document.addEventListener('mouseup', onMouseUp)
-    }
+    })
 
     const onSvSelectorFieldPress = function (event: MouseEvent) {
       let offsetX = Math.max(0, Math.min(event.offsetX - 6, svDragSize))
@@ -144,26 +196,17 @@ const ColorPicker = ({
   }
 
   const renderHueSelector = function () {
-    const onHueSelectorPress = function (event: MouseEvent) {
-      const startPos = event.clientX
-      const startHue = state.hue
-      event.stopPropagation()
-
-      const onMouseMove = function (event: MouseEvent) {
-        const delta = event.clientX - startPos
+    let startHue = 0
+    const onHueSelectorPress = createDrag((startEvent, event) => {
+      if (startEvent === event) {
+        startHue = state.hue
+      } else {
+        const delta = event.clientX - startEvent.clientX
         const deltaHue = (delta / 140) * 360
         const hue = Math.round(Math.max(0, Math.min(startHue + deltaHue, 360)))
         onChange('hue', hue)
       }
-
-      const onMouseUp = function (event: MouseEvent) {
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup', onMouseUp)
-      }
-
-      document.addEventListener('mousemove', onMouseMove)
-      document.addEventListener('mouseup', onMouseUp)
-    }
+    })
 
     const onHueSelectorBarPress = function (event: MouseEvent) {
       let offsetX = Math.max(0, Math.min(event.offsetX - 6, 140))
@@ -219,12 +262,20 @@ const ColorPicker = ({
   }
 
   const renderBottomPanel = function () {
-    const previewStyle = {
-      backgroundColor: `rgb(${state.red},${state.green},${state.blue})`,
-    }
+    let previewStyle
+
+    if (mode == 'color')
+      previewStyle = {
+        backgroundColor: `rgb(${state.red},${state.green},${state.blue})`,
+      }
+    else
+      previewStyle = {
+        background: getGradient(),
+      }
 
     const onPicked = function () {
       if (mode == 'color') onColorPicked?.(Color.fromRgb(state.red, state.green, state.blue))
+      else onGradientPicked?.(getGradient(false, true))
     }
     return (
       <div class="color-picker__bottom-panel">
@@ -237,19 +288,195 @@ const ColorPicker = ({
     )
   }
 
-  if (isHiding) {
-    console.log('hiding')
-    state.rootClasses = ['color-picker', 'color-picker_hidden']
-  } else {
-    state.rootClasses = ['color-picker', 'color-picker_visible']
+  const clearCurrent = function () {
+    const stops = state.stops
+    for (let i = 0; i < stops.length; i++) {
+      const stop = stops[i]
+      if (stop.value == 'current') {
+        stop.value = {
+          r: state.red,
+          g: state.green,
+          b: state.blue,
+        }
+      }
+    }
   }
 
+  const setCurrent = function (stop: ColorStop) {
+    if (stop.value != 'current') {
+      const { r, g, b } = stop.value
+      onChange('red', r)
+      onChange('green', g)
+      onChange('blue', b)
+
+      stop.value = 'current'
+    }
+  }
+
+  const getCurrentStop = function () {
+    for (const stop of state.stops) {
+      if (stop.value == 'current') return stop
+    }
+  }
+
+  const renderGradientControls = function () {
+    const renderStopBar = function () {
+      const pointers = [] as JSX.Element[]
+
+      const onStopPointerPress = (event: MouseEvent, currentStop: ColorStop) => {
+        let stopStartPos = currentStop.position
+        clearCurrent()
+        setCurrent(currentStop)
+        createDrag((startEvent, event) => {
+          if (startEvent === event) {
+            state.isAnyStopFocused = true
+          }
+          if (startEvent !== event) {
+            const delta = event.clientX - startEvent.clientX
+            const deltaPos = delta / 140
+            const stop = getCurrentStop()
+            if (stop) stop.position = Math.max(0, Math.min(stopStartPos + deltaPos, 1))
+            state.stops.sort((a, b) => a.position - b.position)
+          }
+        })(event)
+      }
+
+      const onStopBarPress = function (event: MouseEvent) {
+        const stops = state.stops
+
+        let offsetX = Math.max(0, Math.min(event.offsetX - 6, 140))
+        let percentPosition = offsetX / 140
+        let afterStop = -1
+        for (; afterStop < stops.length - 1; afterStop++) {
+          const stop = stops[afterStop + 1]
+          if (stop.position > percentPosition) break
+        }
+
+        clearCurrent()
+
+        const firstStop = stops[0]
+        const lastStop = stops[stops.length - 1]
+        const prevStop = stops[afterStop]
+        const nextStop = stops[afterStop + 1]
+        let copyFrom: IColor
+
+        if (afterStop == -1 && firstStop.value != 'current') copyFrom = firstStop.value
+        else if (afterStop == stops.length - 1 && lastStop.value != 'current') copyFrom = lastStop.value
+        else if (prevStop.value != 'current') {
+          copyFrom = { ...prevStop.value }
+          const relativePos = (percentPosition - prevStop.position) / (nextStop.position - prevStop.position)
+          ;(['r', 'g', 'b'] as (keyof IColor)[]).map(
+            (item) => (copyFrom[item] += (nextStop.value[item] - prevStop.value[item]) * relativePos)
+          )
+        }
+        if (copyFrom) {
+          const newStop = {
+            position: percentPosition,
+            value: 'current',
+          } as ColorStop
+          stops.push(newStop)
+          onStopPointerPress(event, state.stops[stops.length - 1])
+
+          stops.sort((a, b) => a.position - b.position)
+
+          onChange('red', Math.floor(copyFrom.r))
+          onChange('green', Math.floor(copyFrom.g))
+          onChange('blue', Math.floor(copyFrom.b))
+        }
+      }
+
+      for (let i = 0; i < state.stops.length; i++) {
+        const currentStop = state.stops[i]
+
+        const stopStyle = {
+          backgroundColor: getStopColor(currentStop),
+          transform: `translateX(${currentStop.position * 140}px) translateY(${-12 * i}px)`,
+        }
+
+        if (state.isAnyStopFocused && currentStop.value == 'current') stopStyle.transform += ' scale(1.2)'
+
+        pointers.push(
+          <div
+            class="color-picker__pointer"
+            style={stopStyle}
+            onMouseDown={(event) => onStopPointerPress(event, currentStop)}
+          ></div>
+        )
+      }
+
+      const barStyle = {
+        background: getGradient(true),
+      }
+
+      return (
+        <div class="color-picker__gradient-stops" style={barStyle} onMouseDown={onStopBarPress}>
+          {pointers}
+        </div>
+      )
+    }
+
+    return (
+      <div class="color-picker__gradient-controls">
+        {renderStopBar()}
+        <div class="color-picker__input" style="margin-top:6px">
+          <Prepend>Angle:</Prepend>
+          <NumberInput
+            value={state.gradientAngle}
+            minValue={0}
+            maxValue={360}
+            step={1}
+            onChange={(value) => (state.gradientAngle = value)}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  const deleteStop = function () {
+    const stops = state.stops
+    if (stops.length < 2 || !state.isAnyStopFocused) return
+    let selectedStopIndex = 0
+    for (let i = 0; i < stops.length; i++) {
+      if (stops[i].value == 'current') {
+        selectedStopIndex = i
+        break
+      }
+    }
+    stops.splice(selectedStopIndex, 1)
+    if (stops.length > selectedStopIndex) setCurrent(stops[selectedStopIndex])
+    else setCurrent(stops[selectedStopIndex - 1])
+  }
+
+  useEffect(() => {
+    const onMousedown = () => (state.isAnyStopFocused = false)
+    const onKeyDown = (event) => {
+      if (event.key == 'Delete') deleteStop()
+    }
+    document.addEventListener('mousedown', onMousedown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onMousedown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  })
+
+  const rootClasses = ['color-picker']
+
+  if (isHiding) {
+    rootClasses.push('color-picker_hidden')
+  } else {
+    rootClasses.push('color-picker_visible')
+  }
+
+  if (mode == 'gradient') rootClasses.push('color-picker_mode_gradient')
+
   return (
-    <div class={state.rootClasses.join(' ')}>
+    <div class={rootClasses.join(' ')}>
       {renderMainBox()}
       <div class="color-picker__edit-box">
         {renderHueSelector()}
         {renderInputs()}
+        {mode == 'gradient' ? renderGradientControls() : null}
         {renderBottomPanel()}
       </div>
     </div>

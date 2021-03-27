@@ -1,35 +1,25 @@
 import Background from '@/models/presentation/theme/Background'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
+import parseGradient from '@/util/parseGradient'
 import { requireResource } from '../dataLoader'
 
-function parseGradient(gradient: string) {
-  const result = {
-    angle: 0,
-    colors: [] as { stop: number; value: string }[],
-  }
-
-  const parts = gradient.split(',').map((item) => item.trim())
-  result.angle = parseFloat(parts[0])
-  for (let i = 1; i < parts.length; i++) {
-    const [value, stop] = parts[i].split(' ')
-    result.colors.push({ value, stop: parseFloat(stop) / 100 })
-  }
-  return result
-}
-
 function getGradientCoords(resolution: RendererResolution, angle: number): [number, number, number, number] {
-  angle = angle % 360
-  const rads = (angle / 180) * Math.PI
   const centerX = resolution.targetWidth / 2
   const centerY = resolution.targetHeight / 2
 
-  const segmentLength = Math.min(centerX / Math.cos(rads), centerY / Math.cos(Math.PI - rads))
+  let canvasAngle = (angle + 270) % 360
+  const rads = (canvasAngle - 90) * (Math.PI / 180)
+
+  const hypt = centerY / Math.cos((rads + Math.PI) % (Math.PI / 2))
+  const fromTopRight = centerX - Math.sqrt(hypt * hypt - centerY * centerY)
+  const diag = Math.sin((rads + Math.PI) % (Math.PI / 2)) * fromTopRight
+  const length = hypt + diag
 
   return [
-    centerX - Math.cos(rads) * segmentLength,
-    centerY + Math.sin(rads) * segmentLength,
-    centerX + Math.cos(rads) * segmentLength,
-    centerY - Math.sin(rads) * segmentLength,
+    centerX + Math.cos(-Math.PI / 2 + rads) * length,
+    centerY + Math.sin(-Math.PI / 2 + rads) * length,
+    centerX + Math.cos(Math.PI / 2 + rads) * length,
+    centerY + Math.sin(Math.PI / 2 + rads) * length,
   ]
 }
 
@@ -55,8 +45,8 @@ export default function renderBackground(
       const gradientCoords = getGradientCoords(resolution, gradientValue.angle)
       const gradient = ctx.createLinearGradient(...gradientCoords)
 
-      for (const color of gradientValue.colors) {
-        gradient.addColorStop(color.stop, color.value)
+      for (const stop of gradientValue.stops) {
+        gradient.addColorStop(stop.percent, stop.color.toHex())
       }
       ctx.fillStyle = gradient
       ctx.fillRect(0, 0, resolution.targetWidth, resolution.targetHeight)
