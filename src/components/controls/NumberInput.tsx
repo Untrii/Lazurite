@@ -37,14 +37,18 @@ const NumberInput = ({
 
   const box = useRef(null)
 
-  const rerenderInput = function (value: number | string) {
-    if (typeof value == 'number') return rerenderInput(value.toString())
+  const resizeInput = function (value: number | string) {
+    if (typeof value == 'number') return resizeInput(value.toString())
 
     const textStyle = new TextStyle()
     textStyle.fontFamily = 'Roboto'
     textStyle.fontSize = 12
     textStyle.fontWeight = 700
     box.current.style.width = getTextWidth(textStyle, value) + 4 + 'px'
+  }
+
+  const updateInputValue = function () {
+    if (parseFloat(box.current.value) > state.value) box.current.value = state.value
   }
 
   const applyMaxValue = function (value: string | number): number {
@@ -107,6 +111,7 @@ const NumberInput = ({
 
     state.value = parseFloat(processedText)
     onChange?.(state.value < minValue ? minValue : state.value)
+    updateInputValue()
   }
 
   const onWheel = function (event: WheelEvent) {
@@ -120,7 +125,7 @@ const NumberInput = ({
   }
 
   useLayoutEffect(() => {
-    rerenderInput(state.value)
+    resizeInput(state.value)
   })
 
   return (
