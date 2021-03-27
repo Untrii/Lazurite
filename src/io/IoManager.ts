@@ -45,7 +45,7 @@ export default abstract class IOManager {
     let validationResult = true
 
     for (const key in validatedResult) {
-      const [validatedData, result] = this.validateArray(parsedJson[key], (entry) => entry instanceof Background)
+      const [validatedData, result] = this.validateArray(parsedJson?.[key], (entry) => entry instanceof Background)
       validatedResult[key] = validatedData
       validationResult = validatedResult && result
     }
