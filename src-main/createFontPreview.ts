@@ -5,7 +5,7 @@ export default function createFontPreview(text, pathToFont, pathToResult) {
   return new Promise<void>((resolve, reject) => {
     TextToSvg.load(pathToFont, async (error, converter) => {
       if (error) {
-        reject('Cannot create font preview')
+        reject(error)
       } else {
         const svg = converter.getSVG(text, {
           anchor: 'left top',

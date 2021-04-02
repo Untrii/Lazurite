@@ -76,14 +76,20 @@ function createSafeFileProtocol(protocolName) {
 
 async function createFontPreviewProtocol() {
   protocol.registerFileProtocol('font-preview', async (request, callback) => {
-    const [fontPath, fontName] = request.url.replace(`font-preview://`, '').split('::')
+    const decodedURL = decodeURIComponent(request.url)
+    const [fontPath, fontName] = decodedURL.replace(`font-preview://`, '').split('::')
     const hash = crypto.createHmac('sha256', 'font').update(request.url).digest('hex')
 
     const previewFolder = path.join(app.getPath('userData'), 'Lazurite', 'FontPreview')
     if (!existsSync(previewFolder)) fs.mkdir(previewFolder)
 
     const previewFile = path.join(previewFolder, `${hash}.svg`)
-    if (!existsSync(previewFile)) await createFontPreview(fontName, fontPath, previewFile)
+    try {
+      if (!existsSync(previewFile)) await createFontPreview(fontName, fontPath, previewFile)
+    } catch (msg) {
+      console.log(msg)
+      console.log({ fontPath, fontName, previewFile })
+    }
 
     return callback(previewFile)
   })
