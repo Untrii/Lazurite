@@ -1,5 +1,11 @@
+import { remote } from 'electron'
+import path from 'path'
+
 import getFontFamilyName from '@/util/getFontFamilyName'
+import isElectron from '@/util/isElectron'
 import warmupFont from '@/util/warmupFont'
+
+const { app } = remote
 
 const imageExtensions = ['jpg', 'jpeg', 'png', 'svg', 'gif']
 const videoExtensions = ['mp4', 'mkv', 'avi']
@@ -11,15 +17,42 @@ const pendingResources = new Map<string, Promise<void>>()
 type LoadedResource = HTMLImageElement | HTMLVideoElement | HTMLStyleElement
 type RequireManyResult = { [sourceName: string]: LoadedResource } | undefined
 
-export function startLoading(source: string) {
-  requireResource(source)
+type MacroName = 'user' | 'std' | 'proj'
+const macros: MacroName[] = ['user', 'std', 'proj']
+function getMacro(name: MacroName, presentationPath: string) {
+  if (isElectron()) {
+    switch (name) {
+      case 'user':
+        return app.getPath('userData').replaceAll('\\', '/')
+      case 'std':
+        return path.join(process.cwd(), 'data').replaceAll('\\', '/')
+      case 'proj':
+        const projectPath = presentationPath.replace('local://', '').replaceAll('\\', '')
+        const splittedPath = projectPath.split('/')
+        splittedPath.pop()
+        splittedPath.push('data')
+        return splittedPath.join('/')
+    }
+  } else throw new Error("Macro doesn't supported in browser")
+}
+function applyMacro(source: string, presentationPath: string) {
+  for (const macro of macros) {
+    source = source.replaceAll('#' + macro, getMacro(macro, presentationPath))
+  }
+  return source
 }
 
-export function requireMany(sources: string[]): RequireManyResult {
+export function startLoading(source: string, presentationPath: string) {
+  source = applyMacro(source, presentationPath)
+  requireResource(source, presentationPath)
+}
+
+export function requireMany(sources: string[], presentationPath: string): RequireManyResult {
   const result: RequireManyResult = {}
 
-  for (const item of sources) {
-    const resource = requireResource(item)
+  for (let item of sources) {
+    item = applyMacro(item, presentationPath)
+    const resource = requireResource(item, presentationPath)
     if (!resource) return
     result[item] = resource
   }
@@ -27,22 +60,31 @@ export function requireMany(sources: string[]): RequireManyResult {
   return result
 }
 
-export function requireResource(source: string, overrideExtension?: string): LoadedResource | undefined {
+export function requireResource(
+  source: string,
+  presentationPath: string,
+  overrideExtension?: string
+): LoadedResource | undefined {
+  source = applyMacro(source, presentationPath)
   if (!loadedResources.get(source)) {
-    requireResourceAsync(source)
+    requireResourceAsync(source, presentationPath, overrideExtension)
     return
   } else return loadedResources.get(source)
 }
 
-export async function requireResourceAsync(source: string, overrideExtension?: string): Promise<LoadedResource> {
+export async function requireResourceAsync(
+  source: string,
+  presentationPath: string,
+  overrideExtension?: string
+): Promise<LoadedResource> {
+  source = applyMacro(source, presentationPath)
   if (loadedResources.get(source)) return loadedResources.get(source)
-  const startTime = performance.now()
   if (!pendingResources.has(source)) {
     pendingResources.set(
       source,
       new Promise(async (resolve, reject) => {
         const fileName = source.split('/').pop()
-        const extension = overrideExtension ? overrideExtension : fileName.split('.').pop()
+        const extension = overrideExtension ?? fileName.split('.').pop()
         if (fileName == extension) reject('Files without extension is not allowed')
 
         const onLoad = (element: LoadedResource) => {

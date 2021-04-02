@@ -15,7 +15,7 @@ import FontList from './FontList'
 async function preloadFontPreviews() {
   const startTime = Date.now()
   const fonts = await io.getFonts()
-  await Promise.all(fonts.map((font) => requireResourceAsync(font.previewSource, 'svg')))
+  await Promise.all(fonts.map((font) => requireResourceAsync(font.previewSource, '', 'svg')))
   console.info(`Loaded font preview in ${Date.now() - startTime}ms`)
 }
 

@@ -5,7 +5,12 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import renderText from './objectRenderers/renderText'
 import renderBackground from './renderBackground'
 
-export default function render(ctx: CanvasRenderingContext2D, presentation: Presentation, slide: Slide) {
+export default function render(
+  ctx: CanvasRenderingContext2D,
+  presentation: Presentation,
+  presentationPath: string,
+  slide: Slide
+) {
   try {
     let targetWidth = ctx.canvas.width
     let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
@@ -13,7 +18,7 @@ export default function render(ctx: CanvasRenderingContext2D, presentation: Pres
 
     if (targetWidth < 4) return
 
-    renderBackground(ctx, resolution, presentation.theme.background)
+    renderBackground(ctx, resolution, presentation.theme.background, presentationPath)
 
     for (const objectID in slide) {
       const object = slide[objectID]
@@ -26,6 +31,6 @@ export default function render(ctx: CanvasRenderingContext2D, presentation: Pres
       }
     }
   } catch {
-    requestAnimationFrame(() => render(ctx, presentation, slide))
+    requestAnimationFrame(() => render(ctx, presentation, presentationPath, slide))
   }
 }

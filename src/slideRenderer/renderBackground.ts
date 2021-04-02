@@ -26,7 +26,8 @@ function getGradientCoords(resolution: RendererResolution, angle: number): [numb
 export default function renderBackground(
   ctx: CanvasRenderingContext2D,
   resolution: RendererResolution,
-  background: Background
+  background: Background,
+  presentationPath: string
 ) {
   switch (background.type) {
     case 'color':
@@ -53,7 +54,7 @@ export default function renderBackground(
       break
     case 'image':
       {
-        const image = requireResource(background.value) as HTMLImageElement
+        const image = requireResource(background.value, presentationPath) as HTMLImageElement
         if (image) {
           const { naturalWidth, naturalHeight } = image
           const { targetWidth, targetHeight } = resolution
@@ -70,7 +71,7 @@ export default function renderBackground(
       break
     case 'pattern':
       {
-        const image = requireResource(background.value) as HTMLImageElement
+        const image = requireResource(background.value, presentationPath) as HTMLImageElement
         if (image) {
           const { scale } = resolution
           const { naturalWidth, naturalHeight } = image
