@@ -7,8 +7,8 @@ function getGradientCoords(resolution: RendererResolution, angle: number): [numb
   const centerX = resolution.targetWidth / 2
   const centerY = resolution.targetHeight / 2
 
-  let canvasAngle = (angle + 270) % 360
-  const rads = (canvasAngle - 90) * (Math.PI / 180)
+  let canvasAngle = (angle + 180) % 360
+  const rads = canvasAngle * (Math.PI / 180)
 
   const hypt = centerY / Math.cos((rads + Math.PI) % (Math.PI / 2))
   const fromTopRight = centerX - Math.sqrt(hypt * hypt - centerY * centerY)
