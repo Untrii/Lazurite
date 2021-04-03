@@ -191,7 +191,7 @@ export default class ElectronIO extends IoManager {
       let parsedWeight = parseInt(fontWeight)
       if (isNaN(parsedWeight)) parsedWeight = 400
 
-      const normalizedFileName = path.join(fontsPath, file).replaceAll('\\', '/')
+      const normalizedFileName = '#std/fonts/' + file
       const source = 'local://' + normalizedFileName
       const previewSource = `font-preview://${normalizedFileName}::${fontName}`
 
