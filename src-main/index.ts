@@ -1,9 +1,6 @@
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { is } from 'electron-util'
-import path from 'path'
-import { promises as fs, existsSync } from 'fs'
-import crypto from 'crypto'
-import createFontPreview from './createFontPreview'
+import { createSafeFileProtocol, createFontPreviewProtocol } from './protocols'
 
 function loadRoute(window, route) {
   let url
@@ -42,57 +39,6 @@ function createMainWindow() {
 
   loadRoute(newMainWindow, '')
   mainWindow = newMainWindow
-}
-
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: 'local',
-    privileges: {
-      supportFetchAPI: true,
-      bypassCSP: true,
-      secure: true,
-    },
-  },
-  {
-    scheme: 'font-preview',
-    privileges: {
-      supportFetchAPI: true,
-      bypassCSP: true,
-      secure: true,
-    },
-  },
-])
-
-function createSafeFileProtocol(protocolName) {
-  protocol.registerFileProtocol(protocolName, (request, callback) => {
-    const url = request.url.replace(`${protocolName}://`, '')
-    try {
-      return callback(decodeURIComponent(url))
-    } catch (error) {
-      return null
-    }
-  })
-}
-
-async function createFontPreviewProtocol() {
-  protocol.registerFileProtocol('font-preview', async (request, callback) => {
-    const decodedURL = decodeURIComponent(request.url)
-    const [fontPath, fontName] = decodedURL.replace(`font-preview://`, '').split('::')
-    const hash = crypto.createHmac('sha256', 'font').update(request.url).digest('hex')
-
-    const previewFolder = path.join(app.getPath('userData'), 'Lazurite', 'FontPreview')
-    if (!existsSync(previewFolder)) fs.mkdir(previewFolder)
-
-    const previewFile = path.join(previewFolder, `${hash}.svg`)
-    try {
-      if (!existsSync(previewFile)) await createFontPreview(fontName, fontPath, previewFile)
-    } catch (msg) {
-      console.log(msg)
-      console.log({ fontPath, fontName, previewFile })
-    }
-
-    return callback(previewFile)
-  })
 }
 
 app.on('window-all-closed', () => {

@@ -2,6 +2,7 @@ import store from '@/store'
 import ioManager from '@/io'
 import TabStateModel from '@/models/store/TabStateModel'
 import { PresentationFile } from '@/models/store/AppStateModel'
+import { openTab } from './actions/navigation'
 
 export const startScreenPath = 'start://'
 
@@ -25,6 +26,7 @@ export default async function load() {
     else store.tabs.push(new TabStateModel(await ioManager.loadPresentation(path), path))
   }
   if (openedPaths.length == 0) store.tabs.push(TabStateModel.startScreen)
+  openTab(0)
 
   store.isLoaded = true
 

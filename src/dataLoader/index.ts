@@ -1,5 +1,7 @@
 import getFontFamilyName from '@/util/getFontFamilyName'
+import isElectron from '@/util/isElectron'
 import warmupFont from '@/util/warmupFont'
+import { ipcRenderer } from 'electron'
 
 const imageExtensions = ['jpg', 'jpeg', 'png', 'svg', 'gif']
 const videoExtensions = ['mp4', 'mkv', 'avi']
@@ -11,7 +13,22 @@ const pendingResources = new Map<string, Promise<void>>()
 type LoadedResource = HTMLImageElement | HTMLVideoElement | HTMLStyleElement
 type RequireManyResult = { [sourceName: string]: LoadedResource } | undefined
 
+const contexts = {}
+function applyContext(source: string) {
+  for (const contextName in contexts) {
+    source = source.replace('#' + contextName, contexts[contextName])
+  }
+  return source
+}
+
+export function setContext(contextName: string, value: string) {
+  debugger
+  if (contextName == 'proj' && isElectron()) ipcRenderer.sendSync('setProjectContext', value)
+  contexts[contextName] = value
+}
+
 export function startLoading(source: string) {
+  source = applyContext(source)
   requireResource(source)
 }
 
@@ -19,7 +36,7 @@ export function requireMany(sources: string[]): RequireManyResult {
   const result: RequireManyResult = {}
 
   for (const item of sources) {
-    const resource = requireResource(item)
+    const resource = requireResource(applyContext(item))
     if (!resource) return
     result[item] = resource
   }
@@ -28,13 +45,15 @@ export function requireMany(sources: string[]): RequireManyResult {
 }
 
 export function requireResource(source: string, overrideExtension?: string): LoadedResource | undefined {
+  source = applyContext(source)
   if (!loadedResources.get(source)) {
-    requireResourceAsync(source)
+    requireResourceAsync(source, overrideExtension)
     return
   } else return loadedResources.get(source)
 }
 
 export async function requireResourceAsync(source: string, overrideExtension?: string): Promise<LoadedResource> {
+  source = applyContext(source)
   if (loadedResources.get(source)) return loadedResources.get(source)
   const startTime = performance.now()
   if (!pendingResources.has(source)) {

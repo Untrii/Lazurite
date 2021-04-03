@@ -17,7 +17,7 @@ export default class AppStateModel {
     image: [],
   }
 
-  selectedTabIndex = 0
+  selectedTabIndex = -1
 
   panelSizes = {
     preview: 200,

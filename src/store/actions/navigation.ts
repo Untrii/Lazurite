@@ -5,6 +5,7 @@ import io from '@/io'
 import TabStateModel from '@/models/store/TabStateModel'
 import { PresentationFile } from '@/models/store/AppStateModel'
 import { startScreenPath, loadRecent } from '../load'
+import { setContext } from '@/dataLoader'
 
 async function addNewRecentPresentaion(path: string) {
   const presentations = await io.loadRecentPresentationPaths()
@@ -31,6 +32,7 @@ export function openWindow(name: EditorWindowName) {
 
 export function openTab(index: number) {
   store.selectedTabIndex = index
+  setContext('proj', store.tabs[index].presentationPath.replace('local://', '').replaceAll('\\', '/'))
 }
 
 export function replaceTab(prevIndex: number, newIndex: number) {

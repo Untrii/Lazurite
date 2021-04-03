@@ -151,15 +151,15 @@ if (isElectron()) {
       for (const pathName in paths) if (!existsSync(paths[pathName])) fs.mkdir(paths[pathName])
 
       const patterns = await fs.readdir(paths.patterns)
-      const fullPatternPaths = patterns.map((item) => joinWebPath(paths.patterns, item))
+      const fullPatternPaths = patterns.map((item) => joinWebPath('#std/patterns', item))
       const images = await fs.readdir(paths.images)
-      const fullImagePaths = images.map((item) => joinWebPath(paths.images, item))
+      const fullImagePaths = images.map((item) => joinWebPath('#std/images', item))
       const imagePreviews = new Set(await fs.readdir(paths.bgPreview))
 
       const previewsMap = new Map<string, string>()
       for (const image of images) {
         if (imagePreviews.has(image))
-          previewsMap.set(joinWebPath(paths.images, image), joinWebPath(paths.bgPreview, image))
+          previewsMap.set(joinWebPath('#std/images', image), joinWebPath(paths.bgPreview, image))
       }
 
       result.pattern = await createBackgrounds('pattern', fullPatternPaths)
