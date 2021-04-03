@@ -22,7 +22,6 @@ function applyContext(source: string) {
 }
 
 export function setContext(contextName: string, value: string) {
-  debugger
   if (contextName == 'proj' && isElectron()) ipcRenderer.sendSync('setProjectContext', value)
   contexts[contextName] = value
 }
