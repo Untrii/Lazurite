@@ -9,7 +9,6 @@ interface ISlideProps {
   width: number
   height: number
   presentation: Presentation
-  presentationPath: string
   slide: SlideModel
 }
 
@@ -23,7 +22,7 @@ const Slide = (props: ISlideProps) => {
     let canvasElement = canvas.current
     canvasElement.width = canvasWidth
     canvasElement.height = canvasHeight
-    render(canvasElement.getContext('2d'), props.presentation, props.presentationPath, props.slide)
+    render(canvasElement.getContext('2d'), props.presentation, props.slide)
   })
 
   let canvasStyle = {

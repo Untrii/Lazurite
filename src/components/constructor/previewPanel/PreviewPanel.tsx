@@ -14,7 +14,6 @@ const PreviewPanel = () => {
   const slideHeight = (slideWidth / 16) * 9
 
   const presentation = store.currentTab.openedPresentation
-  const presentationPath = store.currentTab.presentationPath
 
   const onSlideDelete = function (index: number) {
     return (event: MouseEvent) => {
@@ -33,13 +32,7 @@ const PreviewPanel = () => {
           <div class="preview-panel__slide-delete" onClick={onSlideDelete(index)}>
             <img src={assets.delete} alt="" />
           </div>
-          <Slide
-            width={slideWidth}
-            height={slideHeight}
-            slide={slide}
-            presentation={presentation}
-            presentationPath={presentationPath}
-          />
+          <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} />
         </div>
       ))}
 

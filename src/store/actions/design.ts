@@ -36,7 +36,7 @@ export function changeDefaultColor(defaultName: DefaultsName, color: Color) {
 export function changeBackground(bg: Background) {
   const theme = getCurrentTheme()
   theme.background = bg
-  if (bg.type == 'image') requireResourceAsync(bg.value, store.currentTab.presentationPath)
+  if (bg.type == 'image') requireResourceAsync(bg.value)
   saveCurrentPresentation()
 }
 

@@ -7,7 +7,6 @@ import { useReactiveState } from '@/util/reactivity'
 import getFontFamilyName from '@/util/getFontFamilyName'
 import getFontScale from '@/util/getFontScale'
 import assets from '@/assets'
-import store from '@/store'
 
 import Prepend from '@/components/controls/Prepend'
 import NumberInput from '@/components/controls/NumberInput'
@@ -57,8 +56,7 @@ const PresetCard = ({
   })
 
   const renderUpper = function () {
-    const presentationPath = store.currentTab.presentationPath
-    const isFontLoaded = requireResource(fontSource, presentationPath)
+    const isFontLoaded = requireResource(fontSource)
     const updateFont = function () {
       const family = getFontFamilyName(fontSource)
       const weight = selectedWeight
@@ -66,7 +64,7 @@ const PresetCard = ({
       state.loadedFont = { family, weight, scale }
     }
 
-    if (!isFontLoaded) requireResourceAsync(fontSource, presentationPath).then(() => updateFont())
+    if (!isFontLoaded) requireResourceAsync(fontSource).then(() => updateFont())
     else updateFont()
 
     const inputStyle = {

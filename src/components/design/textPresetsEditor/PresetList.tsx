@@ -55,10 +55,9 @@ const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) 
       design.deleteFontPreset(index)
     }
 
-    const presentationPath = store.currentTab.presentationPath
     return presets.map((preset, index) => {
       const font = getFontByName(preset.fontName)
-      requireResource(preset.fontSource, presentationPath)
+      requireResource(preset.fontSource)
 
       return (
         <PresetCard

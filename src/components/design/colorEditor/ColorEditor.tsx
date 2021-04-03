@@ -42,7 +42,6 @@ const tabs: { displayName: string; name: BackgroundType }[] = [
 
 const ColorEditor = () => {
   const presentation = store.currentTab.openedPresentation
-  const presentationPath = store.currentTab.presentationPath
   const theme = presentation.theme
   const { background, defaults } = theme
 
@@ -227,13 +226,7 @@ const ColorEditor = () => {
           <DefaultsGroup title={presetGroup.title} tiles={presetGroup.tiles} tileSize={defaultsTileSize} />
         ))}
         <div class="color-editor__preview">
-          <Slide
-            width={previewWidth}
-            height={previewHeight}
-            presentation={presentation}
-            slide={previewSlide}
-            presentationPath={presentationPath}
-          />
+          <Slide width={previewWidth} height={previewHeight} presentation={presentation} slide={previewSlide} />
         </div>
       </div>
     )
@@ -241,7 +234,7 @@ const ColorEditor = () => {
 
   return (
     <div class="color-editor">
-      <div class="color-editor__left-block" style={{ width: paletteGroupWidth }}>
+      <div class="color-editor__palette" style={{ width: paletteGroupWidth }}>
         {renderNav()}
         {renderPalettes()}
       </div>
