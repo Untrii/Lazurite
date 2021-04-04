@@ -8,10 +8,12 @@ import assets from '@/assets'
 import AnimatedDialogBox from './AnimatedDialogBox'
 import Button from '../controls/Button'
 
+type FilePath = string
+
 interface IFilePickerProps {
   isHiding: boolean
   extensions?: string[]
-  onSelected?: (paths: string[]) => void
+  onSelected?: (files: (FilePath | ArrayBuffer)[]) => void
 }
 
 const FilePicker = ({ isHiding, extensions, onSelected }: IFilePickerProps) => {
@@ -33,20 +35,32 @@ const FilePicker = ({ isHiding, extensions, onSelected }: IFilePickerProps) => {
     event.preventDefault()
   }
 
-  const onDrop = function (event: DragEvent) {
+  const onDrop = async function (event: DragEvent) {
     setIsHovered(false)
     const files = event.dataTransfer.files
 
-    const pathsToAdd = []
+    const filesToAdd = [] as (FilePath | ArrayBuffer)[]
 
     for (let i = 0; i < files.length; i++) {
       const file = files.item(i)
       const [name, extension] = file.name.split('.')
       if (extensions && !extensions.includes(extension)) continue
-      else pathsToAdd.push(file.path)
+      else filesToAdd.push(file.path)
     }
-    onSelected?.(pathsToAdd)
-    console.log(pathsToAdd)
+    const items = event.dataTransfer.items
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type == 'text/uri-list') {
+        const data = await new Promise<Response>((resolve, reject) => {
+          items[i].getAsString((str) => {
+            fetch(str).then(resolve).catch(reject)
+          })
+        })
+        const blob = await data.blob()
+        if (blob.type.startsWith('image')) filesToAdd.push(await blob.arrayBuffer())
+      }
+    }
+    onSelected?.(filesToAdd)
+    console.log(filesToAdd)
   }
 
   return (

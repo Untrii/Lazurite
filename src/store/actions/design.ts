@@ -25,7 +25,7 @@ const getCurrentTheme = function () {
   return store.currentTab.openedPresentation.theme
 }
 
-async function saveImageFile(file: string, type: 'pattern' | 'image') {
+async function saveImageFile(file: string | ArrayBuffer, type: 'pattern' | 'image') {
   if (isElectron()) {
     const folderName = type == 'image' ? 'images' : 'patterns'
 
@@ -33,16 +33,24 @@ async function saveImageFile(file: string, type: 'pattern' | 'image') {
     const previewFolder = path.join(dataFolder, 'preview')
 
     try {
-      file = file.replaceAll('\\', '/')
-
       if (!existsSync(dataFolder)) await mkdir(dataFolder)
       if (type == 'image' && !existsSync(previewFolder)) await mkdir(previewFolder)
 
-      const extension = file.split('.').pop()
+      let extension = 'jpg'
+      if (typeof file == 'string') {
+        file = file.replaceAll('\\', '/')
+        extension = file.split('.').pop()
+      }
+
       const shortName = randomString(12) + '.' + extension
       const imagePath = path.join(dataFolder, shortName)
       const previewPath = path.join(previewFolder, shortName)
-      await copyFile(file, imagePath)
+
+      if (typeof file == 'string') {
+        await copyFile(file, imagePath)
+      } else {
+        await writeFile(imagePath, new Uint8Array(file))
+      }
 
       const imageURL = `local://#user/${folderName}/` + shortName
       const bg = new Background()
@@ -66,13 +74,13 @@ async function saveImageFile(file: string, type: 'pattern' | 'image') {
   }
 }
 
-export async function addImages(files: string[]) {
+export async function addImages(files: (string | ArrayBuffer)[]) {
   for (const file of files) {
     await saveImageFile(file, 'image')
   }
 }
 
-export async function addPatterns(files: string[]) {
+export async function addPatterns(files: (string | ArrayBuffer)[]) {
   for (const file of files) {
     await saveImageFile(file, 'pattern')
   }

@@ -135,7 +135,7 @@ const ColorEditor = () => {
       addUserBackground(bg)
     }
 
-    const onFilesPicked = function (paths: string[]) {
+    const onFilesPicked = function (paths: (string | ArrayBuffer)[]) {
       togglePopper(false)
       if (tabName == 'image') addImages(paths)
       if (tabName == 'pattern') addPatterns(paths)
