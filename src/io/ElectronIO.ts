@@ -1,6 +1,6 @@
 import { existsSync, promises } from 'fs'
 import path from 'path'
-import { remote } from 'electron'
+import { ipcRenderer, remote } from 'electron'
 
 import Presentation from '@/models/presentation/Presentation'
 import { BackgroundCollection } from '@/models/presentation/theme/Background'
@@ -211,5 +211,27 @@ export default class ElectronIO extends IoManager {
     }
 
     return Array.from(fonts.values())
+  }
+
+  _pendingFiles = new Map<string, { resolve: () => void; reject: () => void }>()
+  _isListenerSet = false
+  delete(url: string) {
+    if (!this._isListenerSet) {
+      ipcRenderer.on('deleteFileResult', (event, path, result) => {
+        if (this._pendingFiles.has(path)) {
+          const { resolve, reject } = this._pendingFiles.get(path)
+          if (result == 'OK') resolve()
+          else reject()
+          this._pendingFiles.delete(url)
+        }
+      })
+      this._isListenerSet = true
+    }
+    const promiseHandler = (resolve, reject) => {
+      const path = url.replace('local://', '')
+      this._pendingFiles.set(path, { resolve, reject })
+      ipcRenderer.send('deleteFile', path)
+    }
+    return new Promise<void>(promiseHandler)
   }
 }

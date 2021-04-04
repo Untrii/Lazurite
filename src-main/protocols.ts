@@ -22,6 +22,18 @@ ipcMain.on('setProjectContext', (event, arg) => {
   event.returnValue = ''
 })
 
+ipcMain.on('deleteFile', async (event, arg) => {
+  const originalPath = arg
+  arg = applyContext(arg)
+  let result = 'OK'
+  try {
+    await fs.unlink(arg)
+  } catch {
+    result = 'error'
+  }
+  event.reply('deleteFileResult', originalPath, result)
+})
+
 export function createSafeFileProtocol(protocolName) {
   protocol.registerFileProtocol(protocolName, (request, callback) => {
     const decodedURL = decodeURIComponent(request.url)

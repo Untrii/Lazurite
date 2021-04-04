@@ -1,17 +1,81 @@
+import { promises, existsSync } from 'fs'
+import { remote } from 'electron'
+import path from 'path'
+
+import Color from '@/models/common/Color'
+import Font from '@/models/common/Font'
+import FontPreset from '@/models/presentation/theme/FontPreset'
 import Background, { BackgroundType } from '@/models/presentation/theme/Background'
+import { requireResourceAsync } from '@/dataLoader'
 import store from '@/store'
 import io from '@/io'
-import Color from '@/models/common/Color'
+import isElectron from '@/util/isElectron'
+import randomString from '@/util/randomString'
+
 import { saveCurrentPresentation } from './util'
-import { requireResourceAsync } from '@/dataLoader'
-import FontPreset from '@/models/presentation/theme/FontPreset'
-import Theme from '@/models/presentation/theme/Theme'
-import Font from '@/models/common/Font'
+import createImagePreview from '@/util/createImagePreview'
+import getMedianColor from '@/util/getMedianColor'
+
+const { app } = remote
+const { copyFile, writeFile, mkdir } = promises
 
 type DefaultsName = keyof typeof store.currentTab.openedPresentation.theme.defaults
 
 const getCurrentTheme = function () {
   return store.currentTab.openedPresentation.theme
+}
+
+async function saveImageFile(file: string, type: 'pattern' | 'image') {
+  if (isElectron()) {
+    const folderName = type == 'image' ? 'images' : 'patterns'
+
+    const dataFolder = path.join(app.getPath('userData'), folderName)
+    const previewFolder = path.join(dataFolder, 'preview')
+
+    try {
+      file = file.replaceAll('\\', '/')
+
+      if (!existsSync(dataFolder)) await mkdir(dataFolder)
+      if (type == 'image' && !existsSync(previewFolder)) await mkdir(previewFolder)
+
+      const extension = file.split('.').pop()
+      const shortName = randomString(12) + '.' + extension
+      const imagePath = path.join(dataFolder, shortName)
+      const previewPath = path.join(previewFolder, shortName)
+      await copyFile(file, imagePath)
+
+      const imageURL = `local://#user/${folderName}/` + shortName
+      const bg = new Background()
+      bg.type = type
+      bg.medianColor = await getMedianColor('image', imageURL)
+      bg.value = bg.displayValue = imageURL
+
+      if (type == 'image') {
+        const previewURL = `local://#user/${folderName}/preview/` + shortName
+        const preview = await createImagePreview(imageURL)
+        await writeFile(previewPath, new Uint8Array(preview))
+        bg.displayValue = previewURL
+      }
+
+      addUserBackground(bg)
+    } catch (error) {
+      console.error(error)
+    }
+  } else {
+    throw new Error("Image adding doesn't implemented in web version")
+  }
+}
+
+export async function addImages(files: string[]) {
+  for (const file of files) {
+    await saveImageFile(file, 'image')
+  }
+}
+
+export async function addPatterns(files: string[]) {
+  for (const file of files) {
+    await saveImageFile(file, 'pattern')
+  }
 }
 
 export function addUserBackground(bg: Background) {
@@ -20,10 +84,16 @@ export function addUserBackground(bg: Background) {
   io.saveUserBackgrounds(store.userBackgrounds)
 }
 
-export function deleteUserBackground(type: BackgroundType, index: number) {
+export async function deleteUserBackground(type: BackgroundType, index: number) {
   if (index >= 0 && index < store.userBackgrounds[type].length) {
+    const deletingBackgound = store.userBackgrounds[type][index]
     store.userBackgrounds[type].splice(index, 1)
-    io.saveUserBackgrounds(store.userBackgrounds)
+    await io.saveUserBackgrounds(store.userBackgrounds)
+
+    if (deletingBackgound.type == 'image' || deletingBackgound.type == 'pattern') {
+      await io.delete(deletingBackgound.value)
+      await io.delete(deletingBackgound.displayValue)
+    }
   }
 }
 

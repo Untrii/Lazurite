@@ -9,8 +9,8 @@ import { hsvToRgb, rgbToHsv } from '@/util/colorConvertion'
 import Prepend from '../controls/Prepend'
 import Button from '../controls/Button'
 import NumberInput from '../controls/NumberInput'
-import useForceUpdate from '@/util/useForceUpdate'
 import { useEffect } from 'preact/hooks'
+import AnimatedDialogBox from './AnimatedDialogBox'
 
 interface IColor {
   r: number
@@ -460,18 +460,11 @@ const ColorPicker = ({
     }
   })
 
-  const rootClasses = ['color-picker']
-
-  if (isHiding) {
-    rootClasses.push('color-picker_hidden')
-  } else {
-    rootClasses.push('color-picker_visible')
-  }
-
-  if (mode == 'gradient') rootClasses.push('color-picker_mode_gradient')
+  const width = 168
+  const height = mode == 'color' ? 374 : 432
 
   return (
-    <div class={rootClasses.join(' ')}>
+    <AnimatedDialogBox isHiding={isHiding} width={width} height={height}>
       {renderMainBox()}
       <div class="color-picker__edit-box">
         {renderHueSelector()}
@@ -479,7 +472,7 @@ const ColorPicker = ({
         {mode == 'gradient' ? renderGradientControls() : null}
         {renderBottomPanel()}
       </div>
-    </div>
+    </AnimatedDialogBox>
   )
 }
 export default ColorPicker

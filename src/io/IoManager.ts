@@ -15,6 +15,8 @@ export default abstract class IOManager {
 
   abstract createNewPresentaiton(name: string, author: string): Promise<[Presentation, string]>
 
+  abstract delete(url: string): Promise<void>
+
   abstract getFonts(): Promise<Font[]>
 
   private validateArray<T>(parsedJson: any, itemValidator: (arrayEntry: any) => boolean): [T[], boolean] {

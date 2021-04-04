@@ -14,6 +14,7 @@ interface IPaletteGroupProps {
   addButton?: boolean
   onSelected?: (index: number) => void
   onAddButtonClick?: (event: MouseEvent) => void
+  onAddButtonDragEnter?: () => void
   addButtonPopper?: JSX.Element
   deleteable?: boolean
   onDelete?: (index: number) => void
@@ -26,6 +27,7 @@ const PaletteGroup = ({
   addButton,
   onSelected,
   onAddButtonClick,
+  onAddButtonDragEnter,
   addButtonPopper,
   deleteable,
   onDelete,
@@ -77,6 +79,9 @@ const PaletteGroup = ({
               style={{ height: tileSize + 'px', width: tileSize + 'px' }}
               onClick={(event) => {
                 onAddButtonClick?.(event)
+              }}
+              onDragEnter={() => {
+                onAddButtonDragEnter?.()
               }}
             >
               <img src={assets.add} alt="" />

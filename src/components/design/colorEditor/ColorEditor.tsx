@@ -5,7 +5,14 @@ import { useEffect, useState } from 'preact/hooks'
 
 import backgrounds from '@/presets/backgrounds'
 import store from '@/store'
-import { addUserBackground, changeBackground, changeDefaultColor, deleteUserBackground } from '@/store/actions/design'
+import {
+  addImages,
+  addPatterns,
+  addUserBackground,
+  changeBackground,
+  changeDefaultColor,
+  deleteUserBackground,
+} from '@/store/actions/design'
 import Background, { BackgroundType } from '@/models/presentation/theme/Background'
 import Color from '@/models/common/Color'
 import useDelayedUnmount from '@/util/useDelayedUnmount'
@@ -16,6 +23,7 @@ import Slide from '@/components/constructor/Slide'
 import PaletteGroup from './PaletteGroup'
 import DefaultsGroup from './DefaultsGroup'
 import getMedianColorSync from '@/util/getMedianColorSync'
+import FilePicker from '@/components/dialogs/FilePicker'
 
 const tabs: { displayName: string; name: BackgroundType }[] = [
   {
@@ -59,8 +67,7 @@ const ColorEditor = () => {
   const togglePopper = function (val: boolean) {
     if (isPopperShown != val)
       if (new Date().getTime() - lastChangeTime.getTime() > 500) {
-        const tabName = tabs[currentTabIndex].name
-        if (tabName == 'color' || tabName == 'gradient') setIsPopperShown(val)
+        setIsPopperShown(val)
         setLastChangeTime(new Date())
       }
   }
@@ -98,8 +105,14 @@ const ColorEditor = () => {
   }
 
   const renderPalettes = function () {
+    const tabName = tabs[currentTabIndex].name
+
     const onAddButtonClick = function (event: MouseEvent) {
       togglePopper(!isPopperShown)
+    }
+
+    const onAddButtonDragEnter = function () {
+      togglePopper(true)
     }
 
     const onColorPicked = function (color: Color) {
@@ -122,17 +135,35 @@ const ColorEditor = () => {
       addUserBackground(bg)
     }
 
-    const addButtonPopper = useDelayedUnmount(
-      <ColorPicker
-        onCancel={() => togglePopper(false)}
-        onColorPicked={onColorPicked}
-        onGradientPicked={onGradientPicked}
-        isHiding={!isPopperShown}
-        mode={tabs[currentTabIndex].name as any}
-      />,
-      isPopperShown,
-      500
-    )
+    const onFilesPicked = function (paths: string[]) {
+      togglePopper(false)
+      if (tabName == 'image') addImages(paths)
+      if (tabName == 'pattern') addPatterns(paths)
+    }
+
+    let popperContent = null
+    switch (tabName) {
+      case 'color':
+      case 'gradient':
+        popperContent = (
+          <ColorPicker
+            onCancel={() => togglePopper(false)}
+            onColorPicked={onColorPicked}
+            onGradientPicked={onGradientPicked}
+            isHiding={!isPopperShown}
+            mode={tabs[currentTabIndex].name as any}
+          />
+        )
+        break
+      case 'image':
+      case 'pattern':
+        popperContent = (
+          <FilePicker isHiding={!isPopperShown} onSelected={onFilesPicked} extensions={['png', 'jpg', 'jpeg']} />
+        )
+        break
+    }
+
+    const addButtonPopper = useDelayedUnmount(popperContent, isPopperShown, 500)
 
     const onUserBackgroundSelected = function (index: number) {
       changeBackground(store.userBackgrounds[tabs[currentTabIndex].name][index])
@@ -151,6 +182,7 @@ const ColorEditor = () => {
         <PaletteGroup
           addButton
           onAddButtonClick={onAddButtonClick}
+          onAddButtonDragEnter={onAddButtonDragEnter}
           addButtonPopper={addButtonPopper}
           title="User colors"
           tiles={store.userBackgrounds[tabs[currentTabIndex].name]}
