@@ -115,6 +115,7 @@ const StartScreen = () => {
                   text={button.name}
                   size="large"
                   blockLevel
+                  centred
                   className="start-screen__button"
                   onClick={button.onCLick}
                   key={index}
