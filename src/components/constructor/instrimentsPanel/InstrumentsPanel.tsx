@@ -6,10 +6,8 @@ import { useState } from 'preact/hooks'
 import assets from '@/assets'
 
 import VerticalNav, { INavItem } from '@/components/controls/VerticalNav'
-import NumberInput from '@/components/controls/NumberInput'
-import CompactRadio from '@/components/controls/CompactRadio'
-import ColorPicker from '@/components/dialogs/ColorPicker'
-import SearchBox from '@/components/controls/SearchBox'
+import Button from '@/components/controls/Button'
+import AddTab from './AddTab'
 
 const InstrumentsPanel = () => {
   const tabs: INavItem[] = [
@@ -33,23 +31,18 @@ const InstrumentsPanel = () => {
     setTabIndex(index)
   }
 
+  const getTab = function () {
+    switch (tabIndex) {
+      case 0:
+        return <AddTab />
+      default:
+        return null
+    }
+  }
+
   return (
     <div class="instruments-panel">
-      <div class="instruments-panel__content">
-        <NumberInput prepend="Number input" />
-
-        <CompactRadio
-          prepend="Abracadabra: "
-          colorName="blue-500"
-          variants={[
-            { displayName: '1', icon: assets.add },
-            { displayName: '2', icon: assets.add },
-          ]}
-        />
-
-        <ColorPicker />
-        <SearchBox />
-      </div>
+      <div class="instruments-panel__content">{getTab()}</div>
       <VerticalNav items={tabs} selectedItemIndex={tabIndex} onChange={onChange} />
     </div>
   )

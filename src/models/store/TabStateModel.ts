@@ -1,3 +1,4 @@
+import { AnyTool, PointerTool } from '../editor/Tool'
 import Presentation from '../presentation/Presentation'
 import Slide from '../presentation/Slide'
 
@@ -8,11 +9,15 @@ export type ConstructorTab = 'add' | 'edit'
 export default class TabStateModel {
   presentationPath: string
   openedPresentation: Presentation
-  selectedSlideIndex = 0
-  openededDesignTab = 'color' as DesignTab
-  openedConstructorTab = 'add' as ConstructorTab
-  openedEditorWindow = 'constructor' as EditorWindowName
   isStartScreen = false
+  openedEditorWindow = 'constructor' as EditorWindowName
+
+  selectedSlideIndex = 0
+  openedConstructorTab = 'add' as ConstructorTab
+  addTabToolIndex = [0, 0] as [number, number]
+  tool = new PointerTool() as AnyTool
+
+  openededDesignTab = 'color' as DesignTab
 
   get currentSlide(): Slide | undefined {
     return this.openedPresentation.slides[this.selectedSlideIndex]

@@ -1,0 +1,18 @@
+.add-tab {
+  &__group {
+    margin-bottom: 16px;
+  }
+
+  &__group-title {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0 0 8px 8px;
+    color: white;
+  }
+
+  &__group-button {
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
+  }
+}

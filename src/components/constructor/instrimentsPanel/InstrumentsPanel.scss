@@ -4,13 +4,13 @@
   width: 240px;
   height: 100%;
   background: $blue-400;
-  height: 100%;
+  height: calc(100vh - 70px);
   display: grid;
   grid-template-columns: 200px 40px;
   overflow: scroll;
 
   &__content {
-    padding: 16px;
+    padding: 12px;
   }
 
   &::-webkit-scrollbar {
