@@ -5,6 +5,7 @@ import { h } from 'preact'
 import store from '@/store'
 
 import Slide from '../Slide'
+import ToolOverlay from './ToolOverlay'
 
 interface IWorkspaceProps {
   width: number
@@ -24,9 +25,17 @@ const Workspace = (props: IWorkspaceProps) => {
     width: slideWidth + 'px',
   }
   return (
-    <div style={rootStyle}>
+    <div style={rootStyle} class="workspace">
       {slide ? (
-        <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} />
+        <ToolOverlay width={slideWidth} height={slideHeight}>
+          <Slide
+            width={slideWidth}
+            height={slideHeight}
+            slide={slide}
+            presentation={presentation}
+            selection={currentTab.selection}
+          />
+        </ToolOverlay>
       ) : (
         <div class="workspace__placeholder" style={{ height: slideHeight }}>
           There is no slides

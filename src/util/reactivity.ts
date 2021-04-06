@@ -1,6 +1,6 @@
 import { observable, observe, unobserve } from '@nx-js/observer-util'
 import { FunctionalComponent, options } from 'preact'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { Inputs, useEffect, useLayoutEffect, useMemo, useState } from 'preact/hooks'
 
 /**
  * Позволяет отслеживать реактивные зависимости компонента
@@ -66,6 +66,20 @@ export function useReactiveState<T extends Object>(initialState: T | (() => T)) 
     return observable(initialState as T)
   })
   return state
+}
+
+export function useReactiveLayoutEffect(callback: () => void, inputs?: Inputs) {
+  const [, requestRerender] = useState({})
+  const reactiveCallback = useMemo(
+    () =>
+      observe(callback, {
+        scheduler: () => requestRerender({}),
+        lazy: true,
+      }),
+    // В оригинальной либе для React написано, что так надо, чтобы девтулзы не ломались
+    [callback]
+  )
+  useLayoutEffect(reactiveCallback, inputs)
 }
 
 /**

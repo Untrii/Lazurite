@@ -1,3 +1,4 @@
+import ObjectSelection from '../editor/ObjectSelection'
 import { AnyTool, PointerTool } from '../editor/Tool'
 import Presentation from '../presentation/Presentation'
 import Slide from '../presentation/Slide'
@@ -15,7 +16,8 @@ export default class TabStateModel {
   selectedSlideIndex = 0
   openedConstructorTab = 'add' as ConstructorTab
   addTabToolIndex = [0, 0] as [number, number]
-  tool = new PointerTool() as AnyTool
+  tool = null as AnyTool | null
+  selection = new ObjectSelection()
 
   openededDesignTab = 'color' as DesignTab
 

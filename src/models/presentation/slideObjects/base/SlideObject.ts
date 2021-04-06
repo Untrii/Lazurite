@@ -8,4 +8,12 @@ export default class SlideObject {
   width = 0
   height = 0
   zIndex = 0
+
+  get bottom(): number {
+    return this.top + this.height
+  }
+
+  get right(): number {
+    return this.left + this.width
+  }
 }

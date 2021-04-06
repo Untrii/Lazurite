@@ -4,8 +4,13 @@ import { h, JSX } from 'preact'
 
 import assets from '@/assets'
 import store from '@/store'
-import { AnyTool, PointerTool } from '@/models/editor/Tool'
+import { AnyTool, AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
+import FontPreset from '@/models/presentation/theme/FontPreset'
 import Button from '@/components/controls/Button'
+import { addObjectOnSlide, onAreaSelect, onPointerClick, select, setTool } from '@/store/actions/constructor'
+import { getCurrentPresentation, isAnySlideExists, nextZIndex } from '@/store/getters/slide'
+import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
+import { useState } from 'preact/hooks'
 
 interface IToolButton {
   displayName: string
@@ -20,6 +25,40 @@ interface IButtonGroup {
   items: IToolButton[]
 }
 
+function createPointer() {
+  const result = new PointerTool()
+  result.addListener('click', ({ x, y, ctrl }) => {
+    onPointerClick(x, y, ctrl)
+  })
+  result.addListener('areaSelect', ({ top, left, right, bottom, ctrl }) => {
+    onAreaSelect(top, left, right, bottom, ctrl)
+  })
+  return result
+}
+
+function createTextTool(preset: FontPreset) {
+  const presentation = getCurrentPresentation()
+  const result = new AreaDrawerTool()
+
+  result.addListener('areaSelect', ({ top, left, right, bottom }) => {
+    const textBlock = new TextSlideObject()
+    textBlock.top = top
+    textBlock.left = left
+    textBlock.width = right - left
+    textBlock.height = bottom - top
+    textBlock.content = 'Test content'
+    textBlock.style.fontFamily = preset.fontFamily
+    textBlock.style.fontSize = preset.size
+    textBlock.style.fontWeight = preset.weight
+    textBlock.style.color = presentation.theme.defaults.mainText
+
+    textBlock.zIndex = nextZIndex()
+    addObjectOnSlide(textBlock)
+    select(textBlock)
+  })
+  return result
+}
+
 function getButtonGroups(): IButtonGroup[] {
   const fontPresets = store.currentTab.openedPresentation.theme.fontPresets
 
@@ -32,7 +71,7 @@ function getButtonGroups(): IButtonGroup[] {
         displayName: 'Pointer',
         icon: assets.pointer,
         iconScale: 1,
-        tool: new PointerTool(),
+        tool: createPointer(),
       },
     ],
   })
@@ -55,7 +94,7 @@ function getButtonGroups(): IButtonGroup[] {
       displayName: preset.name,
       icon: previewURL,
       iconScale,
-      tool: new PointerTool(),
+      tool: createTextTool(preset),
     })
   }
   result.push({
@@ -71,25 +110,38 @@ const AddTab = () => {
   const buttonGroups: IButtonGroup[] = getButtonGroups()
   const [selectedGroupIndex, selectedItemIndex] = store.currentTab.addTabToolIndex
 
+  const changeTabTool = function (groupIndex: number, itemIndex: number) {
+    setTool([groupIndex, itemIndex], buttonGroups[groupIndex].items[itemIndex].tool)
+  }
+
+  useState(() => {
+    changeTabTool(0, 0)
+  })
+
   return (
     <div class="add-tab">
-      {buttonGroups.map((group, groupIndex) => (
-        <div class="add-tab__group">
-          {group.displayName ? <h3 class="add-tab__group-title">{group.displayName}</h3> : null}
-          {group.items.map((item, itemIndex) => (
-            <div class="add-tab__group-button">
-              <Button
-                text={item.displayName}
-                icon={item.icon}
-                iconScale={item.iconScale}
-                size="large"
-                blockLevel
-                pressed={selectedGroupIndex == groupIndex && selectedItemIndex == itemIndex}
-              />
-            </div>
-          ))}
-        </div>
-      ))}
+      {isAnySlideExists() ? (
+        buttonGroups.map((group, groupIndex) => (
+          <div class="add-tab__group">
+            {group.displayName ? <h3 class="add-tab__group-title">{group.displayName}</h3> : null}
+            {group.items.map((item, itemIndex) => (
+              <div class="add-tab__group-button">
+                <Button
+                  text={item.displayName}
+                  icon={item.icon}
+                  iconScale={item.iconScale}
+                  size="large"
+                  blockLevel
+                  pressed={selectedGroupIndex == groupIndex && selectedItemIndex == itemIndex}
+                  onClick={() => changeTabTool(groupIndex, itemIndex)}
+                />
+              </div>
+            ))}
+          </div>
+        ))
+      ) : (
+        <div class="add-tab__empty">Please, create slide</div>
+      )}
     </div>
   )
 }

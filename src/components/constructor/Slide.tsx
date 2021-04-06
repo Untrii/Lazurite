@@ -4,12 +4,15 @@ import render from '@/slideRenderer'
 import { h } from 'preact'
 import { useLayoutEffect, useRef } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
+import { useReactiveLayoutEffect } from '@/util/reactivity'
+import ObjectSelection from '@/models/editor/ObjectSelection'
 
 interface ISlideProps {
   width: number
   height: number
   presentation: Presentation
   slide: SlideModel
+  selection?: ObjectSelection
 }
 
 const Slide = (props: ISlideProps) => {
@@ -18,11 +21,11 @@ const Slide = (props: ISlideProps) => {
   let canvasWidth = props.width
   let canvasHeight = props.height
 
-  useLayoutEffect(() => {
+  useReactiveLayoutEffect(() => {
     let canvasElement = canvas.current
     canvasElement.width = canvasWidth
     canvasElement.height = canvasHeight
-    render(canvasElement.getContext('2d'), props.presentation, props.slide)
+    render(canvasElement.getContext('2d'), props.presentation, props.slide, props.selection)
   })
 
   let canvasStyle = {

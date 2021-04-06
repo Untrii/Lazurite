@@ -1,22 +1,28 @@
+import ObjectSelection from '@/models/editor/ObjectSelection'
 import Presentation from '@/models/presentation/Presentation'
 import Slide from '@/models/presentation/Slide'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import renderText from './objectRenderers/renderText'
 import renderBackground from './renderBackground'
+import renderSelection from './renderSelection'
 
-export default function render(ctx: CanvasRenderingContext2D, presentation: Presentation, slide: Slide) {
+export default function render(
+  ctx: CanvasRenderingContext2D,
+  presentation: Presentation,
+  slide: Slide,
+  selection?: ObjectSelection
+) {
+  let targetWidth = ctx.canvas.width
+  let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
   try {
-    let targetWidth = ctx.canvas.width
-    let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
     resolution.targetWidth = targetWidth
 
     if (targetWidth < 4) return
 
     renderBackground(ctx, resolution, presentation.theme.background)
 
-    for (const objectID in slide) {
-      const object = slide[objectID]
+    for (const object of slide) {
       switch (object.type) {
         case TextSlideObject.name:
           renderText(ctx, resolution, object as TextSlideObject)
@@ -27,5 +33,9 @@ export default function render(ctx: CanvasRenderingContext2D, presentation: Pres
     }
   } catch {
     requestAnimationFrame(() => render(ctx, presentation, slide))
+  } finally {
+    if (selection) {
+      renderSelection(ctx, resolution, selection)
+    }
   }
 }

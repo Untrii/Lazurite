@@ -1,0 +1,15 @@
+@import '@/css/variables.scss';
+
+.tool-overlay {
+  overflow: hidden;
+
+  &__crosshair {
+    cursor: crosshair;
+  }
+
+  &__area {
+    position: relative;
+    border: 1px solid $accent-blue;
+    background: rgba($color: $accent-blue, $alpha: 0.4);
+  }
+}
