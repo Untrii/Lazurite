@@ -27,10 +27,10 @@ export default class TabStateModel {
 
   get name() {
     if (this.isStartScreen) return 'Start'
-    else return this.openedPresentation.name
+    else return this.openedPresentation?.name
   }
 
-  constructor(presentation = new Presentation(), path = null) {
+  constructor(presentation = new Presentation(), path = '') {
     this.openedPresentation = presentation
     this.presentationPath = path
   }
