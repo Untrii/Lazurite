@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
 import { useReactiveLayoutEffect } from '@/util/reactivity'
 import ObjectSelection from '@/models/editor/ObjectSelection'
+import useForceUpdate from '@/util/useForceUpdate'
 
 interface ISlideProps {
   width: number
@@ -17,6 +18,7 @@ interface ISlideProps {
 
 const Slide = (props: ISlideProps) => {
   const canvas = useRef(null)
+  const forceUpdate = useForceUpdate()
 
   let canvasWidth = props.width
   let canvasHeight = props.height
@@ -25,7 +27,15 @@ const Slide = (props: ISlideProps) => {
     let canvasElement = canvas.current
     canvasElement.width = canvasWidth
     canvasElement.height = canvasHeight
-    render(canvasElement.getContext('2d'), props.presentation, props.slide, props.selection)
+    render(
+      canvasElement.getContext('2d'),
+      props.presentation,
+      props.slide,
+      () => {
+        requestAnimationFrame(forceUpdate)
+      },
+      props.selection
+    )
   })
 
   let canvasStyle = {
