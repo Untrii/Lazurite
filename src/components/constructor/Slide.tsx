@@ -2,11 +2,13 @@
 import Presentation from '@/models/presentation/Presentation'
 import render from '@/slideRenderer'
 import { h } from 'preact'
-import { useLayoutEffect, useRef } from 'preact/hooks'
+import { useLayoutEffect, useRef, useState } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
-import { useReactiveLayoutEffect } from '@/util/reactivity'
+import { useReactiveLayoutEffect, useReactiveState } from '@/util/reactivity'
 import ObjectSelection from '@/models/editor/ObjectSelection'
 import useForceUpdate from '@/util/useForceUpdate'
+
+const animationSchedule = new Map<HTMLCanvasElement, boolean>()
 
 interface ISlideProps {
   width: number
@@ -18,7 +20,10 @@ interface ISlideProps {
 
 const Slide = (props: ISlideProps) => {
   const canvas = useRef(null)
-  const forceUpdate = useForceUpdate()
+  const state = useReactiveState({
+    lastProps: props,
+  })
+  state.lastProps = props
 
   let canvasWidth = props.width
   let canvasHeight = props.height
@@ -27,15 +32,18 @@ const Slide = (props: ISlideProps) => {
     let canvasElement = canvas.current
     canvasElement.width = canvasWidth
     canvasElement.height = canvasHeight
-    render(
-      canvasElement.getContext('2d'),
-      props.presentation,
-      props.slide,
-      () => {
-        requestAnimationFrame(forceUpdate)
-      },
-      props.selection
-    )
+
+    const onRerenderRequest = () => {
+      if (animationSchedule.get(canvasElement)) return
+      animationSchedule.set(canvasElement, true)
+      requestAnimationFrame(() => {
+        animationSchedule.set(canvasElement, false)
+        const props = state.lastProps
+        render(canvasElement.getContext('2d'), props.presentation, props.slide, onRerenderRequest, props.selection)
+      })
+    }
+
+    render(canvasElement.getContext('2d'), props.presentation, props.slide, onRerenderRequest, props.selection)
   })
 
   let canvasStyle = {

@@ -1,14 +1,20 @@
 import ObjectSelection from '@/models/editor/ObjectSelection'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 
+const dashAnimationSpeed = 8
+
 export default function renderSelection(
   ctx: CanvasRenderingContext2D,
   resolution: RendererResolution,
-  selection: ObjectSelection
+  selection: ObjectSelection,
+  requestRender: () => void
 ) {
   if (selection.isEmpty) return
+  requestRender()
 
   ctx.strokeStyle = '#058CD8'
+  const offset = (performance.now() / 1000) * dashAnimationSpeed
+  ctx.lineDashOffset = offset
   for (const item of selection.items) {
     const [left, top, right, bottom] = [
       Math.floor(item.left * resolution.scale),

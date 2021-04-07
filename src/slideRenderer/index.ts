@@ -12,7 +12,7 @@ export default function render(
   ctx: CanvasRenderingContext2D,
   presentation: Presentation,
   slide: Slide,
-  onException = () => {},
+  requestRerender = () => {},
   selection?: ObjectSelection
 ) {
   let targetWidth = ctx.canvas.width
@@ -39,11 +39,11 @@ export default function render(
       }
     }
   } catch (err) {
-    onException()
+    requestRerender()
     console.warn(err)
   } finally {
     if (selection) {
-      renderSelection(ctx, resolution, selection)
+      renderSelection(ctx, resolution, selection, requestRerender)
     }
   }
 }
