@@ -1,4 +1,4 @@
-import { observable, observe, unobserve } from '@nx-js/observer-util'
+import { observable, observe, unobserve } from './observer-util'
 import { FunctionalComponent, options } from 'preact'
 import { Inputs, useEffect, useLayoutEffect, useMemo, useState } from 'preact/hooks'
 
