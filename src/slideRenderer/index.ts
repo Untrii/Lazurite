@@ -1,3 +1,4 @@
+import { startLoading } from '@/dataLoader'
 import ObjectSelection from '@/models/editor/ObjectSelection'
 import Presentation from '@/models/presentation/Presentation'
 import Slide from '@/models/presentation/Slide'
@@ -15,6 +16,11 @@ export default function render(
 ) {
   let targetWidth = ctx.canvas.width
   let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
+
+  for (const preset of presentation.theme.fontPresets) {
+    startLoading(preset.fontSource)
+  }
+
   try {
     resolution.targetWidth = targetWidth
 
@@ -31,8 +37,9 @@ export default function render(
           console.error('Missing renderer for ' + object.type)
       }
     }
-  } catch {
+  } catch (err) {
     requestAnimationFrame(() => render(ctx, presentation, slide))
+    console.warn(err)
   } finally {
     if (selection) {
       renderSelection(ctx, resolution, selection)

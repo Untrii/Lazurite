@@ -15,6 +15,8 @@ export default function renderText(
   const totalLinesHeight = lines.length * lineHeight
   const { top, left } = object
 
+  if (!document.fonts.check('12px ' + fontFamily)) throw new Error("Font doesn't loaded")
+
   context.font = `normal ${fontWeight} ${fontSize * resolution.scale}px ${fontFamily}`
   context.fillStyle = object.style.color.toHex()
   context.textBaseline = 'top'
