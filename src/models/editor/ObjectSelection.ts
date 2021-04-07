@@ -4,18 +4,15 @@ export default class ObjectSelection {
   private _items: Set<SlideObject> = new Set()
 
   setSelection(item: SlideObject) {
-    console.log('selection changed')
     this._items.clear()
     this._items.add(item)
   }
 
   addItem(item: SlideObject) {
-    console.log('selection changed')
     this._items.add(item)
   }
 
   deleteItem(item: SlideObject) {
-    console.log('selection changed')
     this._items.delete(item)
   }
 
@@ -24,7 +21,6 @@ export default class ObjectSelection {
   }
 
   clear() {
-    console.log('selection changed')
     this._items.clear()
   }
 
@@ -46,5 +42,9 @@ export default class ObjectSelection {
 
   get isEmpty(): boolean {
     return this._items.size === 0
+  }
+
+  get items(): SlideObject[] {
+    return Array.from(this._items)
   }
 }

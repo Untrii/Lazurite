@@ -60,3 +60,7 @@ export function nextZIndex() {
 export function getCurrentTool() {
   return store.currentTab.tool
 }
+
+export function getSelectedObjects() {
+  return store.currentTab.selection.items
+}

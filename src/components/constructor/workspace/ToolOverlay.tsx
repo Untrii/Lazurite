@@ -1,9 +1,10 @@
 import './ToolOverlay.scss'
-import { getCurrentPresentation, getCurrentTool } from '@/store/getters/slide'
+import { getCurrentPresentation, getCurrentTool, getObjectsByCoords } from '@/store/getters/slide'
 import { h, JSX } from 'preact'
 import { useReactiveState } from '@/util/reactivity'
 import { AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
+import store from '@/store'
 
 interface IToolOverlayProps {
   width: number
@@ -27,6 +28,7 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
       y: -1,
     },
     isSelecting: false,
+    showBox: false,
     currentWidth: width,
     currentHeight: height,
   })
@@ -37,11 +39,61 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
   const currentTool = getCurrentTool()
 
   const onMouseDown = function (mouseDownEvent: MouseEvent) {
+    mouseDownEvent.preventDefault()
+    let isDragging = false
     const currentTool = getCurrentTool()
 
+    const { width: presentationWidth, height: presentationHeight } = getCurrentPresentation().resolution
+    const resolution = new RendererResolution(presentationWidth, presentationHeight)
+    resolution.targetWidth = state.currentWidth
+
+    const scaledStartX = mouseDownEvent.offsetX / resolution.scale
+    const scaledStartY = mouseDownEvent.offsetY / resolution.scale
+
+    const selection = store.currentTab.selection
+    const isInSelection = !!getObjectsByCoords(scaledStartX, scaledStartY).find((o) => selection.isInSelection(o))
+    const startSelectionX = selection.left
+    const startSelectionY = selection.top
+
+    const getDeltas = function (event0: MouseEvent, event1: MouseEvent) {
+      return [event1.clientX - event0.clientX, event1.clientY - event0.clientY]
+    }
+
     const onMouseMove = function (mouseMoveEvent: MouseEvent) {
-      const deltaX = mouseMoveEvent.clientX - mouseDownEvent.clientX
-      const deltaY = mouseMoveEvent.clientY - mouseDownEvent.clientY
+      mouseMoveEvent.preventDefault()
+      const [deltaX, deltaY] = getDeltas(mouseDownEvent, mouseMoveEvent)
+      const [scaledDeltaX, scaledDeltaY] = [deltaX, deltaY].map((d) => d / resolution.scale)
+
+      const scaledEndX = scaledStartX + scaledDeltaX
+      const scaledEndY = scaledStartY + scaledDeltaY
+
+      const [top, bottom] = minmax(scaledStartY, scaledEndY)
+      const [left, right] = minmax(scaledStartX, scaledEndX)
+
+      if (bottom - top > 4 || right - left > 4) isDragging = true
+
+      if (currentTool?.name == 'pointer') {
+        const pointerTool = currentTool as PointerTool
+        if (isDragging) {
+          if (isInSelection) {
+            pointerTool.triggerEvent('selectionMove', {
+              startOffsetLeft: scaledStartX - startSelectionX,
+              startOffsetTop: scaledStartY - startSelectionY,
+              left: scaledEndX,
+              top: scaledEndY,
+            })
+            if (state.showBox) state.showBox = false
+          } else {
+            pointerTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
+
+            if (!state.showBox) state.showBox = true
+          }
+        }
+      } else if (currentTool?.name == 'areaDrawer') {
+        if (isDragging) {
+          if (!state.showBox) state.showBox = true
+        }
+      }
 
       state.areaEnd = {
         x: state.areaStart.x + deltaX,
@@ -50,25 +102,21 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
     }
 
     const onMouseUp = function (mouseUpEvent: MouseEvent) {
-      const { width: presentationWidth, height: presentationHeight } = getCurrentPresentation().resolution
-      const resolution = new RendererResolution(presentationWidth, presentationHeight)
-      resolution.targetWidth = state.currentWidth
+      mouseUpEvent.preventDefault()
+      const [scaledDeltaX, scaledDeltaY] = getDeltas(mouseDownEvent, mouseUpEvent).map((d) => d / resolution.scale)
 
-      const scaledStartX = mouseDownEvent.offsetX / resolution.scale
-      const scaledStartY = mouseDownEvent.offsetY / resolution.scale
-      const scaledEndX = scaledStartX + (mouseUpEvent.clientX - mouseDownEvent.clientX) / resolution.scale
-      const scaledEndY = scaledStartY + (mouseUpEvent.clientY - mouseDownEvent.clientY) / resolution.scale
+      const scaledEndX = scaledStartX + scaledDeltaX
+      const scaledEndY = scaledStartY + scaledDeltaY
 
       const [top, bottom] = minmax(scaledStartY, scaledEndY)
       const [left, right] = minmax(scaledStartX, scaledEndX)
 
       if (currentTool?.name == 'pointer') {
         const pointerTool = currentTool as PointerTool
-        if (bottom - top <= 4 && right - left <= 4)
+        if (!isDragging)
           pointerTool.triggerEvent('click', { x: scaledEndX, y: scaledEndY, ctrl: mouseDownEvent.ctrlKey })
-        else {
+        else if (!isInSelection)
           pointerTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
-        }
       } else if (currentTool?.name == 'areaDrawer') {
         const areaDrawerTool = currentTool as AreaDrawerTool
         areaDrawerTool.triggerEvent('areaSelect', { left, top, right, bottom })
@@ -103,9 +151,6 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
   const [top, bottom] = minmax(state.areaStart.y, state.areaEnd.y)
   const areaWidth = right - left
   const areaHeight = bottom - top
-  const isAreaShown =
-    (currentTool?.name == 'areaDrawer' && areaWidth > 0 && areaHeight > 0) ||
-    (currentTool?.name == 'pointer' && areaWidth >= 4 && areaHeight >= 4)
   const areaStyle = {
     top: top - height + 'px',
     left: left + 'px',
@@ -126,7 +171,7 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
   return (
     <div class={rootClasses.join(' ')} style={rootStyle} onMouseDown={onMouseDown}>
       {children}
-      {isAreaShown ? <div class="tool-overlay__area" style={areaStyle}></div> : null}
+      {state.showBox ? <div class="tool-overlay__area" style={areaStyle}></div> : null}
     </div>
   )
 }

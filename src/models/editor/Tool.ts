@@ -41,6 +41,7 @@ export abstract class Tool<EventMap extends object> {
 interface IPointerToolEventMap {
   click: { x: number; y: number; ctrl: boolean }
   areaSelect: { left: number; top: number; right: number; bottom: number; ctrl: boolean }
+  selectionMove: { startOffsetLeft: number; startOffsetTop: number; left: number; top: number }
 }
 export class PointerTool extends Tool<IPointerToolEventMap> {
   get name(): ToolName {

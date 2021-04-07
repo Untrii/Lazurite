@@ -1,7 +1,7 @@
 import { AnyTool } from '@/models/editor/Tool'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import store from '@/store'
-import { getCurrentSlide, getObjectsByArea, getObjectsByCoords } from '../getters/slide'
+import { getCurrentSlide, getObjectsByArea, getObjectsByCoords, getSelectedObjects } from '../getters/slide'
 import { saveCurrentPresentation } from './util'
 
 export function createSlide() {
@@ -48,4 +48,19 @@ export function addObjectOnSlide(object: SlideObject) {
   if (slide) {
     slide.push(object)
   }
+  saveCurrentPresentation()
+}
+
+export function moveSelection(startOffsetLeft: number, startOffsetTop: number, endLeft: number, endTop: number) {
+  const relativeCoords = new Map<SlideObject, [number, number]>()
+  const selection = store.currentTab.selection
+  for (const object of getSelectedObjects()) {
+    relativeCoords.set(object, [object.left - selection.left, object.top - selection.top])
+  }
+  for (const object of getSelectedObjects()) {
+    const [left, top] = relativeCoords.get(object)
+    object.left = endLeft - startOffsetLeft + left
+    object.top = endTop - startOffsetTop + top
+  }
+  saveCurrentPresentation()
 }

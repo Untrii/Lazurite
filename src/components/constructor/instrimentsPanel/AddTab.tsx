@@ -1,16 +1,23 @@
 import './AddTab.scss'
 
 import { h, JSX } from 'preact'
+import { useState } from 'preact/hooks'
 
 import assets from '@/assets'
 import store from '@/store'
 import { AnyTool, AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import FontPreset from '@/models/presentation/theme/FontPreset'
-import Button from '@/components/controls/Button'
-import { addObjectOnSlide, onAreaSelect, onPointerClick, select, setTool } from '@/store/actions/constructor'
-import { getCurrentPresentation, isAnySlideExists, nextZIndex } from '@/store/getters/slide'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
-import { useState } from 'preact/hooks'
+import Button from '@/components/controls/Button'
+import { getCurrentPresentation, isAnySlideExists, nextZIndex } from '@/store/getters/slide'
+import {
+  addObjectOnSlide,
+  moveSelection,
+  onAreaSelect,
+  onPointerClick,
+  select,
+  setTool,
+} from '@/store/actions/constructor'
 
 interface IToolButton {
   displayName: string
@@ -32,6 +39,9 @@ function createPointer() {
   })
   result.addListener('areaSelect', ({ top, left, right, bottom, ctrl }) => {
     onAreaSelect(top, left, right, bottom, ctrl)
+  })
+  result.addListener('selectionMove', ({ left, top, startOffsetLeft, startOffsetTop }) => {
+    moveSelection(startOffsetLeft, startOffsetTop, left, top)
   })
   return result
 }
