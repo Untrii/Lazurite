@@ -11,6 +11,7 @@ import Button from '../controls/Button'
 import NumberInput from '../controls/NumberInput'
 import { useEffect } from 'preact/hooks'
 import AnimatedDialogBox from './AnimatedDialogBox'
+import TextInput from '../controls/TextInput'
 
 interface IColor {
   r: number
@@ -66,6 +67,7 @@ const ColorPicker = ({
     const [hue, saturation, value] = rgbToHsv(r, g, b)
 
     return {
+      lastHexValue: initialColor.toHex(),
       hue,
       saturation,
       value,
@@ -227,6 +229,20 @@ const ColorPicker = ({
   }
 
   const renderInputs = function () {
+    const currentColor = Color.fromRgb(state.red, state.green, state.blue)
+    let hexValue = currentColor.toHex()
+    const parsedColor = Color.fromHex(state.lastHexValue ?? '')
+    if (!parsedColor || currentColor.equals(parsedColor)) hexValue = state.lastHexValue
+
+    const onHexInput = function (value: string) {
+      state.lastHexValue = value
+      const color = Color.fromHex(value)
+      if (!color) return
+      onChange('red', color.r)
+      onChange('green', color.g)
+      onChange('blue', color.b)
+    }
+
     return (
       <div class="color-picker__inputs">
         <div class="color-picker__input">
@@ -255,7 +271,7 @@ const ColorPicker = ({
         </div>
         <div class="color-picker__input">
           <Prepend>Hex:</Prepend>
-          not implemented
+          <TextInput value={hexValue} onChange={onHexInput} />
         </div>
       </div>
     )

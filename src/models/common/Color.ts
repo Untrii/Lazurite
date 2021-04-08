@@ -14,11 +14,21 @@ export default class Color {
   public static fromHex(hex: string) {
     const result = new Color()
     hex = hex.replace('#', '')
-    const hexNum = parseInt(hex, 16)
+    if (hex.length != 3 && hex.length != 6) return null
 
-    result.r = Math.floor(hexNum / 0x10000)
-    result.g = Math.floor((hexNum % 0x10000) / 0x100)
-    result.b = Math.floor(hexNum % 0x100)
+    const hexNum = parseInt(hex, 16)
+    if (isNaN(hexNum)) return null
+
+    let offset = [0x100, 0x10000]
+    let multiplier = 1
+    if (hex.length == 3) {
+      offset = [0x10, 0x100]
+      multiplier = 16
+    }
+
+    result.r = Math.floor(hexNum / offset[1]) * multiplier
+    result.g = Math.floor((hexNum % offset[1]) / offset[0]) * multiplier
+    result.b = Math.floor(hexNum % offset[0]) * multiplier
 
     return result
   }
@@ -51,7 +61,7 @@ export default class Color {
   }
 
   public equals(color: Color): boolean {
-    if (this.r == color.r && this.g == color.g && this.b == color.b) return true
+    if (this.r == color?.r && this.g == color?.g && this.b == color?.b) return true
     return false
   }
 
