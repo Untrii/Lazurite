@@ -2,6 +2,7 @@ import { AnyTool } from '@/models/editor/Tool'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import store from '@/store'
 import { getCurrentSlide } from '../getters/reactive/constructor'
+import { clearSlideChangeListeners } from './raw/workspace'
 import { saveCurrentPresentation } from './util'
 
 export function createSlide() {
@@ -10,6 +11,9 @@ export function createSlide() {
 }
 
 export function deleteSlide(index: number) {
+  clearSlideChangeListeners()
+  store.currentTab.selection.clear()
+
   const slides = store.currentTab.openedPresentation.slides
   if (index >= 0 && index < slides.length) slides.splice(index, 1)
   saveCurrentPresentation()

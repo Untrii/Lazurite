@@ -77,3 +77,7 @@ export function removeSlideChangeListener(slide: Slide, callback: () => void) {
   listeners.get(slide).delete(callback)
   if (listeners.get(slide).size == 0) listeners.delete(slide)
 }
+
+export function clearSlideChangeListeners() {
+  listeners.clear()
+}
