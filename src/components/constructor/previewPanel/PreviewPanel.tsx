@@ -3,7 +3,7 @@ import './PreviewPanel.scss'
 import { h } from 'preact'
 
 import assets from '@/assets'
-import store from '@/store'
+import store, { raw as rawStore } from '@/store'
 import * as constructor from '@/store/actions/constructor'
 
 import DropdownButton from '@/components/controls/DropdownButton'
@@ -13,7 +13,8 @@ const PreviewPanel = () => {
   const slideWidth = 166
   const slideHeight = (slideWidth / 16) * 9
 
-  const presentation = store.currentTab.openedPresentation
+  const watchable = store.currentTab.openedPresentation.slides.length
+  const presentation = rawStore.currentTab.openedPresentation
 
   const onSlideDelete = function (index: number) {
     return (event: MouseEvent) => {

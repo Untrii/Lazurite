@@ -1,10 +1,12 @@
 import './ToolOverlay.scss'
-import { getCurrentPresentation, getCurrentTool, getObjectsByCoords } from '@/store/getters/slide'
+import { getObjectsByCoords } from '@/store/getters/raw/workspace'
+import { getCurrentPresentation, getCurrentTool } from '@/store/getters/reactive/constructor'
 import { h, JSX } from 'preact'
 import { useReactiveState } from '@/util/reactivity'
 import { AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import store from '@/store'
+import { hoverObject, unhoverObject } from '@/store/actions/raw/workspace'
 
 interface IToolOverlayProps {
   width: number
@@ -168,8 +170,19 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
     rootClasses.push('tool-overlay__crosshair')
   }
 
+  const onMouseMove = function (event: MouseEvent) {
+    if (currentTool?.name == 'areaDrawer') return
+    const { width: presentationWidth, height: presentationHeight } = getCurrentPresentation().resolution
+    const resolution = new RendererResolution(presentationWidth, presentationHeight)
+    resolution.targetWidth = state.currentWidth
+
+    const objects = getObjectsByCoords(event.offsetX / resolution.scale, event.offsetY / resolution.scale)
+    if (objects.length > 0) hoverObject(objects[0])
+    else unhoverObject()
+  }
+
   return (
-    <div class={rootClasses.join(' ')} style={rootStyle} onMouseDown={onMouseDown}>
+    <div class={rootClasses.join(' ')} style={rootStyle} onMouseDown={onMouseDown} onMouseMove={onMouseMove}>
       {children}
       {state.showBox ? <div class="tool-overlay__area" style={areaStyle}></div> : null}
     </div>

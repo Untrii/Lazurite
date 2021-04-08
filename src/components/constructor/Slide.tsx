@@ -2,13 +2,14 @@
 import Presentation from '@/models/presentation/Presentation'
 import render from '@/slideRenderer'
 import { h } from 'preact'
-import { useLayoutEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
 import { useReactiveLayoutEffect, useReactiveState } from '@/util/reactivity'
 import ObjectSelection from '@/models/editor/ObjectSelection'
 import useForceUpdate from '@/util/useForceUpdate'
-
-const animationSchedule = new Map<HTMLCanvasElement, boolean>()
+import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
+import { addSlideChangeListener, hoverObject, removeSlideChangeListener } from '@/store/actions/raw/workspace'
+import { getHoveredObject } from '@/store/getters/raw/workspace'
 
 interface ISlideProps {
   width: number
@@ -16,40 +17,63 @@ interface ISlideProps {
   presentation: Presentation
   slide: SlideModel
   selection?: ObjectSelection
+  showHovered?: boolean
 }
+
+const renderingCanvases = new Set<HTMLCanvasElement>()
+const frameRequests = new Set<HTMLCanvasElement>()
 
 const Slide = (props: ISlideProps) => {
   const canvas = useRef(null)
-  const state = useReactiveState({
-    lastProps: props,
-  })
-  state.lastProps = props
+  //const [lastProps, setLastProps] = useState({props})
+  //setLastProps({props})
 
-  let canvasWidth = props.width
-  let canvasHeight = props.height
+  const { width, height, presentation, slide, selection, showHovered } = props
+  console.log('rendering slide')
 
-  useReactiveLayoutEffect(() => {
+  useLayoutEffect(() => {
     let canvasElement = canvas.current
-    canvasElement.width = canvasWidth
-    canvasElement.height = canvasHeight
+    renderingCanvases.add(canvasElement)
+
+    canvasElement.width = width
+    canvasElement.height = height
 
     const onRerenderRequest = () => {
-      if (animationSchedule.get(canvasElement)) return
-      animationSchedule.set(canvasElement, true)
+      if (!renderingCanvases.has(canvasElement)) return
+      if (frameRequests.has(canvasElement)) return
+      frameRequests.add(canvasElement)
       requestAnimationFrame(() => {
-        animationSchedule.set(canvasElement, false)
-        const props = state.lastProps
-        render(canvasElement.getContext('2d'), props.presentation, props.slide, onRerenderRequest, props.selection)
+        frameRequests.delete(canvasElement)
+        render(
+          canvasElement.getContext('2d'),
+          presentation,
+          slide,
+          onRerenderRequest,
+          selection,
+          showHovered ? getHoveredObject() : null
+        )
       })
     }
 
-    render(canvasElement.getContext('2d'), props.presentation, props.slide, onRerenderRequest, props.selection)
+    addSlideChangeListener(slide, onRerenderRequest)
+    render(
+      canvasElement.getContext('2d'),
+      presentation,
+      slide,
+      onRerenderRequest,
+      selection,
+      showHovered ? getHoveredObject() : null
+    )
+    return () => {
+      renderingCanvases.delete(canvasElement)
+      removeSlideChangeListener(slide, onRerenderRequest)
+    }
   })
 
   let canvasStyle = {
     display: 'block',
   }
-  if (canvasWidth < 0) canvasStyle.display = 'none'
+  if (width < 0) canvasStyle.display = 'none'
   return <canvas ref={canvas} style={canvasStyle}></canvas>
 }
 export default Slide

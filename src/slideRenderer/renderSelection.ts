@@ -1,4 +1,5 @@
 import ObjectSelection from '@/models/editor/ObjectSelection'
+import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 
 const dashAnimationSpeed = 8
@@ -7,24 +8,30 @@ export default function renderSelection(
   ctx: CanvasRenderingContext2D,
   resolution: RendererResolution,
   selection: ObjectSelection,
+  highlight: SlideObject | null,
   requestRender: () => void
 ) {
-  if (selection.isEmpty) return
-  requestRender()
-
   ctx.strokeStyle = '#058CD8'
   const offset = (performance.now() / 1000) * dashAnimationSpeed
   ctx.lineDashOffset = offset
-  for (const item of selection.items) {
+
+  const renderOutline = function (slideObject: SlideObject) {
     const [left, top, right, bottom] = [
-      Math.floor(item.left * resolution.scale),
-      Math.floor(item.top * resolution.scale),
-      Math.floor(item.right * resolution.scale),
-      Math.floor(item.bottom * resolution.scale),
+      Math.floor(slideObject.left * resolution.scale),
+      Math.floor(slideObject.top * resolution.scale),
+      Math.floor(slideObject.right * resolution.scale),
+      Math.floor(slideObject.bottom * resolution.scale),
     ]
-    ctx.setLineDash([4, 4])
-    ctx.lineWidth = 2
     ctx.strokeRect(left, top, right - left, bottom - top)
+  }
+
+  ctx.setLineDash([4, 4])
+  ctx.lineWidth = 2
+  for (const item of selection.items) renderOutline(item)
+
+  if (highlight && !selection.isInSelection(highlight)) {
+    ctx.lineDashOffset = 0
+    renderOutline(highlight)
   }
 
   const [outerTop, outerBottom, outerLeft, outerRight] = [
@@ -37,4 +44,5 @@ export default function renderSelection(
   ctx.setLineDash([])
   ctx.lineWidth = 2
   ctx.strokeRect(outerLeft, outerTop, outerRight - outerLeft, outerBottom - outerTop)
+  if (!selection.isEmpty) requestRender()
 }

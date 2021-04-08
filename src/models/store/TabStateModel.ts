@@ -2,6 +2,7 @@ import ObjectSelection from '../editor/ObjectSelection'
 import { AnyTool, PointerTool } from '../editor/Tool'
 import Presentation from '../presentation/Presentation'
 import Slide from '../presentation/Slide'
+import SlideObject from '../presentation/slideObjects/base/SlideObject'
 
 export type EditorWindowName = 'constructor' | 'design' | 'start'
 export type DesignTab = 'color' | 'typography'
@@ -18,6 +19,7 @@ export default class TabStateModel {
   addTabToolIndex = [0, 0] as [number, number]
   tool = null as AnyTool | null
   selection = new ObjectSelection()
+  hoveredObject = null as SlideObject
 
   openededDesignTab = 'color' as DesignTab
 

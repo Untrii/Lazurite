@@ -87,6 +87,6 @@ export function useReactiveLayoutEffect(callback: () => void, inputs?: Inputs) {
  * @param object Изначальное состояние
  * @return Возвращает реактивную версию состояния
  */
-export function reactive<T extends Object>(object: T) {
+export function reactive<T extends Object>(object: T): T {
   return observable(object)
 }

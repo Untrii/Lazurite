@@ -9,15 +9,9 @@ import { AnyTool, AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import FontPreset from '@/models/presentation/theme/FontPreset'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import Button from '@/components/controls/Button'
-import { getCurrentPresentation, isAnySlideExists, nextZIndex } from '@/store/getters/slide'
-import {
-  addObjectOnSlide,
-  moveSelection,
-  onAreaSelect,
-  onPointerClick,
-  select,
-  setTool,
-} from '@/store/actions/constructor'
+import { getCurrentPresentation, isAnySlideExists, nextZIndex } from '@/store/getters/reactive/constructor'
+import { moveSelection, onAreaSelect, onPointerClick, select } from '@/store/actions/raw/workspace'
+import { setTool, addObjectOnSlide } from '@/store/actions/constructor'
 
 interface IToolButton {
   displayName: string

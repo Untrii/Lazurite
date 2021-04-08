@@ -2,10 +2,11 @@ import './Workspace.scss'
 
 import { h } from 'preact'
 
-import store from '@/store'
+import { raw as store } from '@/store'
 
 import Slide from '../Slide'
 import ToolOverlay from './ToolOverlay'
+import { useEffect } from 'preact/hooks'
 
 interface IWorkspaceProps {
   width: number
@@ -34,6 +35,7 @@ const Workspace = (props: IWorkspaceProps) => {
             slide={slide}
             presentation={presentation}
             selection={currentTab.selection}
+            showHovered={true}
           />
         </ToolOverlay>
       ) : (
@@ -41,6 +43,7 @@ const Workspace = (props: IWorkspaceProps) => {
           There is no slides
         </div>
       )}
+      {/* <div>highlight: {}</div> */}
     </div>
   )
 }

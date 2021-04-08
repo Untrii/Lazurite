@@ -4,6 +4,8 @@ import getFontScale from '@/util/getFontScale'
 import getTextLines from '@/util/getTextLines'
 import getTextWidth from '@/util/getTextWidth'
 
+const loadedFonts = new Set<string>()
+
 export default function renderText(
   context: CanvasRenderingContext2D,
   resolution: RendererResolution,
@@ -15,7 +17,10 @@ export default function renderText(
   const totalLinesHeight = lines.length * lineHeight
   const { top, left } = object
 
-  if (!document.fonts.check('12px ' + fontFamily)) throw new Error("Font doesn't loaded")
+  if (!loadedFonts.has(fontFamily)) {
+    if (!document.fonts.check('12px ' + fontFamily)) throw new Error("Font doesn't loaded")
+    else loadedFonts.add(fontFamily)
+  }
 
   context.font = `normal ${fontWeight} ${fontSize * resolution.scale}px ${fontFamily}`
   context.fillStyle = object.style.color.toHex()

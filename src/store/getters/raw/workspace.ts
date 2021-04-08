@@ -1,8 +1,16 @@
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
-import store from '..'
+import { raw as store } from '../..'
 
 function isInside(rangeStart: number, rangeEnd: number, x: number) {
   return x >= rangeStart && x <= rangeEnd
+}
+
+export function getCurrentSlide() {
+  return store.currentTab.currentSlide
+}
+
+export function getHoveredObject() {
+  return store.currentTab.hoveredObject
 }
 
 export function getObjectsByCoords(x: number, y: number) {
@@ -37,28 +45,6 @@ export function getObjectsByArea(top: number, left: number, right: number, botto
   }
   result.sort((a, b) => b.zIndex - a.zIndex)
   return result
-}
-
-export function getCurrentPresentation() {
-  return store.currentTab.openedPresentation
-}
-
-export function getCurrentSlide() {
-  return store.currentTab.currentSlide
-}
-
-export function isAnySlideExists() {
-  return store.currentTab.openedPresentation.slides.length > 0
-}
-
-export function nextZIndex() {
-  const slide = getCurrentSlide()
-  if (slide.length > 0) return Math.max(...slide.map((item) => item.zIndex)) + 1
-  return 0
-}
-
-export function getCurrentTool() {
-  return store.currentTab.tool
 }
 
 export function getSelectedObjects() {

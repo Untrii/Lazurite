@@ -2,6 +2,7 @@ import { startLoading } from '@/dataLoader'
 import ObjectSelection from '@/models/editor/ObjectSelection'
 import Presentation from '@/models/presentation/Presentation'
 import Slide from '@/models/presentation/Slide'
+import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import renderText from './objectRenderers/renderText'
@@ -13,7 +14,8 @@ export default function render(
   presentation: Presentation,
   slide: Slide,
   requestRerender = () => {},
-  selection?: ObjectSelection
+  selection?: ObjectSelection,
+  highlight?: SlideObject
 ) {
   let targetWidth = ctx.canvas.width
   let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
@@ -43,7 +45,7 @@ export default function render(
     console.warn(err)
   } finally {
     if (selection) {
-      renderSelection(ctx, resolution, selection, requestRerender)
+      renderSelection(ctx, resolution, selection, highlight, requestRerender)
     }
   }
 }
