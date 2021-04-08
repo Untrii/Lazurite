@@ -57,6 +57,20 @@ export function moveSelection(startOffsetLeft: number, startOffsetTop: number, e
   triggerListeners(getCurrentSlide())
 }
 
+export function deleteSelectedObjects() {
+  if (store.currentTab.selection.isEmpty) return
+  const currentSlide = getCurrentSlide()
+  const selectedObjects = getSelectedObjects()
+  const filteredObjects = currentSlide.filter((item) => !selectedObjects.includes(item))
+  currentSlide.length = filteredObjects.length
+  store.currentTab.selection.clear()
+
+  for (let i = 0; i < filteredObjects.length; i++) {
+    currentSlide[i] = filteredObjects[i]
+  }
+  triggerListeners(currentSlide)
+}
+
 export function hoverObject(object: SlideObject) {
   store.currentTab.hoveredObject = object
   triggerListeners(getCurrentSlide())

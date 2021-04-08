@@ -27,6 +27,10 @@ export default class TabStateModel {
     return this.openedPresentation.slides[this.selectedSlideIndex]
   }
 
+  set currentSlide(slide: Slide) {
+    this.openedPresentation.slides[this.selectedSlideIndex] = slide
+  }
+
   get name() {
     if (this.isStartScreen) return 'Start'
     else return this.openedPresentation?.name

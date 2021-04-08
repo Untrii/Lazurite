@@ -6,12 +6,18 @@ import store, { raw as rawStore } from '@/store'
 
 import Slide from '../Slide'
 import ToolOverlay from './ToolOverlay'
+import useHotkey from '@/util/useHotkey'
+import { deleteSelectedObjects } from '@/store/actions/raw/workspace'
 
 interface IWorkspaceProps {
   width: number
 }
 
 const Workspace = (props: IWorkspaceProps) => {
+  useHotkey('delete', () => {
+    deleteSelectedObjects()
+  })
+
   const watchable = store.currentTab.openedPresentation.slides.length
   const currentTab = rawStore.currentTab
   const presentation = currentTab.openedPresentation
