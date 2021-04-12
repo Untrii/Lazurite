@@ -46,6 +46,7 @@ function createTextTool(preset: FontPreset) {
     textBlock.height = bottom - top
     textBlock.content = 'Test content'
     textBlock.style.fontFamily = preset.fontFamily
+    textBlock.style.fontSource = preset.fontSource
     textBlock.style.fontSize = preset.size
     textBlock.style.fontWeight = preset.weight
     textBlock.style.color = presentation.theme.defaults.mainText

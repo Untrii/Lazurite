@@ -20,10 +20,6 @@ export default function render(
   let targetWidth = ctx.canvas.width
   let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
 
-  for (const preset of presentation.theme.fontPresets) {
-    startLoading(preset.fontSource)
-  }
-
   try {
     resolution.targetWidth = targetWidth
 

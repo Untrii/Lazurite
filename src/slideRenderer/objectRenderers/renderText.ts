@@ -1,3 +1,4 @@
+import { requireResource } from '@/dataLoader'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import getFontScale from '@/util/getFontScale'
@@ -11,16 +12,14 @@ export default function renderText(
   resolution: RendererResolution,
   object: TextSlideObject
 ) {
-  const { fontSize, fontWeight, fontFamily } = object.style
+  const { fontSize, fontWeight, fontFamily, fontSource } = object.style
   const lines = getTextLines(object)
   const lineHeight = fontSize * getFontScale(fontFamily, fontWeight)
   const totalLinesHeight = lines.length * lineHeight
   const { top, left } = object
 
-  if (!loadedFonts.has(fontFamily)) {
-    if (!document.fonts.check('12px ' + fontFamily)) throw new Error("Font doesn't loaded")
-    else loadedFonts.add(fontFamily)
-  }
+  const font = requireResource(fontSource)
+  if (!font) throw new Error("Font doesn't loaded")
 
   context.font = `normal ${fontWeight} ${fontSize * resolution.scale}px ${fontFamily}`
   context.fillStyle = object.style.color.toHex()
