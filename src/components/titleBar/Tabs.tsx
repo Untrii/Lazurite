@@ -3,8 +3,8 @@ import './Tabs.scss'
 import { h, JSX } from 'preact'
 
 import { useReactiveState } from '@/util/reactivity'
-import { openStartPage, closeTab } from '@/store/actions/navigation'
 import assets from '@/assets'
+import store from '@/store'
 
 interface ITabsProps {
   names: string[]
@@ -30,7 +30,7 @@ const Tabs = (props: ITabsProps) => {
   const onMousedown = function (tabIndex: number, event: MouseEvent) {
     const target: any = event.target
     if (event.shiftKey) {
-      closeTab(tabIndex)
+      store.closeTab(tabIndex)
       return
     }
 
@@ -122,7 +122,7 @@ const Tabs = (props: ITabsProps) => {
   return (
     <div class="tabs">
       {renderTabs()}
-      <div class="tabs__add-button" onClick={openStartPage} style={addButtonStyle}>
+      <div class="tabs__add-button" onClick={() => store.openStartPage()} style={addButtonStyle}>
         <img src={assets.addSmall} alt="" />
       </div>
     </div>

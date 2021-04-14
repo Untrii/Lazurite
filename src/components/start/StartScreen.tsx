@@ -4,7 +4,7 @@ import { h } from 'preact'
 import { useEffect } from 'preact/hooks'
 
 import store from '@/store'
-import * as navigation from '@/store/actions/navigation'
+import * as navigation from '@/store/actions/Navigation'
 import { PresentationFile } from '@/models/store/AppStateModel'
 import useForceUpdate from '@/util/useForceUpdate'
 
@@ -62,7 +62,7 @@ const StartScreen = () => {
   }
 
   const openPresentation = function (file: PresentationFile) {
-    navigation.openPresentation(file)
+    store.openPresentation(file)
   }
 
   const buttons = [

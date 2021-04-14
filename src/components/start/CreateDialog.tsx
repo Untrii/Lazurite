@@ -3,7 +3,7 @@ import './CreateDialog.scss'
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
 
-import * as navigation from '@/store/actions/navigation'
+import store from '@/store'
 
 import Button from '../controls/Button'
 import TextInput from '../controls/TextInput'
@@ -17,7 +17,7 @@ const CreateDialog = ({ onCancel }: ICreateDialogProps) => {
   const [author, setAuthor] = useState('')
 
   const onCreate = async function () {
-    await navigation.createPresentation(name, author)
+    await store.createPresentation(name, author)
   }
 
   return (

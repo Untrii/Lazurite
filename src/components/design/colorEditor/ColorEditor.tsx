@@ -5,14 +5,6 @@ import { useEffect, useState } from 'preact/hooks'
 
 import backgrounds from '@/presets/backgrounds'
 import store from '@/store'
-import {
-  addImages,
-  addPatterns,
-  addUserBackground,
-  changeBackground,
-  changeDefaultColor,
-  deleteUserBackground,
-} from '@/store/actions/design'
 import Background, { BackgroundType } from '@/models/presentation/theme/Background'
 import Color from '@/models/common/Color'
 import useDelayedUnmount from '@/util/useDelayedUnmount'
@@ -122,7 +114,7 @@ const ColorEditor = () => {
       bg.displayValue = color.toHex()
       bg.medianColor = color
       bg.type = 'color'
-      addUserBackground(bg)
+      store.addUserBackground(bg)
     }
 
     const onGradientPicked = function (gradient: string) {
@@ -132,13 +124,13 @@ const ColorEditor = () => {
       bg.displayValue = gradient
       bg.medianColor = getMedianColorSync('gradient', gradient)
       bg.type = 'gradient'
-      addUserBackground(bg)
+      store.addUserBackground(bg)
     }
 
     const onFilesPicked = function (paths: (string | ArrayBuffer)[]) {
       togglePopper(false)
-      if (tabName == 'image') addImages(paths)
-      if (tabName == 'pattern') addPatterns(paths)
+      if (tabName == 'image') store.addImages(paths)
+      if (tabName == 'pattern') store.addPatterns(paths)
     }
 
     let popperContent = null
@@ -166,15 +158,15 @@ const ColorEditor = () => {
     const addButtonPopper = useDelayedUnmount(popperContent, isPopperShown, 500)
 
     const onUserBackgroundSelected = function (index: number) {
-      changeBackground(store.userBackgrounds[tabs[currentTabIndex].name][index])
+      store.changeBackground(store.userBackgrounds[tabs[currentTabIndex].name][index])
     }
 
     const onBackgroundDelete = function (tileIndex: number) {
-      deleteUserBackground(tabs[currentTabIndex].name, tileIndex)
+      store.deleteUserBackground(tabs[currentTabIndex].name, tileIndex)
     }
 
     const onStandartBackgroundSelected = function (index: number) {
-      changeBackground(backgrounds[tabs[currentTabIndex].name][index])
+      store.changeBackground(backgrounds[tabs[currentTabIndex].name][index])
     }
 
     return (
@@ -215,17 +207,17 @@ const ColorEditor = () => {
           {
             title: 'Table row',
             value: defaults.tableRowBG,
-            onChange: (color: Color) => changeDefaultColor('tableRowBG', color),
+            onChange: (color: Color) => store.changeDefaultColor('tableRowBG', color),
           },
           {
             title: 'Stripped table row',
             value: defaults.tableRowStrippedBG,
-            onChange: (color: Color) => changeDefaultColor('tableRowStrippedBG', color),
+            onChange: (color: Color) => store.changeDefaultColor('tableRowStrippedBG', color),
           },
           {
             title: 'Table header',
             value: defaults.tableHeaderBG,
-            onChange: (color: Color) => changeDefaultColor('tableHeaderBG', color),
+            onChange: (color: Color) => store.changeDefaultColor('tableHeaderBG', color),
           },
         ],
       },
@@ -235,17 +227,17 @@ const ColorEditor = () => {
           {
             title: 'Main',
             value: defaults.mainText,
-            onChange: (color: Color) => changeDefaultColor('mainText', color),
+            onChange: (color: Color) => store.changeDefaultColor('mainText', color),
           },
           {
             title: 'Accent 1',
             value: defaults.accentText0,
-            onChange: (color: Color) => changeDefaultColor('accentText0', color),
+            onChange: (color: Color) => store.changeDefaultColor('accentText0', color),
           },
           {
             title: 'Accent 2',
             value: defaults.accentText1,
-            onChange: (color: Color) => changeDefaultColor('accentText1', color),
+            onChange: (color: Color) => store.changeDefaultColor('accentText1', color),
           },
         ],
       },

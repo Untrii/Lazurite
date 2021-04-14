@@ -4,7 +4,6 @@ import { h, Fragment } from 'preact'
 
 import assets from '@/assets'
 import store from '@/store'
-import * as navigation from '@/store/actions/navigation'
 import { DesignTab } from '@/models/store/TabStateModel'
 
 import VerticalNav from '../controls/VerticalNav'
@@ -29,7 +28,7 @@ const Design = () => {
   }
 
   const onTabChange = function (index: number) {
-    navigation.changeDesignTab(tabs[index].name)
+    store.changeDesignTab(tabs[index].name)
   }
 
   const currentTabIndex = tabs.findIndex((tab) => tab.name == store.currentTab.openededDesignTab)

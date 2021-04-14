@@ -5,16 +5,13 @@ import { useState } from 'preact/hooks'
 
 import store from '@/store'
 import Button from '@/components/controls/Button'
-import { isAnySlideExists } from '@/store/getters/reactive/constructor'
-import { setTool } from '@/store/actions/constructor'
-import { getToolGroups } from '@/store/getters/reactive/tools'
 
 const AddTab = () => {
-  const buttonGroups = getToolGroups()
+  const buttonGroups = store.getToolGroups()
   const [selectedGroupIndex, selectedItemIndex] = store.currentTab.addTabToolIndex
 
   const changeTabTool = function (groupIndex: number, itemIndex: number) {
-    setTool([groupIndex, itemIndex], buttonGroups[groupIndex].items[itemIndex].tool)
+    store.setTool([groupIndex, itemIndex], buttonGroups[groupIndex].items[itemIndex].tool)
   }
 
   useState(() => {
@@ -23,7 +20,7 @@ const AddTab = () => {
 
   return (
     <div class="add-tab">
-      {isAnySlideExists() ? (
+      {store.isAnySlideExists() ? (
         buttonGroups.map((group, groupIndex) => (
           <div class="add-tab__group">
             {group.displayName ? <h3 class="add-tab__group-title">{group.displayName}</h3> : null}

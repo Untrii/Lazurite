@@ -4,7 +4,6 @@ import { h } from 'preact'
 
 import { requireResource } from '@/dataLoader'
 import store from '@/store'
-import * as design from '@/store/actions/design'
 import Font from '@/models/common/Font'
 
 import Button from '@/components/controls/Button'
@@ -21,7 +20,7 @@ const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) 
 
   const renderUpper = function () {
     const onAddClick = function () {
-      design.addFontPreset()
+      store.addFontPreset()
     }
 
     return (
@@ -44,15 +43,15 @@ const PresetList = ({ onPresetSelect, selectedIndex, fonts }: IPresetListProps) 
     }
 
     const onNameChange = function (index: number, newName: string) {
-      design.changePresetName(index, newName)
+      store.changePresetName(index, newName)
     }
 
     const onSizeChange = function (index: number, newSize: number) {
-      design.changePresetFontSize(index, newSize)
+      store.changePresetFontSize(index, newSize)
     }
 
     const onDelete = function (index: number) {
-      design.deleteFontPreset(index)
+      store.deleteFontPreset(index)
     }
 
     return presets.map((preset, index) => {

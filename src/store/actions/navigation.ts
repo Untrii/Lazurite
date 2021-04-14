@@ -1,10 +1,9 @@
 import { DesignTab, EditorWindowName } from '@/models/store/TabStateModel'
-import store from '@/store'
-import Presentation from '@/models/presentation/Presentation'
+import store, { StoreType } from '@/store'
 import io from '@/io'
 import TabStateModel from '@/models/store/TabStateModel'
 import { PresentationFile } from '@/models/store/AppStateModel'
-import { startScreenPath, loadRecent } from '../load'
+import { startScreenPath, loadRecent } from '../StoreLoader'
 import { setContext } from '@/dataLoader'
 
 async function addNewRecentPresentaion(path: string) {
@@ -20,53 +19,56 @@ async function updateOpenedPresentaitons(tabs: TabStateModel[]) {
   await io.saveOpenedPresentationPaths(paths)
 }
 
-export async function createPresentation(name: string, author: string) {
-  const [presentation, path] = await io.createNewPresentaiton(name, author)
+export default class NavigationActions {
+  async createPresentation(this: StoreType, name: string, author: string) {
+    const [presentation, path] = await io.createNewPresentaiton(name, author)
 
-  await openPresentation({ presentation, path })
-}
+    await this.openPresentation({ presentation, path })
+  }
 
-export function openWindow(name: EditorWindowName) {
-  store.currentTab.openedEditorWindow = name
-}
+  openWindow(this: StoreType, name: EditorWindowName) {
+    this.currentTab.openedEditorWindow = name
+  }
 
-export function openTab(index: number) {
-  store.selectedTabIndex = index
-  setContext('proj', store.tabs[index].presentationPath.replace('local://', '').replaceAll('\\', '/'))
-}
+  openTab(this: StoreType, index: number) {
+    this.selectedTabIndex = index
+    setContext('proj', this.tabs[index].presentationPath.replace('local://', '').replaceAll('\\', '/'))
+  }
 
-export function replaceTab(prevIndex: number, newIndex: number) {
-  const currentIndexValue = store.tabs.splice(prevIndex, 1)
-  store.tabs.splice(newIndex, 0, currentIndexValue[0])
-  store.selectedTabIndex = newIndex
-  updateOpenedPresentaitons(store.tabs)
-}
+  replaceTab(this: StoreType, prevIndex: number, newIndex: number) {
+    const currentIndexValue = this.tabs.splice(prevIndex, 1)
+    this.tabs.splice(newIndex, 0, currentIndexValue[0])
+    this.selectedTabIndex = newIndex
+    updateOpenedPresentaitons(this.tabs)
+  }
 
-export async function openPresentation(file: PresentationFile) {
-  store.currentTab.isStartScreen = false
-  store.currentTab.openedEditorWindow = 'constructor'
-  store.currentTab.openedPresentation = file.presentation
-  store.currentTab.presentationPath = file.path
+  async openPresentation(this: StoreType, file: PresentationFile) {
+    const currentTab = this.currentTab
+    currentTab.isStartScreen = false
+    currentTab.openedEditorWindow = 'constructor'
+    currentTab.openedPresentation = file.presentation
+    currentTab.presentationPath = file.path
 
-  await addNewRecentPresentaion(file.path)
-  await loadRecent()
-  await updateOpenedPresentaitons(store.tabs)
-}
+    await addNewRecentPresentaion(file.path)
+    await loadRecent()
+    await updateOpenedPresentaitons(this.tabs)
+  }
 
-export async function openStartPage() {
-  store.tabs.push(TabStateModel.startScreen)
-  store.selectedTabIndex = store.tabs.length - 1
-  await updateOpenedPresentaitons(store.tabs)
-}
+  async openStartPage(this: StoreType) {
+    this.tabs.push(TabStateModel.startScreen)
+    this.selectedTabIndex = this.tabs.length - 1
+    await updateOpenedPresentaitons(this.tabs)
+  }
 
-export async function closeTab(index: number) {
-  if (index < 0 || index >= store.tabs.length) return
-  if (store.selectedTabIndex >= index && store.selectedTabIndex > 0) store.selectedTabIndex--
-  store.tabs.splice(index, 1)
-  if (store.tabs.length == 0) store.tabs.push(TabStateModel.startScreen)
-  await updateOpenedPresentaitons(store.tabs)
-}
+  async closeTab(this: StoreType, index: number) {
+    if (index < 0 || index >= this.tabs.length) return
+    if (this.selectedTabIndex >= index && this.selectedTabIndex > 0) this.selectedTabIndex--
+    this.tabs.splice(index, 1)
+    if (this.tabs.length == 0) this.tabs.push(TabStateModel.startScreen)
+    await updateOpenedPresentaitons(this.tabs)
+  }
 
-export function changeDesignTab(tab: DesignTab) {
-  store.currentTab.openededDesignTab = tab
+  changeDesignTab(this: StoreType, tab: DesignTab) {
+    this.currentTab.openededDesignTab = tab
+  }
 }

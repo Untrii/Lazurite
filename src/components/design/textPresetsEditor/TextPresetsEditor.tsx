@@ -4,7 +4,6 @@ import { h } from 'preact'
 import { useState } from 'preact/hooks'
 
 import store from '@/store'
-import * as design from '@/store/actions/design'
 import io from '@/io'
 import { requireResourceAsync } from '@/dataLoader'
 import Font from '@/models/common/Font'
@@ -34,9 +33,9 @@ const TextPresetsEditor = () => {
 
   const onFontSelect = function (index: number, forAll = false) {
     if (forAll) {
-      design.selectPresetFont(fonts[index])
+      store.selectPresetFont(fonts[index])
     } else {
-      if (selectedPresetIndex != -1) design.selectPresetFont(fonts[index], selectedPresetIndex)
+      if (selectedPresetIndex != -1) store.selectPresetFont(fonts[index], selectedPresetIndex)
     }
   }
 

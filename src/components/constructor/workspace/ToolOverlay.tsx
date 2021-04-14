@@ -1,12 +1,9 @@
 import './ToolOverlay.scss'
-import { getObjectsByCoords } from '@/store/getters/raw/workspace'
-import { getCurrentPresentation, getCurrentTool } from '@/store/getters/reactive/constructor'
 import { h, JSX } from 'preact'
 import { useReactiveState } from '@/util/reactivity'
 import { AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import store from '@/store'
-import { hoverObject, unhoverObject } from '@/store/actions/raw/workspace'
 
 interface IToolOverlayProps {
   width: number
@@ -38,14 +35,14 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
   if (state.currentWidth != width) state.currentWidth = width
   if (state.currentHeight != height) state.currentHeight = height
 
-  const currentTool = getCurrentTool()
+  const currentTool = store.getCurrentTool()
 
   const onMouseDown = function (mouseDownEvent: MouseEvent) {
     mouseDownEvent.preventDefault()
     let isDragging = false
-    const currentTool = getCurrentTool()
+    const currentTool = store.getCurrentTool()
 
-    const { width: presentationWidth, height: presentationHeight } = getCurrentPresentation().resolution
+    const { width: presentationWidth, height: presentationHeight } = store.getCurrentPresentation().resolution
     const resolution = new RendererResolution(presentationWidth, presentationHeight)
     resolution.targetWidth = state.currentWidth
 
@@ -53,7 +50,7 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
     const scaledStartY = mouseDownEvent.offsetY / resolution.scale
 
     const selection = store.currentTab.selection
-    const isInSelection = !!getObjectsByCoords(scaledStartX, scaledStartY).find((o) => selection.isInSelection(o))
+    const isInSelection = !!store.getObjectsByCoords(scaledStartX, scaledStartY).find((o) => selection.isInSelection(o))
     const startSelectionX = selection.left
     const startSelectionY = selection.top
 
@@ -172,13 +169,13 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
 
   const onMouseMove = function (event: MouseEvent) {
     if (currentTool?.name == 'areaDrawer') return
-    const { width: presentationWidth, height: presentationHeight } = getCurrentPresentation().resolution
+    const { width: presentationWidth, height: presentationHeight } = store.getCurrentPresentation().resolution
     const resolution = new RendererResolution(presentationWidth, presentationHeight)
     resolution.targetWidth = state.currentWidth
 
-    const objects = getObjectsByCoords(event.offsetX / resolution.scale, event.offsetY / resolution.scale)
-    if (objects.length > 0) hoverObject(objects[0])
-    else unhoverObject()
+    const objects = store.getObjectsByCoords(event.offsetX / resolution.scale, event.offsetY / resolution.scale)
+    if (objects.length > 0) store.hoverObject(objects[0])
+    else store.unhoverObject()
   }
 
   return (

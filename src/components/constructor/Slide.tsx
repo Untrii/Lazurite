@@ -2,14 +2,10 @@
 import Presentation from '@/models/presentation/Presentation'
 import render from '@/slideRenderer'
 import { h } from 'preact'
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
+import { useLayoutEffect, useRef } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
-import { useReactiveLayoutEffect, useReactiveState } from '@/util/reactivity'
 import ObjectSelection from '@/models/editor/ObjectSelection'
-import useForceUpdate from '@/util/useForceUpdate'
-import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
-import { addSlideChangeListener, hoverObject, removeSlideChangeListener } from '@/store/actions/raw/workspace'
-import { getHoveredObject } from '@/store/getters/raw/workspace'
+import { raw as store } from '@/store'
 
 interface ISlideProps {
   width: number
@@ -50,23 +46,23 @@ const Slide = (props: ISlideProps) => {
           slide,
           onRerenderRequest,
           selection,
-          showHovered ? getHoveredObject() : null
+          showHovered ? store.getHoveredObject() : null
         )
       })
     }
 
-    addSlideChangeListener(slide, onRerenderRequest)
+    store.addSlideChangeListener(slide, onRerenderRequest)
     render(
       canvasElement.getContext('2d'),
       presentation,
       slide,
       onRerenderRequest,
       selection,
-      showHovered ? getHoveredObject() : null
+      showHovered ? store.getHoveredObject() : null
     )
     return () => {
       renderingCanvases.delete(canvasElement)
-      removeSlideChangeListener(slide, onRerenderRequest)
+      store.removeSlideChangeListener(slide, onRerenderRequest)
     }
   })
 

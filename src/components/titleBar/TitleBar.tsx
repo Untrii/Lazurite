@@ -6,7 +6,6 @@ import { remote } from 'electron'
 import assets from '@/assets/index'
 import { useReactiveState } from '@/util/reactivity'
 import store from '@/store'
-import * as navigation from '@/store/actions/navigation'
 
 import Tabs from './Tabs'
 import WindowControls from './WindowControls'
@@ -33,11 +32,11 @@ const TitleBar = () => {
   }
 
   const onTabOpened = function (index: number) {
-    navigation.openTab(index)
+    store.openTab(index)
   }
 
   const onReplaced = function (prevIndex: number, newIndex: number) {
-    navigation.replaceTab(prevIndex, newIndex)
+    store.replaceTab(prevIndex, newIndex)
   }
 
   const dragAreaClasses = ['title-bar__drag-area']

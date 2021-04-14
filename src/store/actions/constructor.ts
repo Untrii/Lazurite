@@ -1,33 +1,32 @@
 import { AnyTool } from '@/models/editor/Tool'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
-import store from '@/store'
-import { getCurrentSlide } from '../getters/reactive/constructor'
-import { clearSlideChangeListeners } from './raw/workspace'
-import { saveCurrentPresentation } from './util'
+import store, { StoreType } from '@/store'
 
-export function createSlide() {
-  store.currentTab.openedPresentation.slides.push([])
-  saveCurrentPresentation()
-}
-
-export function deleteSlide(index: number) {
-  clearSlideChangeListeners()
-  store.currentTab.selection.clear()
-
-  const slides = store.currentTab.openedPresentation.slides
-  if (index >= 0 && index < slides.length) slides.splice(index, 1)
-  saveCurrentPresentation()
-}
-
-export function setTool(index: [number, number], tool: AnyTool) {
-  store.currentTab.addTabToolIndex = index
-  store.currentTab.tool = tool
-}
-
-export function addObjectOnSlide(object: SlideObject) {
-  const slide = getCurrentSlide()
-  if (slide) {
-    slide.push(object)
+export default class ConstructorActions {
+  async createSlide(this: StoreType) {
+    this.currentTab.openedPresentation.slides.push([])
+    await this.saveCurrentPresentation()
   }
-  saveCurrentPresentation()
+
+  async deleteSlide(this: StoreType, index: number) {
+    this.clearSlideChangeListeners()
+    store.currentTab.selection.clear()
+
+    const slides = store.currentTab.openedPresentation.slides
+    if (index >= 0 && index < slides.length) slides.splice(index, 1)
+    await this.saveCurrentPresentation()
+  }
+
+  setTool(this: StoreType, index: [number, number], tool: AnyTool) {
+    this.currentTab.addTabToolIndex = index
+    this.currentTab.tool = tool
+  }
+
+  async addObjectOnSlide(this: StoreType, object: SlideObject) {
+    const slide = this.getCurrentSlide()
+    if (slide) {
+      slide.push(object)
+    }
+    await this.saveCurrentPresentation()
+  }
 }

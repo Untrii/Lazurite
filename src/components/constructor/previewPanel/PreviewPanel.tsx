@@ -4,7 +4,6 @@ import { h } from 'preact'
 
 import assets from '@/assets'
 import store, { raw as rawStore } from '@/store'
-import * as constructor from '@/store/actions/constructor'
 
 import DropdownButton from '@/components/controls/DropdownButton'
 import Slide from '../Slide'
@@ -19,7 +18,7 @@ const PreviewPanel = () => {
   const onSlideDelete = function (index: number) {
     return (event: MouseEvent) => {
       event.stopPropagation()
-      constructor.deleteSlide(index)
+      store.deleteSlide(index)
     }
   }
 
@@ -43,7 +42,7 @@ const PreviewPanel = () => {
           variants={new Array(7).fill(0).map((item, index) => 'Template ' + index)}
           defaultVariant="New slide"
           groupName="Create from template"
-          onDefaultClick={() => constructor.createSlide()}
+          onDefaultClick={() => store.createSlide()}
         />
       </div>
     </div>
