@@ -158,13 +158,13 @@ const TextEditorOverlay = ({ children, width, height, renderTrigger }: ITextEdit
         if (!isStart) relativeOffset = 0
         const length = Math.min(end - start, end - currentPosition)
 
-        const highlightedText = lines[i].substring(relativeOffset, relativeOffset + length)
+        const highlightedText = lines[i].substring(0, relativeOffset + length)
         const offsetText = lines[i].substring(0, relativeOffset)
 
-        const width = getTextWidth(obj.style, highlightedText) * resolution.scale
-        const height = lineHeight * resolution.scale
-        const x = getTextWidth(obj.style, offsetText) * resolution.scale
-        const y = lineHeight * i * resolution.scale
+        const x = Math.floor(getTextWidth(obj.style, offsetText) * resolution.scale)
+        const y = Math.floor(lineHeight * i * resolution.scale)
+        const width = Math.floor(getTextWidth(obj.style, highlightedText) * resolution.scale) - x
+        const height = Math.floor(lineHeight * (i + 1) * resolution.scale) - y
 
         if (isStart) {
           selection.startX = x
