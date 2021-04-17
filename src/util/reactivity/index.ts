@@ -59,7 +59,7 @@ options.vnode = (vnode) => {
  * @return Возвращает реактивную версию состояния, при изменении этого состояния, возвращает измененную версию
  */
 
-export function useReactiveState<T extends Object>(initialState: T | (() => T)) {
+export function useReactiveState<T extends Object>(initialState: T | (() => T)): T {
   let [state] = useState(() => {
     if (typeof initialState == 'function') initialState = (initialState as Function)()
     //initialState может быть очищен GC при удалении компонента

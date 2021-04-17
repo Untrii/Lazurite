@@ -1,0 +1,24 @@
+.text-editor-overlay {
+  position: fixed;
+
+  * {
+    position: absolute;
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    color: transparent;
+    box-sizing: border-box;
+    width: 0px;
+
+    &:focus {
+      outline: none;
+      width: 1px;
+    }
+  }
+}
+
+.redacting {
+  cursor: text;
+}

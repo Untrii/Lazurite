@@ -14,6 +14,7 @@ interface ISlideProps {
   slide: SlideModel
   selection?: ObjectSelection
   showHovered?: boolean
+  onRendered?: () => void
 }
 
 const renderingCanvases = new Set<HTMLCanvasElement>()
@@ -48,6 +49,7 @@ const Slide = (props: ISlideProps) => {
           selection,
           showHovered ? store.getHoveredObject() : null
         )
+        props?.onRendered?.()
       })
     }
 

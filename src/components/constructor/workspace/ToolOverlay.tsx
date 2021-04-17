@@ -151,7 +151,7 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
   const areaWidth = right - left
   const areaHeight = bottom - top
   const areaStyle = {
-    top: top - height + 'px',
+    top: top + 'px',
     left: left + 'px',
     width: areaWidth + 'px',
     height: areaHeight + 'px',
@@ -182,6 +182,7 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
     <div class={rootClasses.join(' ')} style={rootStyle} onMouseDown={onMouseDown} onMouseMove={onMouseMove}>
       {children}
       {state.showBox ? <div class="tool-overlay__area" style={areaStyle}></div> : null}
+      {/* <div class="tool-overlay__area" style={{ top: '50px', left: '100px', height: '150px', width: '150px' }}></div> */}
     </div>
   )
 }

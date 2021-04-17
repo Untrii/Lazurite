@@ -44,5 +44,5 @@ export default function renderSelection(
   ctx.setLineDash([])
   ctx.lineWidth = 2
   ctx.strokeRect(outerLeft, outerTop, outerRight - outerLeft, outerBottom - outerTop)
-  if (!selection.isEmpty) requestRender()
+  if (selection.size > 1) requestRender()
 }

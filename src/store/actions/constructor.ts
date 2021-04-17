@@ -29,4 +29,15 @@ export default class ConstructorActions {
     }
     await this.saveCurrentPresentation()
   }
+
+  async changeSelectedObjectProperty<T extends SlideObject>(this: StoreType, propertyName: keyof T, value: T[keyof T]) {
+    const objects = this.getSelectedObjects()
+    if (objects.length != 1) return
+    const object = objects[0]
+
+    if (typeof object?.[propertyName as string] == 'undefined') return
+    ;(object as T)[propertyName] = value
+    store.onCurrentSlideChange()
+    await this.saveCurrentPresentation()
+  }
 }

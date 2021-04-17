@@ -13,7 +13,7 @@ function measureLines(text: string, textStyle: TextStyle, maxWidth: number) {
     if (width < maxWidth) {
       currentLine += ' ' + word
     } else {
-      lines.push(currentLine)
+      lines.push(currentLine + ' ')
       currentLine = word
     }
   }
@@ -21,12 +21,16 @@ function measureLines(text: string, textStyle: TextStyle, maxWidth: number) {
   return lines
 }
 
-export default function getTextLines(textBlock: TextSlideObject) {
+export default function getTextLines(textBlock: TextSlideObject, saveReturns = false) {
   const text = textBlock.content
-  const lines = []
+  const lines: string[] = []
 
   const wrappedLines = text.split('\n')
-  wrappedLines.forEach((value) => lines.push(...measureLines(value, textBlock.style, textBlock.width)))
+  wrappedLines.forEach((value, index) => {
+    const measuredLines = measureLines(value, textBlock.style, textBlock.width)
+    if (saveReturns && index != wrappedLines.length - 1) measuredLines[measuredLines.length - 1] += '\n'
+    lines.push(...measuredLines)
+  })
 
   return lines
 }

@@ -44,6 +44,10 @@ export default class ObjectSelection {
     return this._items.size === 0
   }
 
+  get size() {
+    return this._items.size
+  }
+
   get items(): SlideObject[] {
     return Array.from(this._items)
   }

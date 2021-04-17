@@ -58,7 +58,6 @@ function createTextTool(store: StoreType, preset: FontPreset) {
 export default class ToolGetters {
   getToolGroups(this: StoreType): IButtonGroup[] {
     const fontPresets = store.currentTab.openedPresentation.theme.fontPresets
-
     const result: IButtonGroup[] = []
     result.push({
       name: 'pointer',

@@ -7,6 +7,7 @@ import store, { raw as rawStore } from '@/store'
 import Slide from '../Slide'
 import ToolOverlay from './ToolOverlay'
 import useHotkey from '@/util/useHotkey'
+import TextEditorOverlay from './TextEditorOverlay'
 
 interface IWorkspaceProps {
   width: number
@@ -30,19 +31,29 @@ const Workspace = (props: IWorkspaceProps) => {
     marginLeft: '16px',
     width: slideWidth + 'px',
   }
+
+  const renderTrigger = function (callback: () => void) {
+    renderTrigger['run'] = () => {
+      callback()
+    }
+  }
+
   return (
     <div style={rootStyle} class="workspace">
       {slide ? (
-        <ToolOverlay width={slideWidth} height={slideHeight}>
-          <Slide
-            width={slideWidth}
-            height={slideHeight}
-            slide={slide}
-            presentation={presentation}
-            selection={currentTab.selection}
-            showHovered={true}
-          />
-        </ToolOverlay>
+        <TextEditorOverlay width={slideWidth} height={slideHeight} renderTrigger={renderTrigger}>
+          <ToolOverlay width={slideWidth} height={slideHeight}>
+            <Slide
+              width={slideWidth}
+              height={slideHeight}
+              slide={slide}
+              presentation={presentation}
+              selection={currentTab.selection}
+              showHovered={true}
+              onRendered={() => renderTrigger['run']?.()}
+            />
+          </ToolOverlay>
+        </TextEditorOverlay>
       ) : (
         <div class="workspace__placeholder" style={{ height: slideHeight }}>
           There is no slides

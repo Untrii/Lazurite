@@ -93,4 +93,8 @@ export default class WorkspaceActions {
   clearSlideChangeListeners(this: StoreType) {
     listeners.clear()
   }
+
+  onCurrentSlideChange(this: StoreType) {
+    triggerListeners(this.getCurrentSlide())
+  }
 }
