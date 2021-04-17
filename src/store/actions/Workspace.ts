@@ -69,6 +69,8 @@ export default class WorkspaceActions {
       object.left += newLeft - left + (object.left - left) * (scaleX - 1)
       object.top += newTop - top + (object.top - top) * (scaleY - 1)
     }
+
+    triggerListeners(this.getCurrentSlide())
   }
 
   deleteSelectedObjects(this: StoreType) {
