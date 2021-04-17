@@ -8,6 +8,7 @@ import Slide from '../Slide'
 import ToolOverlay from './ToolOverlay'
 import useHotkey from '@/util/useHotkey'
 import TextEditorOverlay from './TextEditorOverlay'
+import ResizeOverlay from './ResizeOverlay'
 
 interface IWorkspaceProps {
   width: number
@@ -41,19 +42,21 @@ const Workspace = (props: IWorkspaceProps) => {
   return (
     <div style={rootStyle} class="workspace">
       {slide ? (
-        <TextEditorOverlay width={slideWidth} height={slideHeight} renderTrigger={renderTrigger}>
-          <ToolOverlay width={slideWidth} height={slideHeight}>
-            <Slide
-              width={slideWidth}
-              height={slideHeight}
-              slide={slide}
-              presentation={presentation}
-              selection={currentTab.selection}
-              showHovered={true}
-              onRendered={() => renderTrigger['run']?.()}
-            />
-          </ToolOverlay>
-        </TextEditorOverlay>
+        <ResizeOverlay width={slideWidth} height={slideHeight}>
+          <TextEditorOverlay width={slideWidth} height={slideHeight} renderTrigger={renderTrigger}>
+            <ToolOverlay width={slideWidth} height={slideHeight}>
+              <Slide
+                width={slideWidth}
+                height={slideHeight}
+                slide={slide}
+                presentation={presentation}
+                selection={currentTab.selection}
+                showHovered={true}
+                onRendered={() => renderTrigger['run']?.()}
+              />
+            </ToolOverlay>
+          </TextEditorOverlay>
+        </ResizeOverlay>
       ) : (
         <div class="workspace__placeholder" style={{ height: slideHeight }}>
           There is no slides

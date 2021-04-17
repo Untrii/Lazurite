@@ -55,6 +55,22 @@ export default class WorkspaceActions {
     triggerListeners(this.getCurrentSlide())
   }
 
+  resizeSelection(this: StoreType, newTop: number, newLeft: number, newBottom: number, newRight: number) {
+    const selection = this.currentTab.selection
+    if (selection.isEmpty) return
+    const { top, left, bottom, right } = selection
+
+    const scaleY = (newBottom - newTop) / (bottom - top)
+    const scaleX = (newRight - newLeft) / (right - left)
+
+    for (const object of selection.items) {
+      object.width *= scaleX
+      object.height *= scaleY
+      object.left += newLeft - left + (object.left - left) * (scaleX - 1)
+      object.top += newTop - top + (object.top - top) * (scaleY - 1)
+    }
+  }
+
   deleteSelectedObjects(this: StoreType) {
     if (store.currentTab.selection.isEmpty) return
     const currentSlide = this.getCurrentSlide()
