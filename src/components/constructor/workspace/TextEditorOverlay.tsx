@@ -262,14 +262,20 @@ const TextEditorOverlay = ({ children, width, height, renderTrigger }: ITextEdit
     state.selection.end = border(end, 0, obj.content.length)
 
     if (event.key == 'Delete') {
-      if (end - start != 0) clearCurrentSelection()
+      if (end - start != 0) {
+        clearCurrentSelection()
+        return
+      }
       if (obj.content.length == start) return
       const newValue = obj.content.substring(0, start) + obj.content.substring(start + 1)
       store.changeSelectedObjectProperty<TextSlideObject>('content', newValue)
     }
 
     if (event.key == 'Backspace') {
-      if (end - start != 0) clearCurrentSelection()
+      if (end - start != 0) {
+        clearCurrentSelection()
+        return
+      }
       if (start == 0) return
       const newValue = obj.content.substring(0, start - 1) + obj.content.substring(start)
       state.selection.start = --state.selection.end
