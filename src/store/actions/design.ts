@@ -83,13 +83,13 @@ function changePreset(store: StoreType, index: number, changer: (preset: FontPre
 }
 
 export default class DesignActions {
-  async addImages(this: StoreType, files: (string | ArrayBuffer)[]) {
+  async addImages(this: StoreType, files: ArrayBuffer[]) {
     for (const file of files) {
       await saveImageFile(this, file, 'image')
     }
   }
 
-  async addPatterns(this: StoreType, files: (string | ArrayBuffer)[]) {
+  async addPatterns(this: StoreType, files: ArrayBuffer[]) {
     for (const file of files) {
       await saveImageFile(this, file, 'pattern')
     }

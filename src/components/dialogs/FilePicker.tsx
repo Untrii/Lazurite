@@ -3,17 +3,13 @@ import './FilePicker.scss'
 import { h } from 'preact'
 import { useState } from 'preact/hooks'
 
-import assets from '@/assets'
-
 import AnimatedDialogBox from './AnimatedDialogBox'
 import Button from '../controls/Button'
-
-type FilePath = string
 
 interface IFilePickerProps {
   isHiding: boolean
   extensions?: string[]
-  onSelected?: (files: (FilePath | ArrayBuffer)[]) => void
+  onSelected?: (files: ArrayBuffer[]) => void
 }
 
 const FilePicker = ({ isHiding, extensions, onSelected }: IFilePickerProps) => {
@@ -39,13 +35,13 @@ const FilePicker = ({ isHiding, extensions, onSelected }: IFilePickerProps) => {
     setIsHovered(false)
     const files = event.dataTransfer.files
 
-    const filesToAdd = [] as (FilePath | ArrayBuffer)[]
+    const filesToAdd = [] as ArrayBuffer[]
 
     for (let i = 0; i < files.length; i++) {
       const file = files.item(i)
       const [name, extension] = file.name.split('.')
       if (extensions && !extensions.includes(extension)) continue
-      else filesToAdd.push(file.path)
+      else filesToAdd.push(await file.arrayBuffer())
     }
     const items = event.dataTransfer.items
     for (let i = 0; i < items.length; i++) {
