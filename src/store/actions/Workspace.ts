@@ -85,6 +85,7 @@ export default class WorkspaceActions {
       currentSlide[i] = filteredObjects[i]
     }
     triggerListeners(currentSlide)
+    store.saveCurrentPresentation()
   }
 
   hoverObject(this: StoreType, object: SlideObject) {
