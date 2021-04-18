@@ -4,7 +4,7 @@ import { h, JSX } from 'preact'
 
 import Color from '@/models/common/Color'
 import { useReactiveState } from '@/util/reactivity'
-import { hsvToRgb, rgbToHsv } from '@/util/colorConvertion'
+import { hsvToRgb, rgbToHsv } from '@/util/color/colorConvertion'
 
 import Prepend from '../controls/Prepend'
 import Button from '../controls/Button'

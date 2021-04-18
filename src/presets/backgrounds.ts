@@ -4,8 +4,8 @@ import path from 'path'
 import Color from '@/models/common/Color'
 import Background, { BackgroundCollection } from '@/models/presentation/theme/Background'
 import isElectron from '@/util/isElectron'
-import getMedianColor from '@/util/getMedianColor'
-import getMedianColorSync from '@/util/getMedianColorSync'
+import getMedianColor from '@/util/color/getMedianColor'
+import getMedianColorSync from '@/util/color/getMedianColorSync'
 
 const colors = [
   '#FFFFFF',

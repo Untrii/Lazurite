@@ -14,7 +14,7 @@ import ColorPicker from '@/components/dialogs/ColorPicker'
 import Slide from '@/components/constructor/Slide'
 import PaletteGroup from './PaletteGroup'
 import DefaultsGroup from './DefaultsGroup'
-import getMedianColorSync from '@/util/getMedianColorSync'
+import getMedianColorSync from '@/util/color/getMedianColorSync'
 import FilePicker from '@/components/dialogs/FilePicker'
 
 const tabs: { displayName: string; name: BackgroundType }[] = [

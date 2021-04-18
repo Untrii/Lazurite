@@ -13,7 +13,7 @@ import isElectron from '@/util/isElectron'
 import randomString from '@/util/randomString'
 
 import createImagePreview from '@/util/createImagePreview'
-import getMedianColor from '@/util/getMedianColor'
+import getMedianColor from '@/util/color/getMedianColor'
 
 const { app } = remote
 const { copyFile, writeFile, mkdir } = promises

@@ -1,6 +1,6 @@
 import Background from '@/models/presentation/theme/Background'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
-import parseGradient from '@/util/parseGradient'
+import parseGradient from '@/util/color/parseGradient'
 import { requireResource } from '../dataLoader'
 
 function getGradientCoords(resolution: RendererResolution, angle: number): [number, number, number, number] {
