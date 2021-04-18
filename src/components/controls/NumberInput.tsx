@@ -4,7 +4,7 @@ import { h, JSX } from 'preact'
 import { useLayoutEffect, useRef } from 'preact/hooks'
 
 import { useReactiveState } from '@/util/reactivity'
-import getTextWidth from '@/util/getTextWidth'
+import getTextWidth from '@/util/text/getTextWidth'
 import TextStyle from '@/models/presentation/slideObjects/base/TextStyle'
 
 import Prepend from './Prepend'

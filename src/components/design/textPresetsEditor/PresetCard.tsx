@@ -4,8 +4,8 @@ import { h } from 'preact'
 
 import { requireResource, requireResourceAsync } from '@/dataLoader'
 import { useReactiveState } from '@/util/reactivity'
-import getFontFamilyName from '@/util/getFontFamilyName'
-import getFontScale from '@/util/getFontScale'
+import getFontFamilyName from '@/util/text/getFontFamilyName'
+import getFontScale from '@/util/text/getFontScale'
 import assets from '@/assets'
 
 import Prepend from '@/components/controls/Prepend'

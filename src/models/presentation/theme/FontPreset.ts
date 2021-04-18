@@ -1,5 +1,5 @@
-import Font, { FontType } from '@/models/common/Font'
-import getFontFamilyName from '@/util/getFontFamilyName'
+import { FontType } from '@/models/common/Font'
+import getFontFamilyName from '@/util/text/getFontFamilyName'
 import randomString from '@/util/randomString'
 
 export default class FontPreset {

@@ -1,6 +1,6 @@
-import getFontFamilyName from '@/util/getFontFamilyName'
+import getFontFamilyName from '@/util/text/getFontFamilyName'
 import isElectron from '@/util/isElectron'
-import warmupFont from '@/util/warmupFont'
+import warmupFont from '@/util/text/warmupFont'
 import { ipcRenderer } from 'electron'
 
 const imageExtensions = ['jpg', 'jpeg', 'png', 'svg', 'gif']

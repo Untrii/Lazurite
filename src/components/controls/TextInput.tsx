@@ -3,7 +3,7 @@ import './TextInput.scss'
 import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 
-import getTextWidth from '@/util/getTextWidth'
+import getTextWidth from '@/util/text/getTextWidth'
 import TextStyle from '@/models/presentation/slideObjects/base/TextStyle'
 
 import Prepend from './Prepend'

@@ -1,14 +1,16 @@
 import './TextEditorOverlay.scss'
-import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
-import RendererResolution from '@/models/slideRenderer/RendererResolution'
-import store from '@/store'
-import getFontScale from '@/util/getFontScale'
-import getTextLines from '@/util/getTextLines'
-import getTextWidth from '@/util/getTextWidth'
-import { useReactiveState } from '@/util/reactivity'
+
 import { h, Fragment, JSX, Ref } from 'preact'
 import { useEffect, useLayoutEffect, useRef } from 'preact/hooks'
+
+import store from '@/store'
+import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
+import RendererResolution from '@/models/slideRenderer/RendererResolution'
+import { useReactiveState } from '@/util/reactivity'
 import useForceUpdate from '@/util/useForceUpdate'
+import getFontScale from '@/util/text/getFontScale'
+import getTextLines from '@/util/text/getTextLines'
+import getTextWidth from '@/util/text/getTextWidth'
 
 interface ITextEditorOverlayProps {
   width: number

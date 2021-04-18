@@ -1,9 +1,9 @@
 import { requireResource } from '@/dataLoader'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
-import getFontScale from '@/util/getFontScale'
-import getTextLines from '@/util/getTextLines'
-import getTextWidth from '@/util/getTextWidth'
+import getFontScale from '@/util/text/getFontScale'
+import getTextLines from '@/util/text/getTextLines'
+import getTextWidth from '@/util/text/getTextWidth'
 
 const loadedFonts = new Set<string>()
 
