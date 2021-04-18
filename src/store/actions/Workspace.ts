@@ -98,6 +98,8 @@ export default class WorkspaceActions {
     triggerListeners(this.getCurrentSlide())
   }
 
+  async addImage(this: StoreType, image: Blob) {}
+
   addSlideChangeListener(this: StoreType, slide: Slide, callback: () => void) {
     if (!listeners.has(slide)) listeners.set(slide, new Set())
     listeners.get(slide).add(callback)

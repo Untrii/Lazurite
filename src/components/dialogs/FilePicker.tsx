@@ -10,7 +10,7 @@ import handleFiles from '@/util/handleFiles'
 interface IFilePickerProps {
   isHiding: boolean
   accept?: string[]
-  onSelected?: (files: ArrayBuffer[]) => void
+  onSelected?: (files: Blob[]) => void
 }
 
 const FilePicker = ({ isHiding, accept, onSelected }: IFilePickerProps) => {

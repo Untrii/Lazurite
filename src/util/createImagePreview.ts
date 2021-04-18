@@ -1,6 +1,6 @@
 import { requireResourceAsync } from '@/dataLoader'
 
-export default async function createImagePreview(url: string): Promise<ArrayBuffer> {
+export default async function createImagePreview(url: string): Promise<Blob> {
   const canvas = document.createElement('canvas')
   const image = (await requireResourceAsync(url)) as HTMLImageElement
   let scale = Math.min(256 / image.naturalHeight, 256 / image.naturalWidth, 1)
@@ -9,10 +9,10 @@ export default async function createImagePreview(url: string): Promise<ArrayBuff
 
   const context = canvas.getContext('2d')
   context.drawImage(image, 0, 0, canvas.width, canvas.height)
-  return new Promise<ArrayBuffer>((resolve, reject) => {
+  return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
-      async (blob) => {
-        resolve(await blob.arrayBuffer())
+      (blob) => {
+        resolve(blob)
       },
       'image/jpeg',
       0.7

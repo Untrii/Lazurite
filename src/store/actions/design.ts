@@ -24,52 +24,33 @@ const getCurrentTheme = function () {
   return store.currentTab.openedPresentation.theme
 }
 
-async function saveImageFile(store: StoreType, file: string | ArrayBuffer, type: 'pattern' | 'image') {
-  if (isElectron()) {
-    const folderName = type == 'image' ? 'images' : 'patterns'
+async function saveImageFile(store: StoreType, file: Blob, type: 'pattern' | 'image') {
+  const dataFolder = type == 'image' ? '/images' : '/patterns'
+  const previewFolder = '/images/preview'
 
-    const dataFolder = path.join(app.getPath('userData'), folderName)
-    const previewFolder = path.join(dataFolder, 'preview')
+  try {
+    const extension = file.type.split('/').pop()
 
-    try {
-      if (!existsSync(dataFolder)) await mkdir(dataFolder)
-      if (type == 'image' && !existsSync(previewFolder)) await mkdir(previewFolder)
+    const shortName = randomString(12) + '.' + extension
+    const imagePath = `${dataFolder}/${shortName}`
+    const previewPath = `${previewFolder}/${shortName}`
 
-      let extension = 'jpg'
-      if (typeof file == 'string') {
-        file = file.replaceAll('\\', '/')
-        extension = file.split('.').pop()
-      }
+    const imageURL = await io.addFile(file, 'user', imagePath)
 
-      const shortName = randomString(12) + '.' + extension
-      const imagePath = path.join(dataFolder, shortName)
-      const previewPath = path.join(previewFolder, shortName)
+    const bg = new Background()
+    bg.type = type
+    bg.medianColor = await getMedianColor('image', imageURL)
+    bg.value = bg.displayValue = imageURL
 
-      if (typeof file == 'string') {
-        await copyFile(file, imagePath)
-      } else {
-        await writeFile(imagePath, new Uint8Array(file))
-      }
-
-      const imageURL = `local://#user/${folderName}/` + shortName
-      const bg = new Background()
-      bg.type = type
-      bg.medianColor = await getMedianColor('image', imageURL)
-      bg.value = bg.displayValue = imageURL
-
-      if (type == 'image') {
-        const previewURL = `local://#user/${folderName}/preview/` + shortName
-        const preview = await createImagePreview(imageURL)
-        await writeFile(previewPath, new Uint8Array(preview))
-        bg.displayValue = previewURL
-      }
-
-      store.addUserBackground(bg)
-    } catch (error) {
-      console.error(error)
+    if (type == 'image') {
+      const preview = await createImagePreview(imageURL)
+      const previewURL = await io.addFile(preview, 'user', previewPath)
+      bg.displayValue = previewURL
     }
-  } else {
-    throw new Error("Image adding doesn't implemented in web version")
+
+    store.addUserBackground(bg)
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -83,13 +64,13 @@ function changePreset(store: StoreType, index: number, changer: (preset: FontPre
 }
 
 export default class DesignActions {
-  async addImages(this: StoreType, files: ArrayBuffer[]) {
+  async addImages(this: StoreType, files: Blob[]) {
     for (const file of files) {
       await saveImageFile(this, file, 'image')
     }
   }
 
-  async addPatterns(this: StoreType, files: ArrayBuffer[]) {
+  async addPatterns(this: StoreType, files: Blob[]) {
     for (const file of files) {
       await saveImageFile(this, file, 'pattern')
     }

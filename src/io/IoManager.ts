@@ -14,6 +14,7 @@ export default abstract class IOManager {
   abstract saveUserBackgrounds(colors: BackgroundCollection): Promise<void>
 
   abstract createNewPresentaiton(name: string, author: string): Promise<[Presentation, string]>
+  abstract addFile(file: Blob, space: 'user' | 'proj', relativePath: string): Promise<string>
 
   abstract delete(url: string): Promise<void>
 

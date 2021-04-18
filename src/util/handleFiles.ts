@@ -1,11 +1,11 @@
 export default async function handleFiles(dataTransfer: DataTransfer, accept: string[]) {
-  const result = [] as ArrayBuffer[]
+  const result = [] as Blob[]
 
   const files = dataTransfer.files
   for (let i = 0; i < files.length; i++) {
     const file = files.item(i)
     if (accept && !accept.includes(file.type)) continue
-    else result.push(await file.arrayBuffer())
+    else result.push(file)
   }
 
   const items = dataTransfer.items
@@ -18,7 +18,7 @@ export default async function handleFiles(dataTransfer: DataTransfer, accept: st
           })
         })
         const blob = await data.blob()
-        if (!accept || accept.includes(blob.type)) result.push(await blob.arrayBuffer())
+        if (!accept || accept.includes(blob.type)) result.push(blob)
       } catch {}
     }
   }

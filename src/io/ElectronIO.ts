@@ -8,6 +8,7 @@ import Font, { FontVariant, FontWeight } from '@/models/common/Font'
 
 import IoManager from './IOManager'
 import JsonSerializer from './serialization/JsonSerializer'
+import randomString from '@/util/randomString'
 
 const { dialog, app } = remote
 
@@ -233,5 +234,22 @@ export default class ElectronIO extends IoManager {
       ipcRenderer.send('deleteFile', path)
     }
     return new Promise<void>(promiseHandler)
+  }
+
+  async addFile(file: Blob, space: 'user' | 'proj', relativePath: string) {
+    relativePath = relativePath.replaceAll('\\', '/')
+    const spacePath = ipcRenderer.sendSync('getContext', space)
+
+    const filePath = path.join(spacePath, relativePath).replaceAll('\\', '/')
+    const fileFolder = path.dirname(filePath)
+
+    try {
+      if (!existsSync(fileFolder)) await mkdir(fileFolder)
+      await writeFile(filePath, new Uint8Array(await file.arrayBuffer()))
+      return 'local://#' + space + relativePath
+    } catch (error) {
+      console.error(error)
+    }
+    return ''
   }
 }

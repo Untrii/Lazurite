@@ -127,7 +127,7 @@ const ColorEditor = () => {
       store.addUserBackground(bg)
     }
 
-    const onFilesPicked = function (files: ArrayBuffer[]) {
+    const onFilesPicked = function (files: Blob[]) {
       togglePopper(false)
       if (tabName == 'image') store.addImages(files)
       if (tabName == 'pattern') store.addPatterns(files)

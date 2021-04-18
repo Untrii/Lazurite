@@ -17,6 +17,10 @@ function applyContext(source: string) {
   return source
 }
 
+ipcMain.on('getContext', (event, arg) => {
+  event.returnValue = contexts[arg] ?? ''
+})
+
 ipcMain.on('setProjectContext', (event, arg) => {
   contexts.proj = arg.replaceAll('\\', '/')
   event.returnValue = ''
