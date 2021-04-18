@@ -150,7 +150,7 @@ const ColorEditor = () => {
       case 'image':
       case 'pattern':
         popperContent = (
-          <FilePicker isHiding={!isPopperShown} onSelected={onFilesPicked} extensions={['png', 'jpg', 'jpeg']} />
+          <FilePicker isHiding={!isPopperShown} onSelected={onFilesPicked} accept={['image/png', 'image/jpeg']} />
         )
         break
     }
