@@ -3,8 +3,10 @@ import ObjectSelection from '@/models/editor/ObjectSelection'
 import Presentation from '@/models/presentation/Presentation'
 import Slide from '@/models/presentation/Slide'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
+import ImageSlideObject from '@/models/presentation/slideObjects/ImageSlideObject'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
+import renderImage from './objectRenderers/renderImage'
 import renderText from './objectRenderers/renderText'
 import renderBackground from './renderBackground'
 import renderSelection from './renderSelection'
@@ -32,6 +34,8 @@ export default function render(
         case TextSlideObject.name:
           renderText(ctx, resolution, object as TextSlideObject)
           break
+        case ImageSlideObject.name:
+          renderImage(ctx, resolution, object as ImageSlideObject)
         default:
           console.error('Missing renderer for ' + object.type)
       }
