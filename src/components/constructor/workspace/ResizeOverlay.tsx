@@ -1,7 +1,7 @@
 import './ResizeOverlay.scss'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import { raw as store } from '@/store'
-import useForceUpdate from '@/util/useForceUpdate'
+import useForceUpdate from '@/util/hooks/useForceUpdate'
 import { h, JSX } from 'preact'
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
 

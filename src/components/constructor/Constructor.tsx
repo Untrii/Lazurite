@@ -6,7 +6,7 @@ import { useEffect, useState } from 'preact/hooks'
 import PreviewPanel from './previewPanel/PreviewPanel'
 import Workspace from './workspace/Workspace'
 import InstrumentsPanel from './instrimentsPanel/InstrumentsPanel'
-import useHotkey from '@/util/useHotkey'
+import useHotkey from '@/util/hooks/useHotkey'
 import store from '@/store'
 
 const Constructor = () => {

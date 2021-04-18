@@ -4,9 +4,8 @@ import { h } from 'preact'
 import { useEffect } from 'preact/hooks'
 
 import store from '@/store'
-import * as navigation from '@/store/actions/Navigation'
 import { PresentationFile } from '@/models/store/AppStateModel'
-import useForceUpdate from '@/util/useForceUpdate'
+import useForceUpdate from '@/util/hooks/useForceUpdate'
 
 import Button from '../controls/Button'
 import { useReactiveState } from '@/util/reactivity'

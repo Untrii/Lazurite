@@ -1,5 +1,5 @@
 import { JSX } from 'preact'
-import { useReactiveState } from './reactivity'
+import { useReactiveState } from '../reactivity'
 
 export default function useDelayedUnmount(component: JSX.Element, isShown: boolean, delay = 500) {
   const state = useReactiveState({

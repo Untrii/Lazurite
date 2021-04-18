@@ -7,7 +7,7 @@ import backgrounds from '@/presets/backgrounds'
 import store from '@/store'
 import Background, { BackgroundType } from '@/models/presentation/theme/Background'
 import Color from '@/models/common/Color'
-import useDelayedUnmount from '@/util/useDelayedUnmount'
+import useDelayedUnmount from '@/util/hooks/useDelayedUnmount'
 
 import HorizontalNav from '@/components/controls/HorizontalNav'
 import ColorPicker from '@/components/dialogs/ColorPicker'

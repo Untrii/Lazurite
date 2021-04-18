@@ -6,7 +6,7 @@ import store, { raw as rawStore } from '@/store'
 
 import Slide from '../Slide'
 import ToolOverlay from './ToolOverlay'
-import useHotkey from '@/util/useHotkey'
+import useHotkey from '@/util/hooks/useHotkey'
 import TextEditorOverlay from './TextEditorOverlay'
 import ResizeOverlay from './ResizeOverlay'
 
