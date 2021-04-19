@@ -7,6 +7,25 @@ import getTextWidth from '@/util/text/getTextWidth'
 
 const loadedFonts = new Set<string>()
 
+export function getRenderTextDeps(object: TextSlideObject) {
+  const { top, left, width, height, horizontalAlign, verticalAlign, style } = object
+  const { fontSize, fontWeight, fontFamily, fontSource } = style
+
+  return [
+    left,
+    top,
+    width,
+    height,
+    horizontalAlign,
+    verticalAlign,
+    fontSize,
+    fontWeight,
+    fontFamily,
+    fontSource,
+    style.color.toHex(),
+  ]
+}
+
 export default function renderText(
   context: CanvasRenderingContext2D,
   resolution: RendererResolution,
@@ -16,41 +35,41 @@ export default function renderText(
   const lines = getTextLines(object)
   const lineHeight = fontSize * getFontScale(fontFamily, fontWeight)
   const totalLinesHeight = lines.length * lineHeight
-  const { top, left } = object
+  const { top, left, width, height, horizontalAlign, verticalAlign, style } = object
 
   const font = requireResource(fontSource)
   if (!font) throw new Error("Font doesn't loaded")
 
   context.font = `normal ${fontWeight} ${fontSize * resolution.scale}px ${fontFamily}`
-  context.fillStyle = object.style.color.toHex()
+  context.fillStyle = style.color.toHex()
   context.textBaseline = 'top'
 
-  let blockOffsetY = object.top
+  let blockOffsetY = top
 
-  switch (object.verticalAlign) {
+  switch (verticalAlign) {
     case 'middle':
-      blockOffsetY += (object.height - totalLinesHeight) / 2
+      blockOffsetY += (height - totalLinesHeight) / 2
       break
     case 'bottom':
-      blockOffsetY += object.height - totalLinesHeight
+      blockOffsetY += height - totalLinesHeight
       break
   }
 
   const getOffsetX = function (line: string) {
-    const lineWidth = getTextWidth(object.style, line)
-    switch (object.horizontalAlign) {
+    const lineWidth = getTextWidth(style, line)
+    switch (horizontalAlign) {
       case 'left':
         return 0
       case 'middle':
-        return (object.width - lineWidth) / 2
+        return (width - lineWidth) / 2
       case 'right':
-        return object.width - lineWidth
+        return width - lineWidth
     }
   }
 
   for (let i = 0; i < lines.length; i++) {
     const currentLine = lines[i]
-    const offsetX = (object.left + getOffsetX(currentLine)) * resolution.scale
+    const offsetX = (left + getOffsetX(currentLine)) * resolution.scale
     const offsetY = (blockOffsetY + lineHeight * i) * resolution.scale
     context.fillText(currentLine, offsetX, offsetY)
   }

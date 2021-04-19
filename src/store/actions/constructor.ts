@@ -27,6 +27,7 @@ export default class ConstructorActions {
     if (slide) {
       slide.push(object)
     }
+    this.onCurrentSlideChange()
     await this.saveCurrentPresentation()
   }
 

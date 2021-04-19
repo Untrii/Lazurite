@@ -1,6 +1,6 @@
 //import './Slide.scss'
 import Presentation from '@/models/presentation/Presentation'
-import render from '@/slideRenderer'
+import render, { addSlideRenderEventListener, removeSlideRenderEventListener } from '@/slideRenderer'
 import { h } from 'preact'
 import { useLayoutEffect, useRef } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
@@ -14,6 +14,7 @@ interface ISlideProps {
   slide: SlideModel
   selection?: ObjectSelection
   showHovered?: boolean
+  isPreview?: boolean
   onRendered?: () => void
 }
 
@@ -29,7 +30,15 @@ const Slide = (props: ISlideProps) => {
   console.log('rendering slide')
 
   useLayoutEffect(() => {
-    let canvasElement = canvas.current
+    let canvasElement = canvas.current as HTMLCanvasElement
+    if (props.isPreview) {
+      const context = canvasElement.getContext('2d')
+      const listener = (slide) => {
+        context.drawImage(slide, 0, 0, width, height)
+      }
+      addSlideRenderEventListener(props.slide, listener)
+      return () => removeSlideRenderEventListener(props.slide, listener)
+    }
     renderingCanvases.add(canvasElement)
 
     canvasElement.width = width

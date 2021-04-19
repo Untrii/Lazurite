@@ -12,8 +12,8 @@ export default function renderSelection(
   requestRender: () => void
 ) {
   ctx.strokeStyle = '#058CD8'
-  const offset = (performance.now() / 1000) * dashAnimationSpeed
-  ctx.lineDashOffset = offset
+  //const offset = (performance.now() / 1000) * dashAnimationSpeed
+  //ctx.lineDashOffset = offset
 
   const renderOutline = function (slideObject: SlideObject) {
     const [left, top, right, bottom] = [

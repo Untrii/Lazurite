@@ -32,7 +32,7 @@ const PreviewPanel = () => {
           <div class="preview-panel__slide-delete" onClick={onSlideDelete(index)}>
             <img src={assets.delete} alt="" />
           </div>
-          <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} />
+          <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} isPreview={true} />
         </div>
       ))}
 
