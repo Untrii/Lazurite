@@ -36,6 +36,7 @@ export default function render(
           break
         case ImageSlideObject.name:
           renderImage(ctx, resolution, object as ImageSlideObject)
+          break
         default:
           console.error('Missing renderer for ' + object.type)
       }

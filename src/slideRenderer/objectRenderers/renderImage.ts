@@ -8,8 +8,7 @@ export default function (context: CanvasRenderingContext2D, resolution: Renderer
 
   const image = requireResource(object.src) as HTMLImageElement | undefined
   if (!image) {
-    console.warn(`Image ${object.src} not loaded`)
-    return
+    throw new Error(`Image ${object.src} not loaded`)
   }
 
   context.drawImage(image, left, top, width, height)

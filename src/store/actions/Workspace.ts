@@ -1,6 +1,8 @@
+import io from '@/io'
 import Slide from '@/models/presentation/Slide'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import { raw as store, StoreType } from '@/store'
+import randomString from '@/util/randomString'
 
 const listeners = new Map<Slide, Set<Function>>()
 function triggerListeners(slide: Slide) {
@@ -98,7 +100,11 @@ export default class WorkspaceActions {
     triggerListeners(this.getCurrentSlide())
   }
 
-  async addImage(this: StoreType, image: Blob) {}
+  async addImageInProject(this: StoreType, image: Blob) {
+    const ext = image.type.split('/').pop()
+    const name = `/resources/${randomString(8)}.${ext}`
+    return await io.addFile(image, 'proj', name)
+  }
 
   addSlideChangeListener(this: StoreType, slide: Slide, callback: () => void) {
     if (!listeners.has(slide)) listeners.set(slide, new Set())

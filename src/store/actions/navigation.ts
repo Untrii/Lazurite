@@ -1,10 +1,13 @@
+import path from 'path'
+
 import { DesignTab, EditorWindowName } from '@/models/store/TabStateModel'
-import store, { StoreType } from '@/store'
+import { StoreType } from '@/store'
 import io from '@/io'
 import TabStateModel from '@/models/store/TabStateModel'
 import { PresentationFile } from '@/models/store/AppStateModel'
-import { startScreenPath, loadRecent } from '../StoreLoader'
 import { setContext } from '@/dataLoader'
+
+import { startScreenPath, loadRecent } from '../StoreLoader'
 
 async function addNewRecentPresentaion(path: string) {
   const presentations = await io.loadRecentPresentationPaths()
@@ -32,7 +35,7 @@ export default class NavigationActions {
 
   openTab(this: StoreType, index: number) {
     this.selectedTabIndex = index
-    setContext('proj', this.tabs[index].presentationPath.replace('local://', '').replaceAll('\\', '/'))
+    setContext('proj', path.dirname(this.tabs[index].presentationPath.replace('local://', '')).replaceAll('\\', '/'))
   }
 
   replaceTab(this: StoreType, prevIndex: number, newIndex: number) {
