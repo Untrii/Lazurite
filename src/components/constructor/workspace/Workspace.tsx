@@ -20,7 +20,7 @@ const Workspace = (props: IWorkspaceProps) => {
     store.deleteSelectedObjects()
   })
 
-  const watchable = store.currentTab.openedPresentation.slides.length
+  const watchable = store.currentTab.openedPresentation.slides.length && store.currentTab.selectedSlideIndex
   const currentTab = rawStore.currentTab
   const presentation = currentTab.openedPresentation
   const slide = presentation.slides[currentTab.selectedSlideIndex]
@@ -34,18 +34,12 @@ const Workspace = (props: IWorkspaceProps) => {
     width: slideWidth + 'px',
   }
 
-  const renderTrigger = function (callback: () => void) {
-    renderTrigger['run'] = () => {
-      callback()
-    }
-  }
-
   return (
     <div style={rootStyle} class="workspace">
       {slide ? (
         <ImageDropOverlay width={slideWidth} height={slideHeight}>
           <ResizeOverlay width={slideWidth} height={slideHeight}>
-            <TextEditorOverlay width={slideWidth} height={slideHeight} renderTrigger={renderTrigger}>
+            <TextEditorOverlay width={slideWidth} height={slideHeight}>
               <ToolOverlay width={slideWidth} height={slideHeight}>
                 <Slide
                   width={slideWidth}
@@ -54,7 +48,6 @@ const Workspace = (props: IWorkspaceProps) => {
                   presentation={presentation}
                   selection={currentTab.selection}
                   showHovered={true}
-                  onRendered={() => renderTrigger['run']?.()}
                 />
               </ToolOverlay>
             </TextEditorOverlay>

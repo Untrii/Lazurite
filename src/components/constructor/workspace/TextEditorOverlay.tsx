@@ -16,7 +16,6 @@ interface ITextEditorOverlayProps {
   width: number
   height: number
   children: JSX.Element
-  renderTrigger: (callback: () => void) => void
 }
 
 function border(value, min, max) {
@@ -59,13 +58,12 @@ function createStateModel() {
   }
 }
 
-const TextEditorOverlay = ({ children, width, height, renderTrigger }: ITextEditorOverlayProps) => {
+const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps) => {
   const { width: presentationWidth, height: presentationHeight } = store.getCurrentPresentation().resolution
   const resolution = new RendererResolution(presentationWidth, presentationHeight)
   resolution.targetWidth = width
 
   const state = useReactiveState(createStateModel())
-  const forceUpdate = useForceUpdate()
   const overlay = useRef(null)
   const input = useRef(null)
 

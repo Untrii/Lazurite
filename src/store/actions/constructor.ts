@@ -17,6 +17,11 @@ export default class ConstructorActions {
     await this.saveCurrentPresentation()
   }
 
+  selectSlide(this: StoreType, index: number) {
+    this.currentTab.selectedSlideIndex = index
+    this.onCurrentSlideChange()
+  }
+
   setTool(this: StoreType, index: [number, number], tool: AnyTool) {
     this.currentTab.addTabToolIndex = index
     this.currentTab.tool = tool

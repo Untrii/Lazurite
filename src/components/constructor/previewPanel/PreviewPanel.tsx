@@ -22,17 +22,27 @@ const PreviewPanel = () => {
     }
   }
 
+  const onCLick = function (index: number) {
+    store.selectSlide(index)
+  }
+
+  const selectedIndex = store.currentTab.selectedSlideIndex
+
   return (
     <div className="preview-panel">
       {presentation.slides.map((slide, index) => (
-        <div
-          class="preview-panel__slide"
-          onMouseEnter={(event) => (event.target as any).classList.add('preview-panel__slide_animated')}
-        >
-          <div class="preview-panel__slide-delete" onClick={onSlideDelete(index)}>
-            <img src={assets.delete} alt="" />
+        <div class="preview-panel__slide-wrap">
+          {selectedIndex == index ? <div class="preview-panel__selection-mark"></div> : null}
+          <div
+            class="preview-panel__slide"
+            onMouseEnter={(event) => (event.target as any).classList.add('preview-panel__slide_animated')}
+            onClick={() => onCLick(index)}
+          >
+            <div class="preview-panel__slide-delete" onClick={onSlideDelete(index)}>
+              <img src={assets.delete} alt="" />
+            </div>
+            <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} isPreview={true} />
           </div>
-          <Slide width={slideWidth} height={slideHeight} slide={slide} presentation={presentation} isPreview={true} />
         </div>
       ))}
 
