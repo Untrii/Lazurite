@@ -11,8 +11,8 @@ import renderText, { getRenderTextDeps } from './objectRenderers/renderText'
 import renderBackground from './renderBackground'
 import renderSelection from './renderSelection'
 
-const composites = new Map<Slide, Map<number, HTMLCanvasElement[]>>()
-const identities = new Map<Slide, Map<number, any[][]>>()
+const composites = new Map<Slide, [number, HTMLCanvasElement[]]>()
+const identities = new Map<Slide, [number, any[][]]>()
 
 export function createComposite(ctx: CanvasRenderingContext2D) {
   const result = document.createElement('canvas')
@@ -40,8 +40,8 @@ function renderObjects(
   slide: Slide
 ) {
   const resId = ctx.canvas.width * 8192 + ctx.canvas.height
-  const prevRenderComposites = composites.get(slide)?.get(resId) ?? []
-  const prevRenderIdentity = identities.get(slide)?.get(resId) ?? []
+  const [prevResId, prevRenderComposites] = composites.get(slide) ?? [0, []]
+  const [, prevRenderIdentity] = identities.get(slide) ?? [0, []]
   let currentRenderComposites = [] as HTMLCanvasElement[]
   let currentRenderIdentity = [] as any[][]
 
@@ -62,7 +62,7 @@ function renderObjects(
     }
   }
 
-  let isSimilarIdentity = prevRenderIdentity.length == currentRenderIdentity.length
+  let isSimilarIdentity = prevRenderIdentity.length == currentRenderIdentity.length && prevResId == resId
   let error = null
   console.time('render objects')
   for (let i = 0; i < slide.length; i++) {
@@ -159,10 +159,8 @@ export default function render(
       renderSelection(ctx, resolution, selection, highlight, requestRerender)
       console.timeEnd('render selection')
     }
-    if (!composites.get(slide)) composites.set(slide, new Map())
-    if (!identities.get(slide)) identities.set(slide, new Map())
 
-    composites.get(slide).set(resId, currentRenderComposites)
-    identities.get(slide).set(resId, currentRenderIdentity)
+    composites.set(slide, [resId, currentRenderComposites])
+    identities.set(slide, [resId, currentRenderIdentity])
   }
 }
