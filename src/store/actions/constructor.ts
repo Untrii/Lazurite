@@ -22,6 +22,7 @@ export default class ConstructorActions {
 
     this.currentTab.selectedSlideIndex = index
     this.currentTab.selection.clear()
+    this.currentTab.hoveredObject = null
     this.onCurrentSlideChange()
   }
 

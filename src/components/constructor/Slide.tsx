@@ -41,28 +41,23 @@ const Slide = (props: ISlideProps) => {
     )
   }
 
-  const [isFirstRender, onRender] = useState(true)
-
   useLayoutEffect(() => {
     let canvasElement = canvas.current as HTMLCanvasElement
+    canvasElement.width = width
+    canvasElement.height = height
+
     if (props.isPreview) {
       const context = canvasElement.getContext('2d')
       const listener = (slide) => context.drawImage(slide, 0, 0, width, height)
 
-      if (isFirstRender) {
-        console.log('rendering preview')
-        const onRerenderRequest = () => setTimeout(() => renderCanvas(onRerenderRequest), 200)
-        renderCanvas(onRerenderRequest)
-        onRender(false)
-      }
+      console.log('rendering preview')
+      const onRerenderRequest = () => setTimeout(() => renderCanvas(onRerenderRequest), 200)
+      renderCanvas(onRerenderRequest)
 
       addSlideRenderEventListener(props.slide, listener)
       return () => removeSlideRenderEventListener(props.slide, listener)
     }
     renderingCanvases.add(canvasElement)
-
-    canvasElement.width = width
-    canvasElement.height = height
 
     const onRerenderRequest = () => {
       if (!renderingCanvases.has(canvasElement)) return
