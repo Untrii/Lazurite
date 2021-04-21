@@ -4,6 +4,16 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 
 const dashAnimationSpeed = 8
 
+let prevSelectionComposite = document.createElement('canvas')
+let prevSelectionIdentity = []
+
+function createComposite(width: number, height: number) {
+  const result = document.createElement('canvas')
+  result.width = width
+  result.height = height
+  return result
+}
+
 export default function renderSelection(
   ctx: CanvasRenderingContext2D,
   resolution: RendererResolution,
@@ -11,29 +21,6 @@ export default function renderSelection(
   highlight: SlideObject | null,
   requestRender: () => void
 ) {
-  ctx.strokeStyle = '#058CD8'
-  //const offset = (performance.now() / 1000) * dashAnimationSpeed
-  //ctx.lineDashOffset = offset
-
-  const renderOutline = function (slideObject: SlideObject) {
-    const [left, top, right, bottom] = [
-      Math.floor(slideObject.left * resolution.scale),
-      Math.floor(slideObject.top * resolution.scale),
-      Math.floor(slideObject.right * resolution.scale),
-      Math.floor(slideObject.bottom * resolution.scale),
-    ]
-    ctx.strokeRect(left, top, right - left, bottom - top)
-  }
-
-  ctx.setLineDash([4, 4])
-  ctx.lineWidth = 2
-  for (const item of selection.items) renderOutline(item)
-
-  if (highlight && !selection.isInSelection(highlight)) {
-    ctx.lineDashOffset = 0
-    renderOutline(highlight)
-  }
-
   const [outerTop, outerBottom, outerLeft, outerRight] = [
     Math.floor(selection.top * resolution.scale),
     Math.floor(selection.bottom * resolution.scale),
@@ -41,8 +28,64 @@ export default function renderSelection(
     Math.floor(selection.right * resolution.scale),
   ]
 
-  ctx.setLineDash([])
+  const selectionWidth = outerRight - outerLeft + 2
+  const selectionHeight = outerBottom - outerTop + 2
+
+  const currentSelectionIdentity: any[] = [selectionWidth, selectionHeight]
+  selection.items.forEach((item) => currentSelectionIdentity.push(item.id))
+  const isSimilarIdentity = currentSelectionIdentity.length == prevSelectionIdentity.length
+
+  let isSame = isSimilarIdentity
+  for (let i = 0; isSame && i < currentSelectionIdentity.length; i++) {
+    if (currentSelectionIdentity[i] !== prevSelectionIdentity[i]) isSame = false
+  }
+
+  if (isSame) {
+    ctx.drawImage(prevSelectionComposite, outerLeft, outerTop)
+  }
+
+  let currentSelectionComposite = createComposite(selectionWidth, selectionHeight)
+  let currentContext = currentSelectionComposite.getContext('2d')
+  ctx.strokeStyle = '#058CD8'
+
+  const renderOutline = function (
+    ctx: CanvasRenderingContext2D,
+    slideObject: SlideObject,
+    offsetX = -outerLeft,
+    offsetY = -outerTop
+  ) {
+    const [left, top, right, bottom] = [
+      Math.floor(slideObject.left * resolution.scale),
+      Math.floor(slideObject.top * resolution.scale),
+      Math.floor(slideObject.right * resolution.scale),
+      Math.floor(slideObject.bottom * resolution.scale),
+    ]
+    ctx.strokeRect(left + offsetX + 1, top + offsetY + 1, right - left - 1, bottom - top - 1)
+  }
+
+  ctx.setLineDash([4, 4])
   ctx.lineWidth = 2
-  ctx.strokeRect(outerLeft, outerTop, outerRight - outerLeft, outerBottom - outerTop)
-  if (selection.size > 1) requestRender()
+
+  if (highlight && !selection.isInSelection(highlight)) {
+    ctx.lineDashOffset = 0
+    renderOutline(ctx, highlight, 0, 0)
+  }
+
+  if (selectionWidth == Number.NEGATIVE_INFINITY || selectionHeight == Number.NEGATIVE_INFINITY) return
+  if (selectionWidth == 0 || selectionHeight == 0) return
+
+  if (!isSame) {
+    currentContext.strokeStyle = '#058CD8'
+    currentContext.setLineDash([4, 4])
+    currentContext.lineWidth = 2
+    for (const item of selection.items) renderOutline(currentContext, item)
+
+    currentContext.setLineDash([])
+    currentContext.lineWidth = 2
+    currentContext.strokeRect(1, 1, selectionWidth - 3, selectionHeight - 3)
+
+    ctx.drawImage(currentSelectionComposite, outerLeft, outerTop)
+    prevSelectionComposite = currentSelectionComposite
+    prevSelectionIdentity = currentSelectionIdentity
+  }
 }

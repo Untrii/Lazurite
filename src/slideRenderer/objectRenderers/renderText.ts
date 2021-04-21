@@ -8,7 +8,7 @@ import getTextWidth from '@/util/text/getTextWidth'
 const loadedFonts = new Set<string>()
 
 export function getRenderTextDeps(object: TextSlideObject) {
-  const { top, left, width, height, horizontalAlign, verticalAlign, style } = object
+  const { top, left, width, height, horizontalAlign, verticalAlign, style, content } = object
   const { fontSize, fontWeight, fontFamily, fontSource } = style
 
   return [
@@ -16,6 +16,7 @@ export function getRenderTextDeps(object: TextSlideObject) {
     top,
     width,
     height,
+    content,
     horizontalAlign,
     verticalAlign,
     fontSize,
