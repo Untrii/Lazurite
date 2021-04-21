@@ -18,7 +18,10 @@ export default class ConstructorActions {
   }
 
   selectSlide(this: StoreType, index: number) {
+    if (this.currentTab.selectedSlideIndex == index) return
+
     this.currentTab.selectedSlideIndex = index
+    this.currentTab.selection.clear()
     this.onCurrentSlideChange()
   }
 

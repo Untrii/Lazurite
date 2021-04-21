@@ -86,6 +86,7 @@ export default class WorkspaceActions {
     for (let i = 0; i < filteredObjects.length; i++) {
       currentSlide[i] = filteredObjects[i]
     }
+    this.currentTab.hoveredObject = null
     triggerListeners(currentSlide)
     store.saveCurrentPresentation()
   }

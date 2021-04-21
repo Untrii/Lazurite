@@ -3,7 +3,7 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import { raw as store } from '@/store'
 import useForceUpdate from '@/util/hooks/useForceUpdate'
 import { h, JSX } from 'preact'
-import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
+import { useLayoutEffect, useState } from 'preact/hooks'
 
 interface IResizeOverlayProps {
   children: JSX.Element
