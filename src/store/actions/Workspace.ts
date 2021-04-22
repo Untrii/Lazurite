@@ -4,21 +4,12 @@ import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import { raw as store, StoreType } from '@/store'
 import randomString from '@/util/randomString'
 
-const listeners = new Map<Slide, Set<Function>>()
-function triggerListeners(slide: Slide) {
-  for (const [key, value] of listeners) {
-    if (key === slide) {
-      value.forEach((callback) => callback())
-    }
-  }
-}
-
 export default class WorkspaceActions {
   onPointerClick(this: StoreType, x: number, y: number, ctrlPressed = false) {
     const objects = this.getObjectsByCoords(x, y)
     if (!ctrlPressed) this.deselectAll()
     if (objects.length > 0) this.select(objects[0], ctrlPressed)
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   onAreaSelect(this: StoreType, top: number, left: number, right: number, bottom: number, ctrlPressed = false) {
@@ -27,18 +18,18 @@ export default class WorkspaceActions {
     for (const object of objects) {
       this.select(object, true)
     }
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   select(this: StoreType, object: SlideObject, append = false) {
     if (append) store.currentTab.selection.addItem(object)
     else store.currentTab.selection.setSelection(object)
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   deselectAll(this: StoreType) {
     store.currentTab.selection.clear()
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   moveSelection(this: StoreType, startOffsetLeft: number, startOffsetTop: number, endLeft: number, endTop: number) {
@@ -54,7 +45,7 @@ export default class WorkspaceActions {
       object.top = endTop - startOffsetTop + top
     }
     this.saveCurrentPresentation()
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   resizeSelection(this: StoreType, newTop: number, newLeft: number, newBottom: number, newRight: number) {
@@ -72,7 +63,7 @@ export default class WorkspaceActions {
       object.top += newTop - top + (object.top - top) * (scaleY - 1)
     }
 
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   deleteSelectedObjects(this: StoreType) {
@@ -87,20 +78,20 @@ export default class WorkspaceActions {
       currentSlide[i] = filteredObjects[i]
     }
     this.currentTab.hoveredObject = null
-    triggerListeners(currentSlide)
+    this.onCurrentSlideChange()
     store.saveCurrentPresentation()
   }
 
   hoverObject(this: StoreType, object: SlideObject) {
     if (store.currentTab.hoveredObject === object) return
     store.currentTab.hoveredObject = object
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   unhoverObject(this: StoreType) {
     if (store.currentTab.hoveredObject === null) return
     store.currentTab.hoveredObject = null
-    triggerListeners(this.getCurrentSlide())
+    this.onCurrentSlideChange()
   }
 
   async addImageInProject(this: StoreType, image: Blob) {
@@ -109,22 +100,7 @@ export default class WorkspaceActions {
     return await io.addFile(image, 'proj', name)
   }
 
-  addSlideChangeListener(this: StoreType, slide: Slide, callback: () => void) {
-    if (!listeners.has(slide)) listeners.set(slide, new Set())
-    listeners.get(slide).add(callback)
-  }
-
-  removeSlideChangeListener(this: StoreType, slide: Slide, callback: () => void) {
-    if (!listeners.has(slide)) return
-    listeners.get(slide).delete(callback)
-    if (listeners.get(slide).size == 0) listeners.delete(slide)
-  }
-
-  clearSlideChangeListeners(this: StoreType) {
-    listeners.clear()
-  }
-
   onCurrentSlideChange(this: StoreType) {
-    triggerListeners(this.getCurrentSlide())
+    this.triggerEvent('slideChange', this.getCurrentSlide())
   }
 }

@@ -9,11 +9,13 @@ export default class ConstructorActions {
   }
 
   async deleteSlide(this: StoreType, index: number) {
-    this.clearSlideChangeListeners()
     store.currentTab.selection.clear()
 
     const slides = store.currentTab.openedPresentation.slides
-    if (index >= 0 && index < slides.length) slides.splice(index, 1)
+    if (index >= 0 && index < slides.length) {
+      const [slide] = slides.splice(index, 1)
+      this.clearEventListeners('slideChange', slide)
+    }
     await this.saveCurrentPresentation()
   }
 

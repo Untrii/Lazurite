@@ -70,11 +70,11 @@ const Slide = (props: ISlideProps) => {
       })
     }
 
-    store.addSlideChangeListener(slide, onRerenderRequest)
+    store.addEventListener('slideChange', onRerenderRequest, slide)
     renderCanvas(onRerenderRequest)
     return () => {
       renderingCanvases.delete(canvasElement)
-      store.removeSlideChangeListener(slide, onRerenderRequest)
+      store.removeEventListener('slideChange', onRerenderRequest)
     }
   })
 

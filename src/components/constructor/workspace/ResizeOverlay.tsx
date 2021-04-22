@@ -4,6 +4,7 @@ import { raw as store } from '@/store'
 import useForceUpdate from '@/util/hooks/useForceUpdate'
 import { h, JSX } from 'preact'
 import { useLayoutEffect, useState } from 'preact/hooks'
+import useEventBus from '@/store/useEventBus'
 
 interface IResizeOverlayProps {
   children: JSX.Element
@@ -12,7 +13,7 @@ interface IResizeOverlayProps {
 }
 
 const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
-  const forceUpdate = useForceUpdate()
+  useEventBus(store, 'slideChange', store.getCurrentSlide())
   const [draggingStick, setDraggingStick] = useState('')
 
   const presentation = store.getCurrentPresentation()
@@ -24,13 +25,6 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
 
   const middleX = (left + right) / 2
   const middleY = (top + bottom) / 2
-
-  useLayoutEffect(() => {
-    const listener = () => forceUpdate()
-    const slide = store.getCurrentSlide()
-    store.addSlideChangeListener(slide, listener)
-    return () => store.removeSlideChangeListener(slide, listener)
-  })
 
   const sticks = [
     { x: left, y: top, props: ['top', 'left'], cursor: 'nw' },

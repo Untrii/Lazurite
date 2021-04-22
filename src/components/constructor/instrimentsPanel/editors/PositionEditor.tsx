@@ -2,20 +2,13 @@ import './PositionEditor.scss'
 import { h, Fragment } from 'preact'
 import { raw as store } from '@/store'
 import NumberInput from '@/components/controls/NumberInput'
-import { useEffect } from 'preact/hooks'
-import useForceUpdate from '@/util/hooks/useForceUpdate'
+import useEventBus from '@/store/useEventBus'
 
 const PositionEditor = () => {
-  const forceUpdate = useForceUpdate()
   const selection = store.currentTab.selection
   const item = selection.size == 1 ? selection.items[0] : null
 
-  useEffect(() => {
-    const listener = () => forceUpdate()
-    const slide = store.getCurrentSlide()
-    store.addSlideChangeListener(slide, listener)
-    return () => store.removeSlideChangeListener(slide, listener)
-  })
+  useEventBus(store, 'slideChange', store.getCurrentSlide())
 
   const inputs = [
     {

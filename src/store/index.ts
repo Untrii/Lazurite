@@ -9,6 +9,7 @@ import WorkspaceActions from './actions/Workspace'
 import ConstructorGetters from './getters/Constructor'
 import WorkspaceGetters from './getters/Workspace'
 import ToolGetters from './getters/Tools'
+import EventBus from './EventBus'
 
 export const raw = new Store()
   .use(new StoreLoader())
@@ -20,6 +21,7 @@ export const raw = new Store()
   .use(new ConstructorGetters())
   .use(new ToolGetters())
   .use(new WorkspaceGetters())
+  .use(new EventBus())
 type StoreType = typeof raw
 
 export { StoreType }
