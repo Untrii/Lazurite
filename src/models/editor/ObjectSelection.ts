@@ -40,6 +40,14 @@ export default class ObjectSelection {
     return Math.max(...Array.from(this._items).map((item) => item.right))
   }
 
+  get width(): number {
+    return this.right - this.left
+  }
+
+  get height(): number {
+    return this.bottom - this.top
+  }
+
   get isEmpty(): boolean {
     return this._items.size === 0
   }

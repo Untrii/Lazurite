@@ -92,11 +92,13 @@ export default class WorkspaceActions {
   }
 
   hoverObject(this: StoreType, object: SlideObject) {
+    if (store.currentTab.hoveredObject === object) return
     store.currentTab.hoveredObject = object
     triggerListeners(this.getCurrentSlide())
   }
 
   unhoverObject(this: StoreType) {
+    if (store.currentTab.hoveredObject === null) return
     store.currentTab.hoveredObject = null
     triggerListeners(this.getCurrentSlide())
   }

@@ -1,0 +1,21 @@
+.position-editor {
+  padding: 0 4px;
+
+  h3 {
+    font-size: 12px;
+    font-weight: 400;
+    color: white;
+  }
+
+  &__controls {
+  }
+
+  &__control {
+    width: calc(50% - 12px) !important;
+    display: inline-flex !important;
+
+    &:nth-child(odd) {
+      margin-right: 24px;
+    }
+  }
+}

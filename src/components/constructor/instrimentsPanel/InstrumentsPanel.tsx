@@ -8,6 +8,7 @@ import assets from '@/assets'
 import VerticalNav, { INavItem } from '@/components/controls/VerticalNav'
 import Button from '@/components/controls/Button'
 import AddTab from './AddTab'
+import EditTab from './EditTab'
 
 const InstrumentsPanel = () => {
   const tabs: INavItem[] = [
@@ -35,6 +36,8 @@ const InstrumentsPanel = () => {
     switch (tabIndex) {
       case 0:
         return <AddTab />
+      case 1:
+        return <EditTab />
       default:
         return null
     }
