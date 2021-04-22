@@ -64,7 +64,6 @@ function renderObjects(
 
   let isSimilarIdentity = prevRenderIdentity.length == currentRenderIdentity.length && prevResId == resId
   let error = null
-  console.time('render objects')
   for (let i = 0; i < slide.length; i++) {
     if (isSimilarIdentity && i % objectsPerComposite == 0) {
       let isSame = true
@@ -116,7 +115,6 @@ function renderObjects(
       currentContext = currentComposite.getContext('2d')
     }
   }
-  console.timeEnd('render objects')
 
   return [currentRenderComposites, currentRenderIdentity, error]
 }
@@ -155,9 +153,7 @@ export default function render(
   } finally {
     const resId = ctx.canvas.width * 8192 + ctx.canvas.height
     if (selection) {
-      console.time('render selection')
       renderSelection(ctx, resolution, selection, highlight, requestRerender)
-      console.timeEnd('render selection')
     }
 
     composites.set(slide, [resId, currentRenderComposites])
