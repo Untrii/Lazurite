@@ -14,7 +14,9 @@ interface INumberInputProps {
   maxValue?: number
   minValue?: number
   step?: number
+  precision?: number
   prepend?: string
+  className?: string
   onChange?: (newValue: number) => void
 }
 
@@ -22,8 +24,10 @@ const NumberInput = ({
   value = 0,
   minValue = -1e9,
   maxValue = 1e9,
-  step = 0.001,
+  step = 1,
+  precision = 0.1,
   prepend,
+  className = '',
   onChange,
 }: INumberInputProps) => {
   const state = useReactiveState({
@@ -32,24 +36,11 @@ const NumberInput = ({
     prevValue: value,
     emptyValue: false,
   })
+  const fractionsCount = Math.round(Math.log10(1 / precision))
 
   if (isNaN(value)) value = minValue
 
   const box = useRef(null)
-
-  const resizeInput = function (value: number | string) {
-    if (typeof value == 'number') return resizeInput(value.toString())
-
-    const textStyle = new TextStyle()
-    textStyle.fontFamily = 'Roboto'
-    textStyle.fontSize = 12
-    textStyle.fontWeight = 700
-    box.current.style.width = getTextWidth(textStyle, value) + 4 + 'px'
-  }
-
-  const updateInputValue = function () {
-    if (parseFloat(box.current.value) > state.value) box.current.value = state.value
-  }
 
   const applyMaxValue = function (value: string | number): number {
     if (typeof value == 'string') return applyMaxValue(parseFloat(value))
@@ -62,9 +53,8 @@ const NumberInput = ({
     return value
   }
 
-  const applyStep = function (value: string | number): string {
-    if (typeof value == 'number') return applyStep(value.toString())
-    const fractionsCount = Math.round(Math.log10(1 / step))
+  const applyPrecision = function (value: string | number): string {
+    if (typeof value == 'number') return applyPrecision(value.toString())
     const dividerIndex = value.indexOf('.')
     let result = value
     if (dividerIndex != -1) result = value.substring(0, dividerIndex + fractionsCount + 1)
@@ -73,7 +63,7 @@ const NumberInput = ({
   }
 
   if (value != state.prevPropsValue) {
-    state.value = parseFloat(applyStep(applyMaxValue(value)))
+    state.value = parseFloat(applyPrecision(applyMaxValue(value)))
     state.prevPropsValue = value
   }
 
@@ -83,7 +73,7 @@ const NumberInput = ({
     let parsedText = parseFloat(text.replace(',', '.'))
     if (isNaN(parsedText)) text = '0'
 
-    let processedText = applyStep(applyMaxValue(text))
+    let processedText = applyPrecision(applyMaxValue(text))
     if (text.endsWith(',') || text.endsWith('.')) processedText += '.'
 
     if (text.startsWith('0') && text.length > 1) {
@@ -108,10 +98,17 @@ const NumberInput = ({
     state.emptyValue = false
 
     const processedText = processText(text)
+    const value = parseFloat(processedText)
 
-    state.value = parseFloat(processedText)
-    onChange?.(state.value < minValue ? minValue : state.value)
-    updateInputValue()
+    box.current.value = processedText
+    onChange?.(value < minValue ? minValue : value)
+  }
+
+  const incrementValue = function (delta: number) {
+    const value = applyMinValue(applyMaxValue(state.value + delta))
+    state.value = value
+    box.current.value = value
+    onChange?.(value < minValue ? minValue : value)
   }
 
   const onWheel = function (event: WheelEvent) {
@@ -120,27 +117,54 @@ const NumberInput = ({
     if (event.deltaY < 0) delta = 10
     if (event.deltaY > 0) delta = -10
 
-    state.value = applyMinValue(applyMaxValue(state.value + delta))
-    onChange?.(state.value < minValue ? minValue : state.value)
+    incrementValue(delta)
   }
 
-  useLayoutEffect(() => {
-    resizeInput(state.value)
-  })
+  const onKeyDown = function (event: KeyboardEvent) {
+    const allowedKeys = [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '.',
+      ',',
+      'Backspace',
+      'Delete',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowRight',
+      'ArrowLeft',
+    ]
+    if (!allowedKeys.includes(event.key) && !event.ctrlKey) {
+      event.preventDefault()
+    }
+    if (event.code == 'ArrowUp' || event.code == 'ArrowDown') {
+      const delta = event.code == 'ArrowUp' ? 1 : -1
+      incrementValue(delta)
+    }
+  }
+
+  const rootClasses = `number-input ${className}`
 
   return (
-    <div class="number-input">
+    <div class={rootClasses}>
       {prepend ? <Prepend>{prepend}</Prepend> : null}
       <div class="number-input__edit-box" onClick={() => box.current.focus()} onWheel={onWheel}>
         <input
           lang="en"
-          type="number"
-          step={step}
+          step={precision}
           min={minValue}
           max={maxValue}
-          value={state.emptyValue ? '' : state.value}
+          value={value.toFixed(fractionsCount)}
           ref={box}
           onClick={(event) => event.stopPropagation()}
+          onKeyDown={onKeyDown}
           onInput={onInput}
         ></input>
       </div>
