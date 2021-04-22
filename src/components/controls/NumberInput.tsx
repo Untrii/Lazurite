@@ -121,27 +121,8 @@ const NumberInput = ({
   }
 
   const onKeyDown = function (event: KeyboardEvent) {
-    const allowedKeys = [
-      '0',
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      '.',
-      ',',
-      'Backspace',
-      'Delete',
-      'ArrowUp',
-      'ArrowDown',
-      'ArrowRight',
-      'ArrowLeft',
-    ]
-    if (!allowedKeys.includes(event.key) && !event.ctrlKey) {
+    const allowedKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',']
+    if (!allowedKeys.includes(event.key) && !event.ctrlKey && event.code != event.key) {
       event.preventDefault()
     }
     if (event.code == 'ArrowUp' || event.code == 'ArrowDown') {
