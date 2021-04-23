@@ -32,7 +32,7 @@ const NumberInput = ({
 }: INumberInputProps) => {
   const state = useReactiveState({
     prevPropsValue: NaN,
-    value,
+    value: NaN,
     prevValue: value,
     emptyValue: false,
   })
@@ -62,9 +62,14 @@ const NumberInput = ({
     return value
   }
 
-  if (value != state.prevPropsValue) {
-    state.value = parseFloat(applyPrecision(applyMaxValue(value)))
-    state.prevPropsValue = value
+  const renderValue = function (value: number) {
+    let text = value.toFixed(fractionsCount)
+    if (text.includes('.')) {
+      while (text.endsWith('0')) text = text.substring(0, text.length - 1)
+      if (text.endsWith('.')) text = text.substring(0, text.length - 1)
+    }
+
+    box.current.value = text
   }
 
   const processText = function (text: string | number) {
@@ -100,14 +105,18 @@ const NumberInput = ({
     const processedText = processText(text)
     const value = parseFloat(processedText)
 
-    box.current.value = processedText
-    onChange?.(value < minValue ? minValue : value)
+    if (box.current.value.length > processedText.length) renderValue(value)
+
+    if (state.value != value) {
+      state.value = value
+      if (value >= minValue) onChange?.(value)
+    }
   }
 
   const incrementValue = function (delta: number) {
     const value = applyMinValue(applyMaxValue(state.value + delta))
     state.value = value
-    box.current.value = value
+    renderValue(value)
     onChange?.(value < minValue ? minValue : value)
   }
 
@@ -133,6 +142,13 @@ const NumberInput = ({
 
   const rootClasses = `number-input ${className}`
 
+  useLayoutEffect(() => {
+    if (state.value != value) {
+      state.value = value
+      renderValue(value)
+    }
+  })
+
   return (
     <div class={rootClasses}>
       {prepend ? <Prepend>{prepend}</Prepend> : null}
@@ -142,7 +158,6 @@ const NumberInput = ({
           step={precision}
           min={minValue}
           max={maxValue}
-          value={value.toFixed(fractionsCount)}
           ref={box}
           onClick={(event) => event.stopPropagation()}
           onKeyDown={onKeyDown}
