@@ -1,6 +1,8 @@
 //import './TextEditor.scss'
 import assets from '@/assets'
 import CompactRadio from '@/components/controls/CompactRadio'
+import DropdownSelector from '@/components/controls/DropdownSelector'
+import NumberInput from '@/components/controls/NumberInput'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import { raw as store } from '@/store'
 import useEventBus from '@/store/useEventBus'
@@ -38,16 +40,23 @@ const TextEditor = () => {
     },
   ]
 
+  const hVariants = ['left', 'center', 'right']
+  const vVariants = ['top', 'center', 'bottom']
+
+  const currentObject = store.currentTab.selection.items[0] as TextSlideObject
+  const horizontalAlign = currentObject.horizontalAlign
+  const verticalAlign = currentObject.verticalAlign
+  const fontSize = currentObject.style.fontSize
+
   const changeAlign = function (type: 'horizontal' | 'vertical', index: number, variants: string[]) {
     store.changeSelectedObjectProperty<TextSlideObject>((type + 'Align') as any, variants[index])
   }
 
-  const hVariants = ['left', 'center', 'right']
-  const vVariants = ['top', 'center', 'bottom']
-
-  const currentElement = store.currentTab.selection.items[0] as TextSlideObject
-  const horizontal = currentElement.horizontalAlign
-  const vertical = currentElement.verticalAlign
+  const changeFontSize = function (newSize: number) {
+    const style = currentObject.style
+    style.fontSize = newSize
+    store.changeSelectedObjectProperty<TextSlideObject>('style', style)
+  }
 
   return (
     <>
@@ -57,7 +66,7 @@ const TextEditor = () => {
             prepend="Horizontal:"
             colorName="blue-500"
             variants={hAlignVariants}
-            selectedVariantIndex={hVariants.indexOf(horizontal)}
+            selectedVariantIndex={hVariants.indexOf(horizontalAlign)}
             onSelected={(index) => changeAlign('horizontal', index, hVariants)}
           ></CompactRadio>
         </div>
@@ -65,9 +74,20 @@ const TextEditor = () => {
           prepend="Vertical:"
           colorName="blue-500"
           variants={vAlignVariants}
-          selectedVariantIndex={vVariants.indexOf(vertical)}
+          selectedVariantIndex={vVariants.indexOf(verticalAlign)}
           onSelected={(index) => changeAlign('vertical', index, vVariants)}
         ></CompactRadio>
+      </EditorBase>
+      <EditorBase title="Text style">
+        <NumberInput
+          prepend="Font size:"
+          precision={0.1}
+          step={1}
+          value={fontSize}
+          minValue={4}
+          maxValue={200}
+          onChange={changeFontSize}
+        />
       </EditorBase>
     </>
   )
