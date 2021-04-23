@@ -48,7 +48,7 @@ export default function renderText(
   let blockOffsetY = top
 
   switch (verticalAlign) {
-    case 'middle':
+    case 'center':
       blockOffsetY += (height - totalLinesHeight) / 2
       break
     case 'bottom':
@@ -61,7 +61,7 @@ export default function renderText(
     switch (horizontalAlign) {
       case 'left':
         return 0
-      case 'middle':
+      case 'center':
         return (width - lineWidth) / 2
       case 'right':
         return width - lineWidth

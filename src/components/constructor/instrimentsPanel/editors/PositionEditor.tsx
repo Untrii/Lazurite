@@ -3,6 +3,7 @@ import { h, Fragment } from 'preact'
 import { raw as store } from '@/store'
 import NumberInput from '@/components/controls/NumberInput'
 import useEventBus from '@/store/useEventBus'
+import EditorBase from './EditorBase'
 
 const PositionEditor = () => {
   const selection = store.currentTab.selection
@@ -51,21 +52,18 @@ const PositionEditor = () => {
   }
 
   return !selection.isEmpty ? (
-    <div class="position-editor">
-      <h3>Position and size</h3>
-      <div class="position-editor__controls">
-        {inputs.map((item) => (
-          <NumberInput
-            minValue={item.min}
-            precision={1}
-            value={selection[item.prop]}
-            onChange={(value) => onChange(item.prop, value)}
-            prepend={item.name}
-            className="position-editor__control"
-          />
-        ))}
-      </div>
-    </div>
+    <EditorBase title="Size and position">
+      {inputs.map((item) => (
+        <NumberInput
+          minValue={item.min}
+          precision={1}
+          value={selection[item.prop]}
+          onChange={(value) => onChange(item.prop, value)}
+          prepend={item.name}
+          className="position-editor__control"
+        />
+      ))}
+    </EditorBase>
   ) : (
     <></>
   )
