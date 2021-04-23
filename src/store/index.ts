@@ -10,6 +10,7 @@ import ConstructorGetters from './getters/Constructor'
 import WorkspaceGetters from './getters/Workspace'
 import ToolGetters from './getters/Tools'
 import EventBus from './EventBus'
+import FontRegistery from './FontRegistery'
 
 export const raw = new Store()
   .use(new StoreLoader())
@@ -22,6 +23,7 @@ export const raw = new Store()
   .use(new ToolGetters())
   .use(new WorkspaceGetters())
   .use(new EventBus())
+  .use(new FontRegistery())
 type StoreType = typeof raw
 
 export { StoreType }

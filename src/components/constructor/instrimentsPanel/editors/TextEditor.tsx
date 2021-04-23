@@ -3,6 +3,7 @@ import assets from '@/assets'
 import CompactRadio from '@/components/controls/CompactRadio'
 import DropdownSelector from '@/components/controls/DropdownSelector'
 import NumberInput from '@/components/controls/NumberInput'
+import Select from '@/components/controls/Select'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import { raw as store } from '@/store'
 import useEventBus from '@/store/useEventBus'
@@ -58,6 +59,18 @@ const TextEditor = () => {
     store.changeSelectedObjectProperty<TextSlideObject>('style', style)
   }
 
+  const font = store.getFontBySource(currentObject.style.fontSource)
+  const weightOptions = font.weights.map((item) => {
+    return {
+      value: item,
+      displayName: item.toString(),
+    }
+  })
+
+  const onWeightSelected = function (weight: number) {
+    store.changeFontWeight(weight)
+  }
+
   return (
     <>
       <EditorBase title="Alignment">
@@ -80,6 +93,7 @@ const TextEditor = () => {
       </EditorBase>
       <EditorBase title="Text style">
         <NumberInput
+          className="text-editor__input"
           prepend="Font size:"
           precision={0.1}
           step={1}
@@ -88,6 +102,14 @@ const TextEditor = () => {
           maxValue={200}
           onChange={changeFontSize}
         />
+        <Select
+          className="text-editor__input"
+          colorName="blue-500"
+          prepend="Font weight:"
+          value={currentObject.style.fontWeight}
+          options={weightOptions}
+          onSelect={onWeightSelected}
+        ></Select>
       </EditorBase>
     </>
   )

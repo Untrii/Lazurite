@@ -5,5 +5,6 @@ export default class TextStyle {
   fontFamily = 'Arial'
   fontSize = 10
   fontWeight = 400
+  fontType = 'normal' as 'normal' | 'italic'
   color = new Color()
 }

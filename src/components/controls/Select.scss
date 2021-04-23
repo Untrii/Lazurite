@@ -1,0 +1,24 @@
+.select {
+  display: flex;
+  align-items: center;
+
+  input {
+    flex-grow: 1;
+    width: 100%;
+    background: transparent;
+    color: white;
+    border: none;
+    padding: 0;
+    line-height: 24px;
+    text-align: right;
+    cursor: default;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  img {
+    margin-left: 6px;
+  }
+}

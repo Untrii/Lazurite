@@ -22,8 +22,8 @@ export default class StoreLoader {
     const openedPaths = await io.loadOpenedPresentationPaths()
 
     for (const path of openedPaths) {
-      if (path.startsWith(startScreenPath)) store.tabs.push(TabStateModel.startScreen)
-      else store.tabs.push(new TabStateModel(await io.loadPresentation(path), path))
+      if (path.startsWith(startScreenPath)) this.tabs.push(TabStateModel.startScreen)
+      else this.tabs.push(new TabStateModel(await io.loadPresentation(path), path))
     }
     if (openedPaths.length == 0) store.tabs.push(TabStateModel.startScreen)
     this.openTab(0)
@@ -33,5 +33,6 @@ export default class StoreLoader {
     await loadRecent()
 
     store.userBackgrounds = await io.loadUserBackgrounds()
+    store.addFonts(...(await io.getFonts()))
   }
 }
