@@ -69,25 +69,27 @@ const DropdownSelector = ({ variants, colorName, visible, onClick, onClose }: ID
   })
 
   return (
-    <div class={rootClasses.join(' ')} onClick={(event) => event.stopPropagation()}>
-      <div class={selectorClasses.join(' ')} ref={scrollContent} onScroll={onScroll}>
-        {variants.map((item, index) => (
-          <p class={itemClasses.join(' ')} onClick={() => onClick(index)}>
-            {item}
-          </p>
-        ))}
-      </div>
-      {isScrollVisible ? (
-        <div class="scrollbox__scrollbar">
-          <div
-            class="scrollbox__scrollbar-box"
-            onMouseDown={onScrollbarPressed}
-            style={{ marginTop: scrollbarPosition + 'px' }}
-          >
-            <div class="scrollbox__scrollbar-view"></div>
-          </div>
+    <div style="height:1px">
+      <div class={rootClasses.join(' ')} onClick={(event) => event.stopPropagation()}>
+        <div class={selectorClasses.join(' ')} ref={scrollContent} onScroll={onScroll}>
+          {variants.map((item, index) => (
+            <p class={itemClasses.join(' ')} onClick={() => onClick(index)}>
+              {item}
+            </p>
+          ))}
         </div>
-      ) : null}
+        {isScrollVisible ? (
+          <div class="scrollbox__scrollbar">
+            <div
+              class="scrollbox__scrollbar-box"
+              onMouseDown={onScrollbarPressed}
+              style={{ marginTop: scrollbarPosition + 'px' }}
+            >
+              <div class="scrollbox__scrollbar-view"></div>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
