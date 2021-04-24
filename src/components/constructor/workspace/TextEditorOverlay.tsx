@@ -3,7 +3,7 @@ import './TextEditorOverlay.scss'
 import { h, Fragment, JSX, Ref } from 'preact'
 import { useEffect, useLayoutEffect, useRef } from 'preact/hooks'
 
-import store from '@/store'
+import store, { raw as rawStore } from '@/store'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import { useReactiveState } from '@/util/reactivity'
@@ -11,6 +11,7 @@ import useForceUpdate from '@/util/hooks/useForceUpdate'
 import getFontScale from '@/util/text/getFontScale'
 import getTextLines from '@/util/text/getTextLines'
 import getTextWidth from '@/util/text/getTextWidth'
+import useEventBus from '@/store/useEventBus'
 
 interface ITextEditorOverlayProps {
   width: number
@@ -59,6 +60,7 @@ function createStateModel() {
 }
 
 const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps) => {
+  useEventBus(rawStore, 'slideChange', rawStore.getCurrentSlide())
   const { width: presentationWidth, height: presentationHeight } = store.getCurrentPresentation().resolution
   const resolution = new RendererResolution(presentationWidth, presentationHeight)
   resolution.targetWidth = width
@@ -70,6 +72,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   const obj = state.redactingObject
   const lines = getTextLines(state.redactingObject, true)
   const lineHeight = obj.style.fontSize * getFontScale(obj.style.fontFamily, obj.style.fontWeight)
+  const totalLinesHeight = lines.length * lineHeight * resolution.scale
 
   const selectionX = obj.left * resolution.scale
   const selectionY = obj.top * resolution.scale
@@ -83,6 +86,30 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
     startY: 0,
     endX: 0,
     endY: 0,
+  }
+
+  const getOffsetY = function () {
+    switch (obj.verticalAlign) {
+      case 'center':
+        return (selectionH - totalLinesHeight) / 2
+
+      case 'bottom':
+        return selectionH - totalLinesHeight
+    }
+    return 0
+  }
+
+  const getOffsetX = function (line: string) {
+    if (line.endsWith('\n')) line = line.substring(0, line.length - 1)
+    const lineWidth = getTextWidth(obj.style, line) * resolution.scale
+    switch (obj.horizontalAlign) {
+      case 'left':
+        return 0
+      case 'center':
+        return (selectionW - lineWidth) / 2
+      case 'right':
+        return selectionW - lineWidth
+    }
   }
 
   const onDoubleClick = function () {
@@ -101,13 +128,14 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   }
 
   const getSymbolPosition = function (x: number, y: number) {
-    let lineIndex = Math.floor(y / lineHeight / resolution.scale)
+    let lineIndex = Math.floor((y - getOffsetY()) / lineHeight / resolution.scale)
     lineIndex = Math.min(lines.length - 1, lineIndex)
     const currentLine = lines[lineIndex]
     const lineOffsets = getLineOffsets(lines)
+    const lineOffsetX = getOffsetX(currentLine)
     for (let i = 0; i < currentLine.length; i++) {
-      const symbolStart = getTextWidth(obj.style, currentLine.substring(0, i)) * resolution.scale
-      const symbolEnd = getTextWidth(obj.style, currentLine.substring(0, i + 1)) * resolution.scale
+      const symbolStart = getTextWidth(obj.style, currentLine.substring(0, i)) * resolution.scale + lineOffsetX
+      const symbolEnd = getTextWidth(obj.style, currentLine.substring(0, i + 1)) * resolution.scale + lineOffsetX
 
       if (symbolStart <= x && x <= symbolEnd) {
         return lineOffsets[lineIndex] + i
@@ -147,6 +175,8 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
     let currentPosition = 0
     ctx.fillStyle = '#058cd866'
 
+    let blockOffsetY = getOffsetY()
+
     let isStart = true
     for (let i = 0; i < lines.length; i++) {
       if (
@@ -161,10 +191,10 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
         const highlightedText = lines[i].substring(0, relativeOffset + length)
         const offsetText = lines[i].substring(0, relativeOffset)
 
-        const x = Math.floor(getTextWidth(obj.style, offsetText) * resolution.scale)
-        const y = Math.floor(lineHeight * i * resolution.scale)
-        const width = Math.floor(getTextWidth(obj.style, highlightedText) * resolution.scale) - x
-        const height = Math.floor(lineHeight * (i + 1) * resolution.scale) - y
+        const x = Math.floor(getTextWidth(obj.style, offsetText) * resolution.scale + getOffsetX(lines[i]))
+        const y = Math.floor(lineHeight * i * resolution.scale + blockOffsetY)
+        const width = Math.floor(getTextWidth(obj.style, highlightedText) * resolution.scale + getOffsetX(lines[i])) - x
+        const height = Math.floor(lineHeight * (i + 1) * resolution.scale + blockOffsetY) - y
 
         if (isStart) {
           selection.startX = x
