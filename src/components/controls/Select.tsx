@@ -44,7 +44,7 @@ const Select = ({
       <div class={rootClasses}>
         {prepend ? <Prepend>{prepend}</Prepend> : null}
         <input
-          value={options.find((item) => item.value == value).displayName ?? placeholder}
+          value={options.find((item) => item.value == value)?.displayName ?? placeholder}
           type="text"
           readonly
           placeholder={placeholder}
