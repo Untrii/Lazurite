@@ -9,6 +9,8 @@ import { raw as store } from '@/store'
 import useEventBus from '@/store/useEventBus'
 import { h, Fragment } from 'preact'
 import EditorBase from './EditorBase'
+import ColorInput from '@/components/controls/ColorInput'
+import Color from '@/models/common/Color'
 
 const TextEditor = () => {
   useEventBus(store, 'slideChange', store.getCurrentSlide())
@@ -60,10 +62,17 @@ const TextEditor = () => {
   }
 
   const font = store.getFontBySource(currentObject.style.fontSource)
+  const selectedFamily = store.getFonts().findIndex((item) => item === font)
   const weightOptions = font.weights.map((item) => {
     return {
       value: item,
       displayName: item.toString(),
+    }
+  })
+  const familyOptions = store.getFonts().map((item, index) => {
+    return {
+      value: index,
+      displayName: item.name,
     }
   })
 
@@ -71,12 +80,22 @@ const TextEditor = () => {
     store.changeFontWeight(weight)
   }
 
+  const onFamilySelected = function (index: number) {
+    store.changeFontFamily(store.getFonts()[index])
+  }
+
+  const onColorSelected = function (color: Color) {
+    const style = currentObject.style
+    style.color = color
+    store.changeSelectedObjectProperty<TextSlideObject>('style', style)
+  }
+
   return (
     <>
       <EditorBase title="Alignment">
         <CompactRadio
           className="text-editor__input"
-          prepend="Horizontal:"
+          prepend="Horizontal"
           colorName="blue-500"
           variants={hAlignVariants}
           selectedVariantIndex={hVariants.indexOf(horizontalAlign)}
@@ -84,7 +103,7 @@ const TextEditor = () => {
         ></CompactRadio>
         <CompactRadio
           className="text-editor__input"
-          prepend="Vertical:"
+          prepend="Vertical"
           colorName="blue-500"
           variants={vAlignVariants}
           selectedVariantIndex={vVariants.indexOf(verticalAlign)}
@@ -92,9 +111,17 @@ const TextEditor = () => {
         ></CompactRadio>
       </EditorBase>
       <EditorBase title="Text style">
+        <Select
+          className="text-editor__input"
+          colorName="blue-500"
+          prepend="Font family"
+          value={selectedFamily}
+          options={familyOptions}
+          onSelect={onFamilySelected}
+        ></Select>
         <NumberInput
           className="text-editor__input"
-          prepend="Font size:"
+          prepend="Font size"
           precision={0.1}
           step={1}
           value={fontSize}
@@ -105,11 +132,17 @@ const TextEditor = () => {
         <Select
           className="text-editor__input"
           colorName="blue-500"
-          prepend="Font weight:"
+          prepend="Font weight"
           value={currentObject.style.fontWeight}
           options={weightOptions}
           onSelect={onWeightSelected}
         ></Select>
+        <ColorInput
+          className="text-editor__input"
+          prepend="Color"
+          value={currentObject.style.color}
+          onChange={onColorSelected}
+        ></ColorInput>
       </EditorBase>
     </>
   )
