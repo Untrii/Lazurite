@@ -14,6 +14,7 @@ interface ICompactRadioProps {
   variants: IRadioVariant[]
   selectedVariantIndex?: number
   colorName?: string
+  className?: string
   onSelected?: (index: number) => void
 }
 
@@ -22,6 +23,7 @@ const CompactRadio = ({
   colorName = 'blue-400',
   variants,
   selectedVariantIndex = 0,
+  className = '',
   onSelected,
 }: ICompactRadioProps) => {
   const renderVariant = function (variant: IRadioVariant, index: number) {
@@ -34,8 +36,10 @@ const CompactRadio = ({
     )
   }
 
+  const rootClasses = `compact-radio ${className}`
+
   return (
-    <div class="compact-radio">
+    <div class={rootClasses}>
       {prepend ? <Prepend>{prepend}</Prepend> : null}
       <div class="compact-radio__variants">{variants.map((value, index) => renderVariant(value, index))}</div>
     </div>

@@ -1,8 +1,12 @@
 .position-editor {
+  &__controls {
+    margin-top: -4px;
+  }
+
   &__control {
     width: calc(50% - 12px) !important;
     display: inline-flex !important;
-    margin-top: 4px;
+    margin-top: 8px;
 
     &:nth-child(odd) {
       margin-right: 24px;

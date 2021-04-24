@@ -1,4 +1,4 @@
-//import './TextEditor.scss'
+import './TextEditor.scss'
 import assets from '@/assets'
 import CompactRadio from '@/components/controls/CompactRadio'
 import DropdownSelector from '@/components/controls/DropdownSelector'
@@ -74,16 +74,16 @@ const TextEditor = () => {
   return (
     <>
       <EditorBase title="Alignment">
-        <div style="margin-bottom: 8px">
-          <CompactRadio
-            prepend="Horizontal:"
-            colorName="blue-500"
-            variants={hAlignVariants}
-            selectedVariantIndex={hVariants.indexOf(horizontalAlign)}
-            onSelected={(index) => changeAlign('horizontal', index, hVariants)}
-          ></CompactRadio>
-        </div>
         <CompactRadio
+          className="text-editor__input"
+          prepend="Horizontal:"
+          colorName="blue-500"
+          variants={hAlignVariants}
+          selectedVariantIndex={hVariants.indexOf(horizontalAlign)}
+          onSelected={(index) => changeAlign('horizontal', index, hVariants)}
+        ></CompactRadio>
+        <CompactRadio
+          className="text-editor__input"
           prepend="Vertical:"
           colorName="blue-500"
           variants={vAlignVariants}

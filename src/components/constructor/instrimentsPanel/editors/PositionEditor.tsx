@@ -53,16 +53,18 @@ const PositionEditor = () => {
 
   return !selection.isEmpty ? (
     <EditorBase title="Size and position">
-      {inputs.map((item) => (
-        <NumberInput
-          minValue={item.min}
-          precision={1}
-          value={selection[item.prop]}
-          onChange={(value) => onChange(item.prop, value)}
-          prepend={item.name}
-          className="position-editor__control"
-        />
-      ))}
+      <div class="position-editor__controls">
+        {inputs.map((item) => (
+          <NumberInput
+            minValue={item.min}
+            precision={1}
+            value={selection[item.prop]}
+            onChange={(value) => onChange(item.prop, value)}
+            prepend={item.name}
+            className="position-editor__control"
+          />
+        ))}
+      </div>
     </EditorBase>
   ) : (
     <></>
