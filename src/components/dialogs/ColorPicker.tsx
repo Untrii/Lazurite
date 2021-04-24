@@ -252,7 +252,7 @@ const ColorPicker = ({
               value={state[item]}
               minValue={0}
               maxValue={maxValues[item]}
-              step={1}
+              precision={1}
               onChange={(value) => onChange(item as keyof typeof state, value)}
             />
           ))}
@@ -264,7 +264,7 @@ const ColorPicker = ({
               value={state[item]}
               minValue={0}
               maxValue={maxValues[item]}
-              step={1}
+              precision={1}
               onChange={(value) => onChange(item as keyof typeof state, value)}
             />
           ))}
@@ -440,7 +440,7 @@ const ColorPicker = ({
             value={state.gradientAngle}
             minValue={0}
             maxValue={360}
-            step={1}
+            precision={1}
             onChange={(value) => (state.gradientAngle = value)}
           />
         </div>
