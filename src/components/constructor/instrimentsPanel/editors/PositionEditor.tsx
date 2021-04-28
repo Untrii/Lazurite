@@ -37,10 +37,10 @@ const PositionEditor = () => {
 
     switch (prop) {
       case 'left':
-        store.moveSelection(0, 0, newValue, top)
+        store.moveSelection(newValue, top)
         break
       case 'top':
-        store.moveSelection(0, 0, left, newValue)
+        store.moveSelection(left, newValue)
         break
       case 'width':
         store.resizeSelection(top, left, bottom, left + newValue)

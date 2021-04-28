@@ -65,7 +65,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   const resolution = new RendererResolution(presentationWidth, presentationHeight)
   resolution.targetWidth = width
 
-  const state = useReactiveState(createStateModel())
+  const state = useReactiveState(createStateModel)
   const overlay = useRef(null)
   const input = useRef(null)
 

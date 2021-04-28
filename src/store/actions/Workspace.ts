@@ -1,7 +1,7 @@
 import io from '@/io'
 import Slide from '@/models/presentation/Slide'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
-import { raw as store, StoreType } from '@/store'
+import { StoreType } from '@/store'
 import randomString from '@/util/randomString'
 
 export default class WorkspaceActions {
@@ -22,27 +22,82 @@ export default class WorkspaceActions {
   }
 
   select(this: StoreType, object: SlideObject, append = false) {
-    if (append) store.currentTab.selection.addItem(object)
-    else store.currentTab.selection.setSelection(object)
+    if (append) this.currentTab.selection.addItem(object)
+    else this.currentTab.selection.setSelection(object)
     this.onCurrentSlideChange()
   }
 
   deselectAll(this: StoreType) {
-    store.currentTab.selection.clear()
+    this.currentTab.selection.clear()
     this.onCurrentSlideChange()
   }
 
-  moveSelection(this: StoreType, startOffsetLeft: number, startOffsetTop: number, endLeft: number, endTop: number) {
+  stickSelection(
+    this: StoreType,
+    left: number,
+    top: number,
+    right?: number,
+    bottom?: number,
+    sides?: string[]
+  ): [number, number, 'left' | 'right' | 'none', 'top' | 'bottom' | 'none'] {
+    const stickDistance = 4
+    const currentSlide = this.getCurrentSlide()
+    const selection = this.currentTab.selection
+
+    if (typeof right != 'number') right = left + selection.width
+    if (typeof bottom != 'number') bottom = top + selection.height
+    if (!Array.isArray(sides)) sides = ['left', 'top', 'right', 'bottom']
+
+    let deltaX = 0
+    let sideX = 'none'
+    let closestX = Number.POSITIVE_INFINITY
+    let deltaY = 0
+    let sideY = 'none'
+    let closestY = Number.POSITIVE_INFINITY
+
+    for (const object of currentSlide) {
+      if (selection.isInSelection(object)) continue
+      const deltasX = [object.left - left, object.right - left, object.right - right, object.left - right]
+      const deltasY = [object.top - top, object.bottom - top, object.bottom - bottom, object.top - bottom]
+
+      deltasX.forEach((dx, index) => {
+        const adx = Math.abs(dx)
+        if (index < 2 && !sides.includes('left')) return
+        if (index >= 2 && !sides.includes('right')) return
+        if (adx < closestX && adx <= stickDistance) {
+          closestX = adx
+          deltaX = dx
+          if (index >= 2) sideX = 'right'
+          else sideX = 'left'
+        }
+      })
+
+      deltasY.forEach((dy, index) => {
+        const ady = Math.abs(dy)
+        if (index < 2 && !sides.includes('top')) return
+        if (index >= 2 && !sides.includes('bottom')) return
+        if (ady < closestY && ady <= stickDistance) {
+          closestY = ady
+          deltaY = dy
+          if (index >= 2) sideY = 'bottom'
+          else sideY = 'top'
+        }
+      })
+    }
+    return [deltaX, deltaY, sideX as any, sideY as any]
+  }
+
+  moveSelection(this: StoreType, endLeft: number, endTop: number) {
     const relativeCoords = new Map<SlideObject, [number, number]>()
-    const selection = store.currentTab.selection
+    const selection = this.currentTab.selection
     const selectedObjects = this.getSelectedObjects()
     for (const object of selectedObjects) {
       relativeCoords.set(object, [object.left - selection.left, object.top - selection.top])
     }
     for (const object of selectedObjects) {
       const [left, top] = relativeCoords.get(object)
-      object.left = endLeft - startOffsetLeft + left
-      object.top = endTop - startOffsetTop + top
+      object.left = endLeft + left
+      object.top = endTop + top
     }
     this.saveCurrentPresentation()
     this.onCurrentSlideChange()
@@ -67,30 +122,30 @@ export default class WorkspaceActions {
   }
 
   deleteSelectedObjects(this: StoreType) {
-    if (store.currentTab.selection.isEmpty) return
+    if (this.currentTab.selection.isEmpty) return
     const currentSlide = this.getCurrentSlide()
     const selectedObjects = this.getSelectedObjects()
     const filteredObjects = currentSlide.filter((item) => !selectedObjects.includes(item))
     currentSlide.length = filteredObjects.length
-    store.currentTab.selection.clear()
+    this.currentTab.selection.clear()
 
     for (let i = 0; i < filteredObjects.length; i++) {
       currentSlide[i] = filteredObjects[i]
     }
     this.currentTab.hoveredObject = null
     this.onCurrentSlideChange()
-    store.saveCurrentPresentation()
+    this.saveCurrentPresentation()
   }
 
   hoverObject(this: StoreType, object: SlideObject) {
-    if (store.currentTab.hoveredObject === object) return
-    store.currentTab.hoveredObject = object
+    if (this.currentTab.hoveredObject === object) return
+    this.currentTab.hoveredObject = object
     this.onCurrentSlideChange()
   }
 
   unhoverObject(this: StoreType) {
-    if (store.currentTab.hoveredObject === null) return
-    store.currentTab.hoveredObject = null
+    if (this.currentTab.hoveredObject === null) return
+    this.currentTab.hoveredObject = null
     this.onCurrentSlideChange()
   }
 

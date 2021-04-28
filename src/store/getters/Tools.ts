@@ -2,7 +2,7 @@ import assets from '@/assets'
 import { AnyTool, AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import FontPreset from '@/models/presentation/theme/FontPreset'
-import store, { StoreType } from '@/store'
+import { StoreType } from '@/store'
 
 interface IToolButton {
   displayName: string
@@ -26,7 +26,22 @@ function createPointer(store: StoreType) {
     store.onAreaSelect(top, left, right, bottom, ctrl)
   })
   result.addListener('selectionMove', ({ left, top, startOffsetLeft, startOffsetTop }) => {
-    store.moveSelection(startOffsetLeft, startOffsetTop, left, top)
+    const [deltaX, deltaY, sideX, sideY] = store.stickSelection(left - startOffsetLeft, top - startOffsetTop)
+    const actualX = left - startOffsetLeft + deltaX
+    const actualY = top - startOffsetTop + deltaY
+    const selection = store.currentTab.selection
+
+    let x = -1
+    let y = -1
+
+    if (sideX == 'left') x = actualX
+    if (sideX == 'right') x = actualX + selection.width
+    if (sideY == 'top') y = actualY
+    if (sideY == 'bottom') y = actualY + selection.height
+
+    if (deltaX != 0 || deltaY != 0) result.triggerEvent('stick', { x, y })
+    else result.triggerEvent('unstick', {})
+    store.moveSelection(actualX, actualY)
   })
   return result
 }
@@ -57,7 +72,7 @@ function createTextTool(store: StoreType, preset: FontPreset) {
 
 export default class ToolGetters {
   getToolGroups(this: StoreType): IButtonGroup[] {
-    const fontPresets = store.currentTab.openedPresentation.theme.fontPresets
+    const fontPresets = this.currentTab.openedPresentation.theme.fontPresets
     const result: IButtonGroup[] = []
     result.push({
       name: 'pointer',

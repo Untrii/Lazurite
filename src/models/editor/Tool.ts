@@ -30,7 +30,7 @@ export abstract class Tool<EventMap extends object> {
     this._listeners.get(name).add(listener)
   }
 
-  deleteListener<T extends keyof EventMap>(name: T, listener: (value: EventMap[T]) => void) {
+  removeListener<T extends keyof EventMap>(name: T, listener: (value: EventMap[T]) => void) {
     if (!this._listeners.has(name)) return
     this._listeners.get(name).delete(listener)
   }
@@ -40,6 +40,9 @@ export abstract class Tool<EventMap extends object> {
 
 interface IPointerToolEventMap {
   click: { x: number; y: number; ctrl: boolean }
+  stick: { x: number; y: number }
+  mouseUp: {}
+  unstick: {}
   areaSelect: { left: number; top: number; right: number; bottom: number; ctrl: boolean }
   selectionMove: { startOffsetLeft: number; startOffsetTop: number; left: number; top: number }
 }

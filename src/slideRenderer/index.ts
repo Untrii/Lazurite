@@ -123,9 +123,7 @@ export default function render(
   ctx: CanvasRenderingContext2D,
   presentation: Presentation,
   slide: Slide,
-  requestRerender = () => {},
-  selection?: ObjectSelection,
-  highlight?: SlideObject
+  requestRerender = () => {}
 ) {
   let targetWidth = ctx.canvas.width
   let resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
@@ -152,10 +150,6 @@ export default function render(
     console.warn(err)
   } finally {
     const resId = ctx.canvas.width * 8192 + ctx.canvas.height
-    if (selection) {
-      renderSelection(ctx, resolution, selection, highlight, requestRerender)
-    }
-
     composites.set(slide, [resId, currentRenderComposites])
     identities.set(slide, [resId, currentRenderIdentity])
   }

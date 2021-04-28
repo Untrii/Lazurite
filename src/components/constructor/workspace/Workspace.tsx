@@ -10,6 +10,11 @@ import useHotkey from '@/util/hooks/useHotkey'
 import TextEditorOverlay from './TextEditorOverlay'
 import ResizeOverlay from './ResizeOverlay'
 import ImageDropOverlay from './ImageDropOverlay'
+import renderSelection from '@/slideRenderer/renderSelection'
+import RendererResolution from '@/models/slideRenderer/RendererResolution'
+import { PointerTool } from '@/models/editor/Tool'
+import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
+import useForceUpdate from '@/util/hooks/useForceUpdate'
 
 interface IWorkspaceProps {
   width: number
@@ -34,6 +39,37 @@ const Workspace = (props: IWorkspaceProps) => {
     width: slideWidth + 'px',
   }
 
+  const [guideLines, setGuideLines] = useState(null as { x: number; y: number })
+
+  const onRendered = function (ctx: CanvasRenderingContext2D) {
+    const tool = store.getCurrentTool()
+    const resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
+    resolution.targetWidth = slideWidth
+    renderSelection(ctx, resolution, currentTab.selection, currentTab.hoveredObject, guideLines)
+  }
+
+  useLayoutEffect(() => {
+    const tool = rawStore.getCurrentTool()
+    const unstickListener = () => setGuideLines({ x: -1, y: -1 })
+    const stickListener = (position) => {
+      setGuideLines(position)
+    }
+    const mouseUpListener = () => {
+      setGuideLines({ x: -1, y: -1 })
+    }
+
+    if (tool instanceof PointerTool) {
+      tool.addListener('stick', stickListener)
+      tool.addListener('unstick', unstickListener)
+      tool.addListener('mouseUp', mouseUpListener)
+      return () => {
+        tool.removeListener('stick', stickListener)
+        tool.removeListener('unstick', unstickListener)
+        tool.removeListener('mouseUp', mouseUpListener)
+      }
+    }
+  })
+
   return (
     <div style={rootStyle} class="workspace">
       {slide ? (
@@ -46,8 +82,7 @@ const Workspace = (props: IWorkspaceProps) => {
                   height={slideHeight}
                   slide={slide}
                   presentation={presentation}
-                  selection={currentTab.selection}
-                  showHovered={true}
+                  onRendered={onRendered}
                 />
               </ToolOverlay>
             </TextEditorOverlay>

@@ -116,6 +116,7 @@ const ToolOverlay = ({ width, height, children }: IToolOverlayProps) => {
           pointerTool.triggerEvent('click', { x: scaledEndX, y: scaledEndY, ctrl: mouseDownEvent.ctrlKey })
         else if (!isInSelection)
           pointerTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
+        pointerTool.triggerEvent('mouseUp', {})
       } else if (currentTool?.name == 'areaDrawer') {
         const areaDrawerTool = currentTool as AreaDrawerTool
         areaDrawerTool.triggerEvent('areaSelect', { left, top, right, bottom })

@@ -4,7 +4,6 @@ import render, { addSlideRenderEventListener, removeSlideRenderEventListener } f
 import { h } from 'preact'
 import { useLayoutEffect, useRef, useState } from 'preact/hooks'
 import SlideModel from '@/models/presentation/Slide'
-import ObjectSelection from '@/models/editor/ObjectSelection'
 import { raw as store } from '@/store'
 
 interface ISlideProps {
@@ -12,10 +11,8 @@ interface ISlideProps {
   height: number
   presentation: Presentation
   slide: SlideModel
-  selection?: ObjectSelection
-  showHovered?: boolean
   isPreview?: boolean
-  onRendered?: () => void
+  onRendered?: (ctx: CanvasRenderingContext2D) => void
 }
 
 const renderingCanvases = new Set<HTMLCanvasElement>()
@@ -26,19 +23,14 @@ const Slide = (props: ISlideProps) => {
   //const [lastProps, setLastProps] = useState({props})
   //setLastProps({props})
 
-  const { width, height, presentation, slide, selection, showHovered } = props
+  const { width, height, presentation, slide, onRendered } = props
   console.log('rendering slide')
 
   const renderCanvas = function (onRerenderRequest = () => {}) {
-    let canvasElement = canvas.current as HTMLCanvasElement
-    render(
-      canvasElement.getContext('2d'),
-      presentation,
-      slide,
-      onRerenderRequest,
-      selection,
-      showHovered ? store.getHoveredObject() : null
-    )
+    const canvasElement = canvas.current as HTMLCanvasElement
+    const context = canvasElement.getContext('2d')
+    render(canvasElement.getContext('2d'), presentation, slide, onRerenderRequest)
+    onRendered?.(context)
   }
 
   useLayoutEffect(() => {
@@ -66,7 +58,6 @@ const Slide = (props: ISlideProps) => {
       requestAnimationFrame(() => {
         frameRequests.delete(canvasElement)
         renderCanvas(onRerenderRequest)
-        props?.onRendered?.()
       })
     }
 

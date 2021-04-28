@@ -5,6 +5,7 @@ import useForceUpdate from '@/util/hooks/useForceUpdate'
 import { h, JSX } from 'preact'
 import { useLayoutEffect, useState } from 'preact/hooks'
 import useEventBus from '@/store/useEventBus'
+import { PointerTool } from '@/models/editor/Tool'
 
 interface IResizeOverlayProps {
   children: JSX.Element
@@ -38,6 +39,7 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
   ]
 
   const onMouseDown = function (index: number, mouseDownEvent: MouseEvent) {
+    const tool = store.currentTab.tool
     mouseDownEvent.preventDefault()
     setDraggingStick(sticks[index].cursor)
     const currentSelection = store.currentTab.selection
@@ -65,6 +67,26 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
       if (newSelection.left > newSelection.right)
         [newSelection.left, newSelection.right] = [newSelection.right, newSelection.left]
 
+      const [offsetX, offsetY, sideX, sideY] = store.stickSelection(
+        newSelection.left,
+        newSelection.top,
+        newSelection.right,
+        newSelection.bottom,
+        props
+      )
+      for (const prop of props) {
+        if (prop == 'top' || prop == 'bottom') newSelection[prop] += offsetY
+        if (prop == 'left' || prop == 'right') newSelection[prop] += offsetX
+      }
+
+      if (tool instanceof PointerTool) {
+        let x = -1
+        let y = -1
+        if (sideX != 'none') x = newSelection[sideX]
+        if (sideY != 'none') x = newSelection[sideY]
+        tool.triggerEvent('stick', { x, y })
+      }
+
       if (newSelection.left != newSelection.right && newSelection.top != newSelection.bottom)
         store.resizeSelection(newSelection.top, newSelection.left, newSelection.bottom, newSelection.right)
     }
@@ -72,6 +94,7 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
       setDraggingStick('')
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
+      if (tool instanceof PointerTool) tool.triggerEvent('mouseUp', {})
     }
 
     document.addEventListener('mousemove', onMouseMove)
