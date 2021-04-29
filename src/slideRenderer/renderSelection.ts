@@ -3,6 +3,7 @@ import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 
 const dashAnimationSpeed = 8
+const selectionColor = '#058CD8'
 
 let prevSelectionComposite = document.createElement('canvas')
 let prevSelectionIdentity = []
@@ -46,7 +47,7 @@ export default function renderSelection(
 
   let currentSelectionComposite = createComposite(selectionWidth, selectionHeight)
   let currentContext = currentSelectionComposite.getContext('2d')
-  ctx.strokeStyle = '#058CD8'
+  ctx.strokeStyle = selectionColor
 
   const renderOutline = function (
     ctx: CanvasRenderingContext2D,
@@ -75,7 +76,7 @@ export default function renderSelection(
   if (selectionWidth == 0 || selectionHeight == 0) return
 
   if (!isSame) {
-    currentContext.strokeStyle = '#058CD8'
+    currentContext.strokeStyle = selectionColor
     currentContext.setLineDash([4, 4])
     currentContext.lineWidth = 2
     for (const item of selection.items) renderOutline(currentContext, item)

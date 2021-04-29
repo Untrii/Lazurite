@@ -29,7 +29,6 @@ const Select = ({
   const toggleDropdown = function (event: Event) {
     event.stopPropagation()
     setDropdownVisible(!isDropdownVisible)
-    console.log(isDropdownVisible)
   }
 
   const onClick = function (index: number) {

@@ -50,8 +50,8 @@ export default class WorkspaceActions {
     const selectionWidth = selection.width
     const selectionHeight = selection.height
 
-    if (typeof right != 'number') right = left + selection.width
-    if (typeof bottom != 'number') bottom = top + selection.height
+    if (typeof right != 'number') right = left + selectionWidth
+    if (typeof bottom != 'number') bottom = top + selectionHeight
     if (!Array.isArray(sides)) sides = ['left', 'top', 'right', 'bottom']
 
     let deltaX = 0
@@ -110,7 +110,6 @@ export default class WorkspaceActions {
     )
       sideY = 'both'
 
-    console.log({ sideX, sideY })
     return [deltaX, deltaY, sideX as any, sideY as any]
   }
 

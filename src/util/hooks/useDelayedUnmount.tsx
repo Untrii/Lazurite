@@ -7,7 +7,6 @@ export default function useDelayedUnmount(component: JSX.Element, isShown: boole
     lastState: isShown,
   })
   state.lastState = isShown
-  console.log('hook')
 
   if (isShown) state.isRendering = true
   else {

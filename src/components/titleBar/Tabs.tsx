@@ -61,7 +61,6 @@ const Tabs = (props: ITabsProps) => {
 
       state.draggingTabCurrentX = x
       if (state.draggingTabStartX == -1) {
-        console.log('setting start x')
         state.draggingTabStartX = x
         state.startOffsetX = event.offsetX
       }

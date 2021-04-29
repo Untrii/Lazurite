@@ -6,8 +6,6 @@ exports.createPreviews = async function () {
   let imgpath = 'data/background'
   let previewPath = imgpath + '/preview'
 
-  console.log('preparing preview')
-
   try {
     await fs.mkdir(imgpath)
   } catch (e) {}

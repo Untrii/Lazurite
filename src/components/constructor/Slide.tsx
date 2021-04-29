@@ -20,11 +20,7 @@ const frameRequests = new Set<HTMLCanvasElement>()
 
 const Slide = (props: ISlideProps) => {
   const canvas = useRef(null)
-  //const [lastProps, setLastProps] = useState({props})
-  //setLastProps({props})
-
   const { width, height, presentation, slide, onRendered } = props
-  console.log('rendering slide')
 
   const renderCanvas = function (onRerenderRequest = () => {}) {
     const canvasElement = canvas.current as HTMLCanvasElement
@@ -42,7 +38,6 @@ const Slide = (props: ISlideProps) => {
       const context = canvasElement.getContext('2d')
       const listener = (slide) => context.drawImage(slide, 0, 0, width, height)
 
-      console.log('rendering preview')
       const onRerenderRequest = () => setTimeout(() => renderCanvas(onRerenderRequest), 200)
       renderCanvas(onRerenderRequest)
 

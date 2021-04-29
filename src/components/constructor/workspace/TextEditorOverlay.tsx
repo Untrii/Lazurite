@@ -123,8 +123,6 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
     state.redactingObject = currentElement
     state.selection.start = 0
     state.selection.end = currentElement.content.length
-
-    console.log('entering ' + currentElement.id)
   }
 
   const getSymbolPosition = function (x: number, y: number) {
@@ -145,7 +143,6 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   }
 
   const exitEditor = function () {
-    console.log('exiting ' + state.redactingObject.id)
     const newModel = createStateModel()
     for (const key in newModel) {
       state[key] = newModel[key]

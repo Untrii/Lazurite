@@ -19,12 +19,10 @@ const FilePicker = ({ isHiding, accept, onSelected }: IFilePickerProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const onDragEnter = function (event: DragEvent) {
-    console.log('drag enter')
     setIsHovered(true)
   }
 
   const onDragLeave = function (event: DragEvent) {
-    console.log('drag leave')
     setIsHovered(false)
   }
 

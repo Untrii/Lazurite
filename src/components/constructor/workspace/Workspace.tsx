@@ -45,7 +45,6 @@ const Workspace = (props: IWorkspaceProps) => {
     const tool = store.getCurrentTool()
     const resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
     resolution.targetWidth = slideWidth
-    console.log(guideLines)
     renderSelection(ctx, resolution, currentTab.selection, currentTab.hoveredObject, guideLines)
   }
 

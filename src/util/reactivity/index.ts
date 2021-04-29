@@ -46,7 +46,6 @@ const cache = new WeakMap()
 window['componentCache'] = cache
 options.vnode = (vnode) => {
   if (typeof vnode.type == 'function') {
-    //console.log('Rerendering ' + vnode.type.name)
     if (!cache.has(vnode.type)) cache.set(vnode.type, reactiveComponent(vnode.type as FunctionalComponent))
     vnode.type = cache.get(vnode.type)
   }

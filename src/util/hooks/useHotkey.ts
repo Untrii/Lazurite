@@ -42,7 +42,6 @@ function onKeyDown(event: KeyboardEvent) {
       break
   }
 
-  console.log(Array.from(pressedButtons))
   if (listeners.has(event.code)) {
     listeners.get(event.code).forEach(([options, callback]) => {
       if (options.alt && !isPressed.alt) return
