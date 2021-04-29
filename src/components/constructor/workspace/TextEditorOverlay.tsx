@@ -430,7 +430,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   if (state.isRedacting) canvasClasses.push('redacting')
 
   useEffect(() => {
-    input.current?.focus?.()
+    if (state.isRedacting) input.current?.focus?.()
   })
 
   return (

@@ -75,15 +75,18 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
         props
       )
       for (const prop of props) {
-        if (prop == 'top' || prop == 'bottom') newSelection[prop] += offsetY
         if (prop == 'left' || prop == 'right') newSelection[prop] += offsetX
+        if (prop == 'top' || prop == 'bottom') newSelection[prop] += offsetY
       }
 
       if (tool instanceof PointerTool) {
-        let x = -1
-        let y = -1
-        if (sideX != 'none') x = newSelection[sideX]
-        if (sideY != 'none') x = newSelection[sideY]
+        let x = []
+        let y = []
+        if (sideX == 'both') x = [newSelection.left, newSelection.right]
+        else if (sideX != 'none') x = [newSelection[sideX]]
+
+        if (sideY == 'both') y = [newSelection.top, newSelection.bottom]
+        else if (sideY != 'none') y = [newSelection[sideY]]
         tool.triggerEvent('stick', { x, y })
       }
 

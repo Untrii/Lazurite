@@ -40,7 +40,7 @@ export abstract class Tool<EventMap extends object> {
 
 interface IPointerToolEventMap {
   click: { x: number; y: number; ctrl: boolean }
-  stick: { x: number; y: number }
+  stick: { x: number[]; y: number[] }
   mouseUp: {}
   unstick: {}
   areaSelect: { left: number; top: number; right: number; bottom: number; ctrl: boolean }

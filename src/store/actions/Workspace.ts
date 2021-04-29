@@ -4,6 +4,10 @@ import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 import { StoreType } from '@/store'
 import randomString from '@/util/randomString'
 
+function roughlyEquals(num0: number, num1: number) {
+  return Math.abs(num0 - num1) < 0.5
+}
+
 export default class WorkspaceActions {
   onPointerClick(this: StoreType, x: number, y: number, ctrlPressed = false) {
     const objects = this.getObjectsByCoords(x, y)
@@ -39,10 +43,12 @@ export default class WorkspaceActions {
     right?: number,
     bottom?: number,
     sides?: string[]
-  ): [number, number, 'left' | 'right' | 'none', 'top' | 'bottom' | 'none'] {
+  ): [number, number, 'left' | 'right' | 'none' | 'both', 'top' | 'bottom' | 'none' | 'both'] {
     const stickDistance = 4
     const currentSlide = this.getCurrentSlide()
     const selection = this.currentTab.selection
+    const selectionWidth = selection.width
+    const selectionHeight = selection.height
 
     if (typeof right != 'number') right = left + selection.width
     if (typeof bottom != 'number') bottom = top + selection.height
@@ -51,9 +57,11 @@ export default class WorkspaceActions {
     let deltaX = 0
     let sideX = 'none'
     let closestX = Number.POSITIVE_INFINITY
+    let closestObjectX = null as SlideObject
     let deltaY = 0
     let sideY = 'none'
     let closestY = Number.POSITIVE_INFINITY
+    let closestObjectY = null as SlideObject
 
     for (const object of currentSlide) {
       if (selection.isInSelection(object)) continue
@@ -67,6 +75,7 @@ export default class WorkspaceActions {
         if (adx < closestX && adx <= stickDistance) {
           closestX = adx
           deltaX = dx
+          closestObjectX = object
           if (index >= 2) sideX = 'right'
           else sideX = 'left'
         }
@@ -79,11 +88,29 @@ export default class WorkspaceActions {
         if (ady < closestY && ady <= stickDistance) {
           closestY = ady
           deltaY = dy
+          closestObjectY = object
           if (index >= 2) sideY = 'bottom'
           else sideY = 'top'
         }
       })
     }
+
+    if (
+      sides.includes('left') &&
+      sides.includes('right') &&
+      roughlyEquals(left + deltaX, closestObjectX?.left) &&
+      roughlyEquals(right + deltaX, closestObjectX?.right)
+    )
+      sideX = 'both'
+    if (
+      sides.includes('top') &&
+      sides.includes('bottom') &&
+      roughlyEquals(top + deltaY, closestObjectY?.top) &&
+      roughlyEquals(bottom + deltaY, closestObjectY?.bottom)
+    )
+      sideY = 'both'
+
+    console.log({ sideX, sideY })
     return [deltaX, deltaY, sideX as any, sideY as any]
   }
 

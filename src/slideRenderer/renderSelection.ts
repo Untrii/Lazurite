@@ -19,7 +19,7 @@ export default function renderSelection(
   resolution: RendererResolution,
   selection: ObjectSelection,
   highlight: SlideObject | null,
-  guideLines: { x?: number; y?: number } | null
+  guideLines: { x?: number[]; y?: number[] } | null
 ) {
   const [outerTop, outerBottom, outerLeft, outerRight] = [
     Math.floor(selection.top * resolution.scale),
@@ -91,15 +91,15 @@ export default function renderSelection(
 
   if (guideLines) {
     ctx.lineWidth = 1
-    if (guideLines.x > 0) {
-      const scaledX = Math.floor(guideLines.x * resolution.scale)
+    for (const x of guideLines.x ?? []) {
+      const scaledX = Math.floor(x * resolution.scale)
       ctx.beginPath()
       ctx.moveTo(scaledX + 0.5, 0)
       ctx.lineTo(scaledX + 0.5, resolution.targetHeight)
       ctx.stroke()
     }
-    if (guideLines.y > 0) {
-      const scaledY = Math.floor(guideLines.y * resolution.scale)
+    for (const y of guideLines.y ?? []) {
+      const scaledY = Math.floor(y * resolution.scale)
       ctx.beginPath()
       ctx.moveTo(0, scaledY + 0.5)
       ctx.lineTo(resolution.targetWidth, scaledY + 0.5)

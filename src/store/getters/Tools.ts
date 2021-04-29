@@ -31,13 +31,15 @@ function createPointer(store: StoreType) {
     const actualY = top - startOffsetTop + deltaY
     const selection = store.currentTab.selection
 
-    let x = -1
-    let y = -1
+    let x = []
+    let y = []
 
-    if (sideX == 'left') x = actualX
-    if (sideX == 'right') x = actualX + selection.width
-    if (sideY == 'top') y = actualY
-    if (sideY == 'bottom') y = actualY + selection.height
+    if (sideX == 'left') x = [actualX]
+    if (sideX == 'right') x = [actualX + selection.width]
+    if (sideX == 'both') x = [actualX, actualX + selection.width]
+    if (sideY == 'top') y = [actualY]
+    if (sideY == 'bottom') y = [actualY + selection.height]
+    if (sideY == 'both') y = [actualY, actualY + selection.height]
 
     if (deltaX != 0 || deltaY != 0) result.triggerEvent('stick', { x, y })
     else result.triggerEvent('unstick', {})
