@@ -431,35 +431,38 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   })
 
   return (
-    <>
-      <div class="text-editor-overlay" onDblClick={onDoubleClick} onClick={onClick}>
-        {children}
-        {state.isRedacting ? (
-          <canvas
-            class={canvasClasses.join(' ')}
-            ref={overlay}
-            width={selectionW}
-            height={selectionH}
-            style={{ top: selectionY + 'px', left: selectionX + 'px' }}
-            onMouseDown={onCanvasMouseDown}
-            onMouseMove={onCanvasMouseMove}
-            onMouseUp={onCanvasMouseUp}
-            onClick={onCanvasClick}
-          ></canvas>
-        ) : null}
+    <div
+      class="text-editor-overlay"
+      onDblClick={onDoubleClick}
+      onClick={onClick}
+      style={{ width: width + 'px', height: height + 'px' }}
+    >
+      {children}
+      {state.isRedacting ? (
+        <canvas
+          class={canvasClasses.join(' ')}
+          ref={overlay}
+          width={selectionW}
+          height={selectionH}
+          style={{ top: selectionY + 'px', left: selectionX + 'px' }}
+          onMouseDown={onCanvasMouseDown}
+          onMouseMove={onCanvasMouseMove}
+          onMouseUp={onCanvasMouseUp}
+          onClick={onCanvasClick}
+        ></canvas>
+      ) : null}
 
-        <input
-          type="textarea"
-          style={inputStyle}
-          ref={input}
-          onKeyDown={onKeyDown}
-          onClick={onInputClick}
-          onMouseDown={onInputMouseDown}
-          onMouseUp={onInputMouseUp}
-          onInput={onInput}
-        />
-      </div>
-    </>
+      <input
+        type="textarea"
+        style={inputStyle}
+        ref={input}
+        onKeyDown={onKeyDown}
+        onClick={onInputClick}
+        onMouseDown={onInputMouseDown}
+        onMouseUp={onInputMouseUp}
+        onInput={onInput}
+      />
+    </div>
   )
 }
 export default TextEditorOverlay

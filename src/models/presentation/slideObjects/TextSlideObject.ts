@@ -10,5 +10,6 @@ export default class TextSlideObject extends SlideObject {
   type = TextSlideObject.name
   verticalAlign: VerticalAlignVariants = 'top'
   horizontalAlign: HorizontalAlignVariants = 'left'
+  presetId = ''
   style = new TextStyle()
 }

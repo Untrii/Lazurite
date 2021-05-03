@@ -52,7 +52,7 @@ export default class ConstructorActions {
 
     if (typeof object?.[propertyName as string] == 'undefined') return
     ;(object as T)[propertyName] = value
-    store.onCurrentSlideChange()
+    this.onCurrentSlideChange()
     await this.saveCurrentPresentation()
   }
 
@@ -70,7 +70,7 @@ export default class ConstructorActions {
         object.style.fontFamily = getFontFamilyName(variant.source)
       }
     }
-    store.onCurrentSlideChange()
+    this.onCurrentSlideChange()
     await this.saveCurrentPresentation()
   }
 
@@ -98,7 +98,7 @@ export default class ConstructorActions {
       object.style.fontType = variant.type
     }
 
-    store.onCurrentSlideChange()
+    this.onCurrentSlideChange()
     await this.saveCurrentPresentation()
   }
 }

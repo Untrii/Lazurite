@@ -59,6 +59,7 @@ function createTextTool(store: StoreType, preset: FontPreset) {
     textBlock.width = right - left
     textBlock.height = bottom - top
     textBlock.content = 'Test content'
+    textBlock.presetId = preset.id
     textBlock.style.fontFamily = preset.fontFamily
     textBlock.style.fontSource = preset.fontSource
     textBlock.style.fontSize = preset.size

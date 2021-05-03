@@ -55,7 +55,7 @@ const Workspace = (props: IWorkspaceProps) => {
       setGuideLines(position)
     }
     const mouseUpListener = () => {
-      setGuideLines({ x: [], y: [] })
+      if (guideLines?.x?.length > 0 || guideLines?.y?.length > 0) setGuideLines({ x: [], y: [] })
     }
 
     if (tool instanceof PointerTool) {
@@ -75,8 +75,8 @@ const Workspace = (props: IWorkspaceProps) => {
       {slide ? (
         <ImageDropOverlay width={slideWidth} height={slideHeight}>
           <ResizeOverlay width={slideWidth} height={slideHeight}>
-            <TextEditorOverlay width={slideWidth} height={slideHeight}>
-              <ToolOverlay width={slideWidth} height={slideHeight}>
+            <ToolOverlay width={slideWidth} height={slideHeight}>
+              <TextEditorOverlay width={slideWidth} height={slideHeight}>
                 <Slide
                   width={slideWidth}
                   height={slideHeight}
@@ -84,8 +84,8 @@ const Workspace = (props: IWorkspaceProps) => {
                   presentation={presentation}
                   onRendered={onRendered}
                 />
-              </ToolOverlay>
-            </TextEditorOverlay>
+              </TextEditorOverlay>
+            </ToolOverlay>
           </ResizeOverlay>
         </ImageDropOverlay>
       ) : (

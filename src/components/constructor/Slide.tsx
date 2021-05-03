@@ -24,9 +24,11 @@ const Slide = (props: ISlideProps) => {
 
   const renderCanvas = function (onRerenderRequest = () => {}) {
     const canvasElement = canvas.current as HTMLCanvasElement
-    const context = canvasElement.getContext('2d')
-    render(canvasElement.getContext('2d'), presentation, slide, onRerenderRequest)
-    onRendered?.(context)
+    const context = canvasElement?.getContext('2d')
+    if (context) {
+      render(context, presentation, slide, onRerenderRequest)
+      onRendered?.(context)
+    }
   }
 
   useLayoutEffect(() => {

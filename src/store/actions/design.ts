@@ -1,7 +1,3 @@
-import { promises, existsSync } from 'fs'
-import { remote } from 'electron'
-import path from 'path'
-
 import Color from '@/models/common/Color'
 import Font from '@/models/common/Font'
 import FontPreset from '@/models/presentation/theme/FontPreset'
@@ -9,14 +5,12 @@ import Background, { BackgroundType } from '@/models/presentation/theme/Backgrou
 import { requireResourceAsync } from '@/dataLoader'
 import store, { StoreType } from '@/store'
 import io from '@/io'
-import isElectron from '@/util/isElectron'
 import randomString from '@/util/randomString'
 
 import createImagePreview from '@/util/createImagePreview'
 import getMedianColor from '@/util/color/getMedianColor'
-
-const { app } = remote
-const { copyFile, writeFile, mkdir } = promises
+import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
+import TextStyle from '@/models/presentation/slideObjects/base/TextStyle'
 
 type DefaultsName = keyof typeof store.currentTab.openedPresentation.theme.defaults
 
@@ -138,6 +132,21 @@ export default class DesignActions {
     this.saveCurrentPresentation()
   }
 
+  changeNotOverridedTextStyle<T extends keyof TextStyle>(
+    this: StoreType,
+    name: T,
+    oldValue: TextStyle[T],
+    newValue: TextStyle[T]
+  ) {
+    for (const slide of this.getCurrentPresentation().slides) {
+      for (const slideObject of slide) {
+        if (slideObject instanceof TextSlideObject) {
+          if (slideObject.style[name] == oldValue) slideObject.style[name] = newValue
+        }
+      }
+    }
+  }
+
   changePresetName(this: StoreType, index: number, newName: string) {
     changePreset(this, index, (preset) => {
       preset.name = newName
@@ -146,12 +155,14 @@ export default class DesignActions {
 
   changePresetFontSize(this: StoreType, index: number, newSize: number) {
     changePreset(this, index, (preset) => {
+      this.changeNotOverridedTextStyle('fontSize', preset.size, newSize)
       preset.size = newSize
     })
   }
 
   changePresetFontSource(this: StoreType, index: number, newFontSource: string) {
     changePreset(this, index, (preset) => {
+      this.changeNotOverridedTextStyle('fontSource', preset.fontSource, newFontSource)
       preset.fontSource = newFontSource
     })
   }
