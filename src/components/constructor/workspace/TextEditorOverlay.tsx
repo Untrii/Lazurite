@@ -274,6 +274,13 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
     state.selection.end = state.selection.start = start + replacement.length
     const newValue = obj.content.substring(0, start) + replacement + obj.content.substring(end)
     store.changeSelectedObjectProperty<TextSlideObject>('content', newValue)
+
+    if (replacement.length > 0) {
+      obj.content = newValue
+      const newLines = getTextLines(obj)
+      if (newLines.length * lineHeight > obj.height)
+        store.changeSelectedObjectProperty<TextSlideObject>('height', newLines.length * lineHeight + 1)
+    }
   }
 
   const onKeyDown = function (event: KeyboardEvent) {
