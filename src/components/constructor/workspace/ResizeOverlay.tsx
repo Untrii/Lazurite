@@ -67,7 +67,7 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
       if (newSelection.left > newSelection.right)
         [newSelection.left, newSelection.right] = [newSelection.right, newSelection.left]
 
-      const [offsetX, offsetY, sideX, sideY] = store.stickSelection(
+      const [offsetX, offsetY, linesX, linesY] = store.stickSelection(
         newSelection.left,
         newSelection.top,
         newSelection.right,
@@ -80,14 +80,7 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
       }
 
       if (tool instanceof PointerTool) {
-        let x = []
-        let y = []
-        if (sideX == 'both') x = [newSelection.left, newSelection.right]
-        else if (sideX != 'none') x = [newSelection[sideX]]
-
-        if (sideY == 'both') y = [newSelection.top, newSelection.bottom]
-        else if (sideY != 'none') y = [newSelection[sideY]]
-        tool.triggerEvent('stick', { x, y })
+        tool.triggerEvent('stick', { x: linesX, y: linesY })
       }
 
       if (newSelection.left != newSelection.right && newSelection.top != newSelection.bottom)

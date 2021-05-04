@@ -43,7 +43,7 @@ export default class WorkspaceActions {
     right?: number,
     bottom?: number,
     sides?: string[]
-  ): [number, number, 'left' | 'right' | 'none' | 'both', 'top' | 'bottom' | 'none' | 'both'] {
+  ): [number, number, number[], number[]] {
     const stickDistance = 4
     const currentSlide = this.getCurrentSlide()
     const selection = this.currentTab.selection
@@ -55,11 +55,11 @@ export default class WorkspaceActions {
     if (!Array.isArray(sides)) sides = ['left', 'top', 'right', 'bottom']
 
     let deltaX = 0
-    let sideX = 'none'
+    let linesX = []
     let closestX = Number.POSITIVE_INFINITY
     let closestObjectX = null as SlideObject
     let deltaY = 0
-    let sideY = 'none'
+    let linesY = []
     let closestY = Number.POSITIVE_INFINITY
     let closestObjectY = null as SlideObject
 
@@ -76,8 +76,8 @@ export default class WorkspaceActions {
           closestX = adx
           deltaX = dx
           closestObjectX = object
-          if (index >= 2) sideX = 'right'
-          else sideX = 'left'
+          if (index >= 2) linesX = [right + deltaX]
+          else linesX = [left + deltaX]
         }
       })
 
@@ -89,8 +89,8 @@ export default class WorkspaceActions {
           closestY = ady
           deltaY = dy
           closestObjectY = object
-          if (index >= 2) sideY = 'bottom'
-          else sideY = 'top'
+          if (index >= 2) linesY = [bottom + deltaY]
+          else linesY = [top + deltaY]
         }
       })
     }
@@ -101,16 +101,16 @@ export default class WorkspaceActions {
       roughlyEquals(left + deltaX, closestObjectX?.left) &&
       roughlyEquals(right + deltaX, closestObjectX?.right)
     )
-      sideX = 'both'
+      linesX = [left + deltaX, right + deltaX]
     if (
       sides.includes('top') &&
       sides.includes('bottom') &&
       roughlyEquals(top + deltaY, closestObjectY?.top) &&
       roughlyEquals(bottom + deltaY, closestObjectY?.bottom)
     )
-      sideY = 'both'
+      linesY = [top + deltaY, bottom + deltaY]
 
-    return [deltaX, deltaY, sideX as any, sideY as any]
+    return [deltaX, deltaY, linesX, linesY]
   }
 
   moveSelection(this: StoreType, endLeft: number, endTop: number) {
