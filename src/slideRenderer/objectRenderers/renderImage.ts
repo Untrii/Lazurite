@@ -16,14 +16,14 @@ function compress(image: HTMLImageElement): CompressLevels {
   const ratio = image.naturalHeight / image.naturalWidth
 
   const second = document.createElement('canvas')
-  second.width = 1280
-  second.height = 1280 * ratio
-  second.getContext('2d', { alpha: false }).drawImage(image, 0, 0, 1280, 1280 * ratio)
+  second.width = Math.min(1280, image.naturalWidth)
+  second.height = Math.min(1280 * ratio, image.naturalHeight)
+  second.getContext('2d').drawImage(image, 0, 0, second.width, second.height)
 
   const third = document.createElement('canvas')
-  third.width = 640
-  third.height = 640 * ratio
-  third.getContext('2d', { alpha: false }).drawImage(image, 0, 0, 640, 640 * ratio)
+  third.width = Math.min(640, image.naturalWidth)
+  third.height = Math.min(640 * ratio, image.naturalHeight)
+  third.getContext('2d').drawImage(image, 0, 0, third.width, third.height)
   return {
     original: image,
     '1080p': image,

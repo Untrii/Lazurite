@@ -4,6 +4,8 @@ import { raw as store } from '@/store'
 import NumberInput from '@/components/controls/NumberInput'
 import useEventBus from '@/store/useEventBus'
 import EditorBase from './EditorBase'
+import Button from '@/components/controls/Button'
+import ImageSlideObject from '@/models/presentation/slideObjects/ImageSlideObject'
 
 const PositionEditor = () => {
   const selection = store.currentTab.selection
@@ -65,6 +67,26 @@ const PositionEditor = () => {
           />
         ))}
       </div>
+      {item instanceof ImageSlideObject ? (
+        <>
+          <Button
+            className="position-editor__button"
+            blockLevel
+            text="Restore proportions"
+            centred
+            colorName="blue-500"
+            onClick={() => store.restoreImageProportions()}
+          />
+          <Button
+            className="position-editor__button"
+            blockLevel
+            text="Restore size"
+            centred
+            colorName="blue-500"
+            onClick={() => store.restoreImageSize()}
+          />
+        </>
+      ) : null}
     </EditorBase>
   ) : (
     <></>
