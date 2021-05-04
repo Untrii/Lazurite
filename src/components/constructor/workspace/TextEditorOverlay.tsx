@@ -99,7 +99,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   const pushToHistory = function (value: string) {
     state.history.push({ selectionStart: state.selection.start, selectionEnd: state.selection.end, value })
     state.historyForward = []
-    console.log(state.history)
+    if (state.history.length > 384) state.history.splice(0, 128)
   }
 
   const undo = function () {
@@ -371,7 +371,6 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
 
     if (event.code == 'KeyZ' && event.ctrlKey) {
       event.preventDefault()
-      console.log('undo')
       undo()
     }
 
