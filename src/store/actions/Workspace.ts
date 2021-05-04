@@ -44,7 +44,7 @@ export default class WorkspaceActions {
     bottom?: number,
     sides?: string[]
   ): [number, number, number[], number[]] {
-    const stickDistance = 4
+    const stickDistance = 8
     const currentSlide = this.getCurrentSlide()
     const selection = this.currentTab.selection
     const selectionWidth = selection.width
@@ -65,8 +65,22 @@ export default class WorkspaceActions {
 
     for (const object of currentSlide) {
       if (selection.isInSelection(object)) continue
-      const deltasX = [object.left - left, object.right - left, object.right - right, object.left - right]
-      const deltasY = [object.top - top, object.bottom - top, object.bottom - bottom, object.top - bottom]
+      const deltasX = []
+      const sticksX = []
+      ;[object.left, object.right, (object.left + object.right) / 2].forEach((side0) => {
+        ;[left, right, (left + right) / 2].forEach((side1) => {
+          deltasX.push(side0 - side1)
+          sticksX.push(side0)
+        })
+      })
+      const deltasY = []
+      const sticksY = []
+      ;[object.top, object.bottom, (object.top + object.bottom) / 2].forEach((side0) => {
+        ;[top, bottom, (top + bottom) / 2].forEach((side1) => {
+          deltasY.push(side0 - side1)
+          sticksY.push(side0)
+        })
+      })
 
       deltasX.forEach((dx, index) => {
         const adx = Math.abs(dx)
@@ -76,8 +90,7 @@ export default class WorkspaceActions {
           closestX = adx
           deltaX = dx
           closestObjectX = object
-          if (index >= 2) linesX = [right + deltaX]
-          else linesX = [left + deltaX]
+          linesX = [sticksX[index]]
         }
       })
 
@@ -89,8 +102,7 @@ export default class WorkspaceActions {
           closestY = ady
           deltaY = dy
           closestObjectY = object
-          if (index >= 2) linesY = [bottom + deltaY]
-          else linesY = [top + deltaY]
+          linesY = [sticksY[index]]
         }
       })
     }

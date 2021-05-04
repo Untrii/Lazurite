@@ -39,7 +39,7 @@ const Workspace = (props: IWorkspaceProps) => {
     width: slideWidth + 'px',
   }
 
-  const [guideLines, setGuideLines] = useState(null as { x: number[]; y: number[] })
+  const [guideLines] = useState({ x: [], y: [] } as { x: number[]; y: number[] })
 
   const onRendered = function (ctx: CanvasRenderingContext2D) {
     const tool = store.getCurrentTool()
@@ -50,12 +50,16 @@ const Workspace = (props: IWorkspaceProps) => {
 
   useLayoutEffect(() => {
     const tool = rawStore.getCurrentTool()
-    const unstickListener = () => setGuideLines({ x: [], y: [] })
+    const unstickListener = () => {
+      guideLines.x = []
+      guideLines.y = []
+    }
     const stickListener = (position) => {
-      setGuideLines(position)
+      guideLines.x = position.x
+      guideLines.y = position.y
     }
     const mouseUpListener = () => {
-      if (guideLines?.x?.length > 0 || guideLines?.y?.length > 0) setGuideLines({ x: [], y: [] })
+      if (guideLines?.x?.length > 0 || guideLines?.y?.length > 0) unstickListener()
     }
 
     if (tool instanceof PointerTool) {
