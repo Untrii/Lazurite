@@ -19,6 +19,12 @@ interface ITextEditorOverlayProps {
   children: JSX.Element
 }
 
+interface IHistoryItem {
+  selectionStart: number
+  selectionEnd: number
+  value: string
+}
+
 function border(value, min, max) {
   if (value < min) return min
   if (value > max) return max
@@ -56,6 +62,8 @@ function createStateModel() {
       y: -1,
     },
     lastMove: new Date(),
+    history: [] as IHistoryItem[],
+    historyForward: [] as IHistoryItem[],
   }
 }
 
@@ -86,6 +94,31 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
     startY: 0,
     endX: 0,
     endY: 0,
+  }
+
+  const pushToHistory = function (value: string) {
+    state.history.push({ selectionStart: state.selection.start, selectionEnd: state.selection.end, value })
+    state.historyForward = []
+    console.log(state.history)
+  }
+
+  const undo = function () {
+    if (state.history.length > 0) {
+      const item = state.history.pop()
+      state.selection.start = item.selectionStart
+      state.selection.end = item.selectionEnd
+      store.changeSelectedObjectProperty<TextSlideObject>('content', item.value)
+      state.historyForward.push(item)
+    }
+  }
+
+  const redo = function () {
+    if (state.historyForward.length > 0) {
+      const item = state.historyForward.pop()
+      state.selection.start = item.selectionStart
+      state.selection.end = item.selectionEnd
+      store.changeSelectedObjectProperty<TextSlideObject>('content', item.value)
+    }
   }
 
   const getOffsetY = function () {
@@ -237,6 +270,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   const clearCurrentSelection = function (replacement = '') {
     let { start, end } = state.selection
     if (start > end) [start, end] = [end, start]
+    pushToHistory(obj.content)
     state.selection.end = state.selection.start = start + replacement.length
     const newValue = obj.content.substring(0, start) + replacement + obj.content.substring(end)
     store.changeSelectedObjectProperty<TextSlideObject>('content', newValue)
@@ -294,6 +328,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
         return
       }
       if (obj.content.length == start) return
+      pushToHistory(obj.content)
       const newValue = obj.content.substring(0, start) + obj.content.substring(start + 1)
       store.changeSelectedObjectProperty<TextSlideObject>('content', newValue)
     }
@@ -304,6 +339,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
         return
       }
       if (start == 0) return
+      pushToHistory(obj.content)
       const newValue = obj.content.substring(0, start - 1) + obj.content.substring(start)
       state.selection.start = --state.selection.end
       store.changeSelectedObjectProperty<TextSlideObject>('content', newValue)
@@ -331,6 +367,17 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
       navigator.clipboard.readText().then((value) => {
         clearCurrentSelection(value)
       })
+    }
+
+    if (event.code == 'KeyZ' && event.ctrlKey) {
+      event.preventDefault()
+      console.log('undo')
+      undo()
+    }
+
+    if (event.code == 'KeyY' && event.ctrlKey) {
+      event.preventDefault()
+      redo()
     }
 
     if (event.key == 'Enter') {
