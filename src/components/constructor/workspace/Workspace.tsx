@@ -24,6 +24,7 @@ const Workspace = (props: IWorkspaceProps) => {
   useHotkey('delete', () => {
     store.deleteSelectedObjects()
   })
+  const forceUpdate = useForceUpdate()
 
   const watchable = store.currentTab.openedPresentation.slides.length && store.currentTab.selectedSlideIndex
   const currentTab = rawStore.currentTab
@@ -79,7 +80,7 @@ const Workspace = (props: IWorkspaceProps) => {
       {slide ? (
         <ImageDropOverlay width={slideWidth} height={slideHeight}>
           <ResizeOverlay width={slideWidth} height={slideHeight}>
-            <ToolOverlay width={slideWidth} height={slideHeight}>
+            <ToolOverlay width={slideWidth} height={slideHeight} onAreaDraw={forceUpdate}>
               <TextEditorOverlay width={slideWidth} height={slideHeight}>
                 <Slide
                   width={slideWidth}
