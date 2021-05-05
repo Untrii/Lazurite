@@ -12,6 +12,7 @@ import getFontScale from '@/util/text/getFontScale'
 import getTextLines from '@/util/text/getTextLines'
 import getTextWidth from '@/util/text/getTextWidth'
 import useEventBus from '@/store/useEventBus'
+import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
 
 interface ITextEditorOverlayProps {
   width: number
@@ -47,7 +48,7 @@ function getLineOffsets(lines: string[]): number[] {
 function createStateModel() {
   return {
     isRedacting: false,
-    redactingObject: new TextSlideObject(),
+    redactingObject: TextSlideObject.placeholder as TextSlideObject,
     selection: {
       start: 0,
       end: 0,
@@ -107,7 +108,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
       const item = state.history.pop()
       state.selection.start = item.selectionStart
       state.selection.end = item.selectionEnd
-      store.changeSelectedObjectProperty<TextSlideObject>('content', item.value)
+      rawStore.changeSelectedObjectProperty<TextSlideObject>('content', item.value)
       state.historyForward.push(item)
     }
   }
@@ -117,8 +118,17 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
       const item = state.historyForward.pop()
       state.selection.start = item.selectionStart
       state.selection.end = item.selectionEnd
-      store.changeSelectedObjectProperty<TextSlideObject>('content', item.value)
+      rawStore.changeSelectedObjectProperty<TextSlideObject>('content', item.value)
     }
+  }
+
+  const tryResize = function (obj: TextSlideObject) {
+    const newLines = getTextLines(obj)
+    if (newLines.length * lineHeight > obj.height)
+      rawStore.changeSelectedObjectProperty<TextSlideObject>('height', newLines.length * lineHeight + 1)
+  }
+  if (!obj.isPlaceholder) {
+    tryResize(obj)
   }
 
   const getOffsetY = function () {
@@ -277,9 +287,7 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
 
     if (replacement.length > 0) {
       obj.content = newValue
-      const newLines = getTextLines(obj)
-      if (newLines.length * lineHeight > obj.height)
-        store.changeSelectedObjectProperty<TextSlideObject>('height', newLines.length * lineHeight + 1)
+      tryResize(obj)
     }
   }
 
@@ -473,7 +481,6 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
 
   const onCanvasMouseUp = function (event: MouseEvent) {
     state.isSelectionDrawing = false
-    event.stopPropagation()
   }
 
   const canvasClasses = []
