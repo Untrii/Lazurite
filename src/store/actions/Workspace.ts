@@ -36,6 +36,57 @@ export default class WorkspaceActions {
     this.onCurrentSlideChange()
   }
 
+  stickSide(
+    this: StoreType,
+    start: number,
+    end: number,
+    sides: ['left' | 'top', 'right' | 'bottom'],
+    stickSides?: number[]
+  ): [number, number[]] {
+    const stickDistance = 8
+    const currentSlide = this.getCurrentSlide()
+    const selection = this.currentTab.selection
+
+    let delta = 0
+    let lines = [] as number[]
+    let closest = Number.POSITIVE_INFINITY
+    let closestObject = null as SlideObject
+
+    if (!Array.isArray(stickSides)) stickSides = [start, end, (start + end) / 2]
+
+    for (const object of currentSlide) {
+      if (selection.isInSelection(object)) continue
+      const objectStart = object[sides[0]]
+      const objectEnd = object[sides[1]]
+      const deltas = []
+      const sticks = []
+      ;[objectStart, objectEnd, (objectStart + objectEnd) / 2].forEach((side0) => {
+        stickSides.forEach((side1) => {
+          deltas.push(side0 - side1)
+          sticks.push(side0)
+        })
+      })
+
+      deltas.forEach((d, index) => {
+        const ad = Math.abs(d)
+        if (ad < closest && ad <= stickDistance) {
+          closest = ad
+          delta = d
+          closestObject = object
+          lines = [sticks[index]]
+        }
+      })
+    }
+
+    if (
+      stickSides.length == 2 &&
+      roughlyEquals(start + delta, closestObject?.[sides[0]] as number) &&
+      roughlyEquals(end + delta, closestObject?.[sides[1]] as number)
+    )
+      lines = [start + delta, end + delta]
+    return [delta, lines]
+  }
+
   stickSelection(
     this: StoreType,
     left: number,
@@ -44,8 +95,6 @@ export default class WorkspaceActions {
     bottom?: number,
     sides?: string[]
   ): [number, number, number[], number[]] {
-    const stickDistance = 8
-    const currentSlide = this.getCurrentSlide()
     const selection = this.currentTab.selection
     const selectionWidth = selection.width
     const selectionHeight = selection.height
@@ -54,73 +103,20 @@ export default class WorkspaceActions {
     if (typeof bottom != 'number') bottom = top + selectionHeight
     if (!Array.isArray(sides)) sides = ['left', 'top', 'right', 'bottom']
 
-    let deltaX = 0
-    let linesX = []
-    let closestX = Number.POSITIVE_INFINITY
-    let closestObjectX = null as SlideObject
-    let deltaY = 0
-    let linesY = []
-    let closestY = Number.POSITIVE_INFINITY
-    let closestObjectY = null as SlideObject
+    let xSides
+    let ySides
 
-    for (const object of currentSlide) {
-      if (selection.isInSelection(object)) continue
-      const deltasX = []
-      const sticksX = []
-      ;[object.left, object.right, (object.left + object.right) / 2].forEach((side0) => {
-        ;[left, right, (left + right) / 2].forEach((side1) => {
-          deltasX.push(side0 - side1)
-          sticksX.push(side0)
-        })
-      })
-      const deltasY = []
-      const sticksY = []
-      ;[object.top, object.bottom, (object.top + object.bottom) / 2].forEach((side0) => {
-        ;[top, bottom, (top + bottom) / 2].forEach((side1) => {
-          deltasY.push(side0 - side1)
-          sticksY.push(side0)
-        })
-      })
-
-      deltasX.forEach((dx, index) => {
-        const adx = Math.abs(dx)
-        if (index < 2 && !sides.includes('left')) return
-        if (index >= 2 && !sides.includes('right')) return
-        if (adx < closestX && adx <= stickDistance) {
-          closestX = adx
-          deltaX = dx
-          closestObjectX = object
-          linesX = [sticksX[index]]
-        }
-      })
-
-      deltasY.forEach((dy, index) => {
-        const ady = Math.abs(dy)
-        if (index < 2 && !sides.includes('top')) return
-        if (index >= 2 && !sides.includes('bottom')) return
-        if (ady < closestY && ady <= stickDistance) {
-          closestY = ady
-          deltaY = dy
-          closestObjectY = object
-          linesY = [sticksY[index]]
-        }
-      })
+    const withNor = function (w, nor) {
+      return sides.includes(w) && !sides.includes(nor)
     }
 
-    if (
-      sides.includes('left') &&
-      sides.includes('right') &&
-      roughlyEquals(left + deltaX, closestObjectX?.left) &&
-      roughlyEquals(right + deltaX, closestObjectX?.right)
-    )
-      linesX = [left + deltaX, right + deltaX]
-    if (
-      sides.includes('top') &&
-      sides.includes('bottom') &&
-      roughlyEquals(top + deltaY, closestObjectY?.top) &&
-      roughlyEquals(bottom + deltaY, closestObjectY?.bottom)
-    )
-      linesY = [top + deltaY, bottom + deltaY]
+    if (withNor('left', 'right')) xSides = [left]
+    if (withNor('right', 'left')) xSides = [right]
+    if (withNor('top', 'bottom')) ySides = [top]
+    if (withNor('bottom', 'top')) ySides = [bottom]
+
+    let [deltaX, linesX] = this.stickSide(left, right, ['left', 'right'], xSides)
+    let [deltaY, linesY] = this.stickSide(top, bottom, ['top', 'bottom'], ySides)
 
     return [deltaX, deltaY, linesX, linesY]
   }
