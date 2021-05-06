@@ -55,6 +55,8 @@ const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProp
     const startSelectionX = selection.left
     const startSelectionY = selection.top
 
+    if (currentTool instanceof PointerTool) currentTool.triggerEvent('mouseDown', {})
+
     const getDeltas = function (event0: MouseEvent, event1: MouseEvent) {
       return [event1.clientX - event0.clientX, event1.clientY - event0.clientY]
     }
@@ -72,11 +74,10 @@ const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProp
 
       if (bottom - top > 4 || right - left > 4) isDragging = true
 
-      if (currentTool?.name == 'pointer') {
-        const pointerTool = currentTool as PointerTool
+      if (currentTool instanceof PointerTool) {
         if (isDragging) {
           if (isInSelection) {
-            pointerTool.triggerEvent('selectionMove', {
+            currentTool.triggerEvent('selectionMove', {
               startOffsetLeft: scaledStartX - startSelectionX,
               startOffsetTop: scaledStartY - startSelectionY,
               left: scaledEndX,
@@ -84,7 +85,7 @@ const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProp
             })
             if (state.showBox) state.showBox = false
           } else {
-            pointerTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
+            currentTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
 
             if (!state.showBox) state.showBox = true
           }

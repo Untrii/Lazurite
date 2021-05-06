@@ -9,7 +9,6 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import renderImage, { getRenderImageDeps } from './objectRenderers/renderImage'
 import renderText, { getRenderTextDeps } from './objectRenderers/renderText'
 import renderBackground from './renderBackground'
-import renderSelection from './renderSelection'
 
 const composites = new Map<Slide, [number, HTMLCanvasElement[]]>()
 const identities = new Map<Slide, [number, any[][]]>()

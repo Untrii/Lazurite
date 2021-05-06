@@ -1,10 +1,12 @@
 import ObjectSelection from '@/models/editor/ObjectSelection'
 import SlideObject from '@/models/presentation/slideObjects/base/SlideObject'
+import TextSlideObject from '@/models/presentation/slideObjects/TextSlideObject'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 
 const dashAnimationSpeed = 8
 const selectionColor = '#058CD8'
 const guideLinesColor = '#F07427'
+const shadowOutlineColor = '#00000020'
 
 let prevSelectionComposite = document.createElement('canvas')
 let prevSelectionIdentity = []
@@ -20,7 +22,9 @@ export default function renderSelection(
   ctx: CanvasRenderingContext2D,
   resolution: RendererResolution,
   selection: ObjectSelection,
+  slideObjects: SlideObject[],
   highlight: SlideObject | null,
+  highlightAll = false,
   guideLines: { x?: number[]; y?: number[] } | null
 ) {
   const [outerTop, outerBottom, outerLeft, outerRight] = [
@@ -74,7 +78,8 @@ export default function renderSelection(
     ctx: CanvasRenderingContext2D,
     slideObject: SlideObject,
     offsetX = -outerLeft,
-    offsetY = -outerTop
+    offsetY = -outerTop,
+    outlineWidth = 2
   ) {
     const [left, top, right, bottom] = [
       Math.floor(slideObject.left * resolution.scale),
@@ -82,7 +87,7 @@ export default function renderSelection(
       Math.floor(slideObject.right * resolution.scale),
       Math.floor(slideObject.bottom * resolution.scale),
     ]
-    ctx.strokeRect(left + offsetX + 1, top + offsetY + 1, right - left - 1, bottom - top - 1)
+    ctx.strokeRect(left + offsetX + outlineWidth / 2, top + offsetY + outlineWidth / 2, right - left, bottom - top)
   }
 
   ctx.setLineDash([4, 4])
@@ -96,15 +101,25 @@ export default function renderSelection(
   if (selectionWidth == Number.NEGATIVE_INFINITY || selectionHeight == Number.NEGATIVE_INFINITY) return
   if (selectionWidth == 0 || selectionHeight == 0) return
 
+  if (highlightAll) {
+    ctx.strokeStyle = shadowOutlineColor
+    ctx.setLineDash([])
+    ctx.lineWidth = 1
+    for (const item of slideObjects) {
+      if (item instanceof TextSlideObject) renderOutline(ctx, item, 0, 0, 1)
+    }
+  }
+
   if (!isSame) {
     currentContext.strokeStyle = selectionColor
     currentContext.setLineDash([4, 4])
     currentContext.lineWidth = 2
     for (const item of selection.items) renderOutline(currentContext, item)
 
+    currentContext.strokeStyle = selectionColor
     currentContext.setLineDash([])
     currentContext.lineWidth = 2
-    currentContext.strokeRect(1, 1, selectionWidth - 3, selectionHeight - 3)
+    currentContext.strokeRect(1, 1, selectionWidth - 2, selectionHeight - 2)
 
     ctx.drawImage(currentSelectionComposite, outerLeft, outerTop)
     prevSelectionComposite = currentSelectionComposite

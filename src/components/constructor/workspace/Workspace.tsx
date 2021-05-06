@@ -45,12 +45,22 @@ const Workspace = (props: IWorkspaceProps) => {
   }
 
   const [guideLines] = useState({ x: [], y: [] } as { x: number[]; y: number[] })
+  const [isPointerActive] = useState({ value: false })
 
   const onRendered = function (ctx: CanvasRenderingContext2D) {
     const tool = store.getCurrentTool()
     const resolution = new RendererResolution(presentation.resolution.width, presentation.resolution.height)
     resolution.targetWidth = slideWidth
-    renderSelection(ctx, resolution, currentTab.selection, currentTab.hoveredObject, guideLines)
+    const slideObjects = rawStore.getCurrentSlide()
+    renderSelection(
+      ctx,
+      resolution,
+      currentTab.selection,
+      slideObjects,
+      currentTab.hoveredObject,
+      isPointerActive.value,
+      guideLines
+    )
   }
 
   useLayoutEffect(() => {
@@ -65,16 +75,23 @@ const Workspace = (props: IWorkspaceProps) => {
     }
     const mouseUpListener = () => {
       if (guideLines?.x?.length > 0 || guideLines?.y?.length > 0) unstickListener()
+      isPointerActive.value = false
+      forceUpdate()
+    }
+    const mouseDownListener = () => {
+      isPointerActive.value = true
     }
 
     if (tool instanceof PointerTool) {
       tool.addListener('stick', stickListener)
       tool.addListener('unstick', unstickListener)
       tool.addListener('mouseUp', mouseUpListener)
+      tool.addListener('mouseDown', mouseDownListener)
       return () => {
         tool.removeListener('stick', stickListener)
         tool.removeListener('unstick', unstickListener)
         tool.removeListener('mouseUp', mouseUpListener)
+        tool.removeListener('mouseDown', mouseDownListener)
       }
     }
   })

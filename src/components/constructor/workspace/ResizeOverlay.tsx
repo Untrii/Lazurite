@@ -51,6 +51,8 @@ const ResizeOverlay = ({ children, width, height }: IResizeOverlayProps) => {
     }
     const { clientX: startClientX, clientY: startClientY } = mouseDownEvent
 
+    if (tool instanceof PointerTool) tool.triggerEvent('mouseDown', {})
+
     const onMouseMove = function (event: MouseEvent) {
       const deltaX = event.clientX - startClientX
       const deltaY = event.clientY - startClientY
