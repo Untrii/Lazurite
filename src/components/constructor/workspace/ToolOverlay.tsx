@@ -8,7 +8,7 @@ import store from '@/store'
 interface IToolOverlayProps {
   width: number
   height: number
-  onAreaDraw?: () => void
+  onAreaSelect?: () => void
   children: JSX.Element
 }
 
@@ -17,7 +17,7 @@ function minmax(a, b) {
   else return [a, b]
 }
 
-const ToolOverlay = ({ width, height, onAreaDraw, children }: IToolOverlayProps) => {
+const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProps) => {
   const state = useReactiveState({
     areaStart: {
       x: -1,
@@ -115,13 +115,15 @@ const ToolOverlay = ({ width, height, onAreaDraw, children }: IToolOverlayProps)
         const pointerTool = currentTool as PointerTool
         if (!isDragging)
           pointerTool.triggerEvent('click', { x: scaledEndX, y: scaledEndY, ctrl: mouseDownEvent.ctrlKey })
-        else if (!isInSelection)
+        else if (!isInSelection) {
           pointerTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
+          onAreaSelect?.()
+        }
         pointerTool.triggerEvent('mouseUp', {})
       } else if (currentTool?.name == 'areaDrawer') {
         const areaDrawerTool = currentTool as AreaDrawerTool
         areaDrawerTool.triggerEvent('areaSelect', { left, top, right, bottom })
-        onAreaDraw?.()
+        onAreaSelect?.()
       }
 
       document.removeEventListener('mouseup', onMouseUp)

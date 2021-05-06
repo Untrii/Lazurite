@@ -29,7 +29,8 @@ const Workspace = (props: IWorkspaceProps) => {
   })
   const forceUpdate = useForceUpdate()
 
-  const watchable = store.currentTab.openedPresentation.slides.length && store.currentTab.selectedSlideIndex
+  const watchable =
+    store.currentTab.openedPresentation.slides.length && store.currentTab.selectedSlideIndex && store.currentTab.tool
   const currentTab = rawStore.currentTab
   const presentation = currentTab.openedPresentation
   const slide = presentation.slides[currentTab.selectedSlideIndex]
@@ -83,7 +84,7 @@ const Workspace = (props: IWorkspaceProps) => {
       {slide ? (
         <ImageDropOverlay width={slideWidth} height={slideHeight}>
           <ResizeOverlay width={slideWidth} height={slideHeight}>
-            <ToolOverlay width={slideWidth} height={slideHeight} onAreaDraw={forceUpdate}>
+            <ToolOverlay width={slideWidth} height={slideHeight} onAreaSelect={forceUpdate}>
               <TextEditorOverlay width={slideWidth} height={slideHeight}>
                 <Slide
                   width={slideWidth}
