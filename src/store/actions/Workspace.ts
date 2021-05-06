@@ -183,6 +183,7 @@ export default class WorkspaceActions {
     }
 
     this.onCurrentSlideChange()
+    this.saveCurrentPresentation()
   }
 
   deleteSelectedObjects(this: StoreType) {
