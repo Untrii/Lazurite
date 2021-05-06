@@ -11,6 +11,7 @@ import WorkspaceGetters from './getters/Workspace'
 import ToolGetters from './getters/Tools'
 import EventBus from './EventBus'
 import FontRegistery from './FontRegistery'
+import ColorAutoSelector from './actions/ColorAutoSelector'
 
 export const raw = new Store()
   .use(new StoreLoader())
@@ -24,6 +25,7 @@ export const raw = new Store()
   .use(new WorkspaceGetters())
   .use(new EventBus())
   .use(new FontRegistery())
+  .use(new ColorAutoSelector())
 type StoreType = typeof raw
 
 export { StoreType }

@@ -60,5 +60,15 @@
     font-size: 12px;
     font-weight: 500;
     color: white;
+    width: max-content;
+  }
+
+  &__top {
+    display: flex;
+    width: 100%;
+    padding-right: 16px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
   }
 }

@@ -16,6 +16,7 @@ import PaletteGroup from './PaletteGroup'
 import DefaultsGroup from './DefaultsGroup'
 import getMedianColorSync from '@/util/color/getMedianColorSync'
 import FilePicker from '@/components/dialogs/FilePicker'
+import Button from '@/components/controls/Button'
 
 const tabs: { displayName: string; name: BackgroundType }[] = [
   {
@@ -243,9 +244,16 @@ const ColorEditor = () => {
       },
     ]
 
+    const onAutoClick = function () {
+      store.autoSelect()
+    }
+
     return (
       <div class="color-editor__picked">
-        <h2 class="color-editor__picked-title">Defaults</h2>
+        <div className="color-editor__top">
+          <h2 class="color-editor__picked-title">Defaults</h2>
+          <Button text="Auto" onClick={onAutoClick} colorName="blue-500" />
+        </div>
         {presetTiles.map((presetGroup) => (
           <DefaultsGroup title={presetGroup.title} tiles={presetGroup.tiles} tileSize={defaultsTileSize} />
         ))}

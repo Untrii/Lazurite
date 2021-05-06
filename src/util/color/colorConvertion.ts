@@ -4,7 +4,7 @@
  * @param   Number  b       The blue color value
  * @return  Array           The HSV representation
  */
-export function rgbToHsv(r, g, b) {
+export function rgbToHsv(r: number, g: number, b: number) {
   ;(r /= 255), (g /= 255), (b /= 255)
 
   let max = Math.max(r, g, b),
@@ -43,7 +43,7 @@ export function rgbToHsv(r, g, b) {
  * @param   Number  v       The value [0-100]
  * @return  Array           The RGB representation
  */
-export function hsvToRgb(h, s, v) {
+export function hsvToRgb(h: number, s: number, v: number) {
   h /= 360
   s /= 100
   v /= 100
