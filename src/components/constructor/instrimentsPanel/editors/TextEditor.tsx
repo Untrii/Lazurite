@@ -126,7 +126,7 @@ const TextEditor = () => {
           step={1}
           value={fontSize}
           minValue={4}
-          maxValue={200}
+          maxValue={1600}
           onChange={changeFontSize}
         />
         <Select
