@@ -4,6 +4,7 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 
 const dashAnimationSpeed = 8
 const selectionColor = '#058CD8'
+const guideLinesColor = '#F07427'
 
 let prevSelectionComposite = document.createElement('canvas')
 let prevSelectionIdentity = []
@@ -28,6 +29,26 @@ export default function renderSelection(
     Math.floor(selection.left * resolution.scale),
     Math.floor(selection.right * resolution.scale),
   ]
+
+  if (guideLines) {
+    ctx.lineWidth = 1
+    ctx.strokeStyle = guideLinesColor
+    ctx.setLineDash([])
+    for (const x of guideLines.x ?? []) {
+      const scaledX = Math.floor(x * resolution.scale)
+      ctx.beginPath()
+      ctx.moveTo(scaledX + 0.5, 0)
+      ctx.lineTo(scaledX + 0.5, resolution.targetHeight)
+      ctx.stroke()
+    }
+    for (const y of guideLines.y ?? []) {
+      const scaledY = Math.floor(y * resolution.scale)
+      ctx.beginPath()
+      ctx.moveTo(0, scaledY + 0.5)
+      ctx.lineTo(resolution.targetWidth, scaledY + 0.5)
+      ctx.stroke()
+    }
+  }
 
   const selectionWidth = outerRight - outerLeft + 2
   const selectionHeight = outerBottom - outerTop + 2
@@ -88,23 +109,5 @@ export default function renderSelection(
     ctx.drawImage(currentSelectionComposite, outerLeft, outerTop)
     prevSelectionComposite = currentSelectionComposite
     prevSelectionIdentity = currentSelectionIdentity
-  }
-
-  if (guideLines) {
-    ctx.lineWidth = 1
-    for (const x of guideLines.x ?? []) {
-      const scaledX = Math.floor(x * resolution.scale)
-      ctx.beginPath()
-      ctx.moveTo(scaledX + 0.5, 0)
-      ctx.lineTo(scaledX + 0.5, resolution.targetHeight)
-      ctx.stroke()
-    }
-    for (const y of guideLines.y ?? []) {
-      const scaledY = Math.floor(y * resolution.scale)
-      ctx.beginPath()
-      ctx.moveTo(0, scaledY + 0.5)
-      ctx.lineTo(resolution.targetWidth, scaledY + 0.5)
-      ctx.stroke()
-    }
   }
 }
