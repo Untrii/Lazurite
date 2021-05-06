@@ -54,6 +54,18 @@ export default class WorkspaceActions {
 
     if (!Array.isArray(stickSides)) stickSides = [start, end, (start + end) / 2]
 
+    const handleDeltas = function (deltas: number[], sticks: number[], object?: SlideObject) {
+      deltas.forEach((d, index) => {
+        const ad = Math.abs(d)
+        if (ad < closest && ad <= stickDistance) {
+          closest = ad
+          delta = d
+          closestObject = object
+          lines = [sticks[index]]
+        }
+      })
+    }
+
     for (const object of currentSlide) {
       if (selection.isInSelection(object)) continue
       const objectStart = object[sides[0]]
@@ -76,6 +88,18 @@ export default class WorkspaceActions {
           lines = [sticks[index]]
         }
       })
+    }
+
+    {
+      const resolution = this.getCurrentPresentation().resolution
+      const middle = sides[0] == 'left' ? resolution.width / 2 : resolution.height / 2
+      const deltas = []
+      const sticks = []
+      stickSides.forEach((side1) => {
+        deltas.push(middle - side1)
+        sticks.push(middle)
+      })
+      handleDeltas(deltas, sticks)
     }
 
     if (
