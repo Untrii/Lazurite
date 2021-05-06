@@ -92,13 +92,19 @@ export default class WorkspaceActions {
 
     {
       const resolution = this.getCurrentPresentation().resolution
-      const middle = sides[0] == 'left' ? resolution.width / 2 : resolution.height / 2
+      const start = 0
+      const end = sides[0] == 'left' ? resolution.width : resolution.height
+      const middle = end / 2
       const deltas = []
       const sticks = []
-      stickSides.forEach((side1) => {
-        deltas.push(middle - side1)
-        sticks.push(middle)
-      })
+
+      ;[start, end, middle].forEach((side0) =>
+        stickSides.forEach((side1) => {
+          deltas.push(side0 - side1)
+          sticks.push(side0)
+        })
+      )
+
       handleDeltas(deltas, sticks)
     }
 
