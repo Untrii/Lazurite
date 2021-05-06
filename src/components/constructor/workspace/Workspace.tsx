@@ -24,6 +24,9 @@ const Workspace = (props: IWorkspaceProps) => {
   useHotkey('delete', () => {
     store.deleteSelectedObjects()
   })
+  useHotkey('ctrl+D', () => {
+    store.deselectAll()
+  })
   const forceUpdate = useForceUpdate()
 
   const watchable = store.currentTab.openedPresentation.slides.length && store.currentTab.selectedSlideIndex
