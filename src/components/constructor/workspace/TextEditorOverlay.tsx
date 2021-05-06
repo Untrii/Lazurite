@@ -171,6 +171,8 @@ const TextEditorOverlay = ({ children, width, height }: ITextEditorOverlayProps)
   const getSymbolPosition = function (x: number, y: number) {
     let lineIndex = Math.floor((y - getOffsetY()) / lineHeight / resolution.scale)
     lineIndex = Math.min(lines.length - 1, lineIndex)
+    lineIndex = Math.max(0, lineIndex)
+
     const currentLine = lines[lineIndex]
     const lineOffsets = getLineOffsets(lines)
     const lineOffsetX = getOffsetX(currentLine)
