@@ -181,8 +181,16 @@ const ToolOverlay = ({ width, height, onAreaDraw, children }: IToolOverlayProps)
     else store.unhoverObject()
   }
 
+  const onMouseLeave = () => store.unhoverObject()
+
   return (
-    <div class={rootClasses.join(' ')} style={rootStyle} onMouseDown={onMouseDown} onMouseMove={onMouseMove}>
+    <div
+      class={rootClasses.join(' ')}
+      style={rootStyle}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+    >
       {children}
       {state.showBox ? <div class="tool-overlay__area" style={areaStyle}></div> : null}
     </div>
