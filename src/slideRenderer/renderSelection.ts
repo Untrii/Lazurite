@@ -27,12 +27,16 @@ export default function renderSelection(
   highlightAll = false,
   guideLines: { x?: number[]; y?: number[] } | null
 ) {
-  const [outerTop, outerBottom, outerLeft, outerRight] = [
-    Math.floor(selection.top * resolution.scale),
-    Math.floor(selection.bottom * resolution.scale),
-    Math.floor(selection.left * resolution.scale),
-    Math.floor(selection.right * resolution.scale),
-  ]
+  const scale = function (...values: number[]) {
+    return values.map((value) => Math.floor(value * resolution.scale))
+  }
+
+  const [outerTop, outerBottom, outerLeft, outerRight] = scale(
+    selection.top,
+    selection.bottom,
+    selection.left,
+    selection.right
+  )
 
   if (guideLines) {
     ctx.lineWidth = 1
@@ -81,12 +85,7 @@ export default function renderSelection(
     offsetY = -outerTop,
     outlineWidth = 2
   ) {
-    const [left, top, right, bottom] = [
-      Math.floor(slideObject.left * resolution.scale),
-      Math.floor(slideObject.top * resolution.scale),
-      Math.floor(slideObject.right * resolution.scale),
-      Math.floor(slideObject.bottom * resolution.scale),
-    ]
+    const [left, top, right, bottom] = scale(slideObject.left, slideObject.top, slideObject.right, slideObject.bottom)
     ctx.strokeRect(left + offsetX + outlineWidth / 2, top + offsetY + outlineWidth / 2, right - left, bottom - top)
   }
 

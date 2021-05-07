@@ -4,6 +4,7 @@ import { useReactiveState } from '@/util/reactivity'
 import { AreaDrawerTool, PointerTool } from '@/models/editor/Tool'
 import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import store from '@/store'
+import useForceUpdate from '@/util/hooks/useForceUpdate'
 
 interface IToolOverlayProps {
   width: number
@@ -12,7 +13,7 @@ interface IToolOverlayProps {
   children: JSX.Element
 }
 
-function minmax(a, b) {
+function minmax(a: number, b: number) {
   if (a > b) return [b, a]
   else return [a, b]
 }
@@ -86,7 +87,6 @@ const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProp
             if (state.showBox) state.showBox = false
           } else {
             currentTool.triggerEvent('areaSelect', { left, top, right, bottom, ctrl: mouseDownEvent.ctrlKey })
-
             if (!state.showBox) state.showBox = true
           }
         }
@@ -152,17 +152,6 @@ const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProp
     document.addEventListener('mousemove', onMouseMove)
   }
 
-  const [left, right] = minmax(state.areaStart.x, state.areaEnd.x)
-  const [top, bottom] = minmax(state.areaStart.y, state.areaEnd.y)
-  const areaWidth = right - left
-  const areaHeight = bottom - top
-  const areaStyle = {
-    top: top + 'px',
-    left: left + 'px',
-    width: areaWidth + 'px',
-    height: areaHeight + 'px',
-  }
-
   const rootStyle = {
     width: width + 'px',
     height: height + 'px',
@@ -195,7 +184,6 @@ const ToolOverlay = ({ width, height, onAreaSelect, children }: IToolOverlayProp
       onMouseLeave={onMouseLeave}
     >
       {children}
-      {state.showBox ? <div class="tool-overlay__area" style={areaStyle}></div> : null}
     </div>
   )
 }

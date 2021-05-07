@@ -15,6 +15,7 @@ import RendererResolution from '@/models/slideRenderer/RendererResolution'
 import { PointerTool } from '@/models/editor/Tool'
 import { useEffect, useLayoutEffect, useState } from 'preact/hooks'
 import useForceUpdate from '@/util/hooks/useForceUpdate'
+import renderSelectBox from '@/slideRenderer/renderSelectBox'
 
 interface IWorkspaceProps {
   width: number
@@ -46,6 +47,7 @@ const Workspace = (props: IWorkspaceProps) => {
 
   const [guideLines] = useState({ x: [], y: [] } as { x: number[]; y: number[] })
   const [isPointerActive] = useState({ value: false })
+  const [selectBox, setSelectBox] = useState({ left: -1, top: -1, right: -1, bottom: -1 })
 
   const onRendered = function (ctx: CanvasRenderingContext2D) {
     const tool = store.getCurrentTool()
@@ -61,6 +63,7 @@ const Workspace = (props: IWorkspaceProps) => {
       isPointerActive.value,
       guideLines
     )
+    renderSelectBox(ctx, resolution, selectBox)
   }
 
   useLayoutEffect(() => {
@@ -76,10 +79,22 @@ const Workspace = (props: IWorkspaceProps) => {
     const mouseUpListener = () => {
       if (guideLines?.x?.length > 0 || guideLines?.y?.length > 0) unstickListener()
       isPointerActive.value = false
-      forceUpdate()
+      setSelectBox({ left: -1, top: -1, right: -1, bottom: -1 })
     }
     const mouseDownListener = () => {
       isPointerActive.value = true
+    }
+    const areaSelectListener = ({ left = 0, top = 0, right = 0, bottom = 0 }) => {
+      // setSelectBox({
+      //   x:left,
+      //   y:top,
+      //   w: right-left,
+      //   h: bottom-top
+      // })
+      selectBox.left = left
+      selectBox.top = top
+      selectBox.right = right
+      selectBox.bottom = bottom
     }
 
     if (tool instanceof PointerTool) {
@@ -87,11 +102,13 @@ const Workspace = (props: IWorkspaceProps) => {
       tool.addListener('unstick', unstickListener)
       tool.addListener('mouseUp', mouseUpListener)
       tool.addListener('mouseDown', mouseDownListener)
+      tool.addListener('areaSelect', areaSelectListener)
       return () => {
         tool.removeListener('stick', stickListener)
         tool.removeListener('unstick', unstickListener)
         tool.removeListener('mouseUp', mouseUpListener)
         tool.removeListener('mouseDown', mouseDownListener)
+        tool.removeListener('areaSelect', areaSelectListener)
       }
     }
   })
