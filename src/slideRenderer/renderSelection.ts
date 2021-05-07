@@ -28,7 +28,12 @@ export default function renderSelection(
   guideLines: { x?: number[]; y?: number[] } | null
 ) {
   const scale = function (...values: number[]) {
-    return values.map((value) => Math.floor(value * resolution.scale))
+    return values.map((value) => {
+      value *= resolution.scale
+      value = Math.round(value * 1000)
+      if (value % 1000 > 500) return Math.ceil(value / 1000)
+      else return Math.floor(value / 1000)
+    })
   }
 
   const [outerTop, outerBottom, outerLeft, outerRight] = scale(
@@ -58,8 +63,8 @@ export default function renderSelection(
     }
   }
 
-  const selectionWidth = outerRight - outerLeft + 2
-  const selectionHeight = outerBottom - outerTop + 2
+  const selectionWidth = outerRight - outerLeft
+  const selectionHeight = outerBottom - outerTop
 
   const currentSelectionIdentity: any[] = [selectionWidth, selectionHeight]
   selection.items.forEach((item) => currentSelectionIdentity.push(item.id))
@@ -71,10 +76,10 @@ export default function renderSelection(
   }
 
   if (isSame) {
-    ctx.drawImage(prevSelectionComposite, outerLeft, outerTop)
+    ctx.drawImage(prevSelectionComposite, outerLeft - 1, outerTop - 1)
   }
 
-  let currentSelectionComposite = createComposite(selectionWidth, selectionHeight)
+  let currentSelectionComposite = createComposite(selectionWidth + 2, selectionHeight + 2)
   let currentContext = currentSelectionComposite.getContext('2d')
   ctx.strokeStyle = selectionColor
 
@@ -86,6 +91,13 @@ export default function renderSelection(
     outlineWidth = 2
   ) {
     const [left, top, right, bottom] = scale(slideObject.left, slideObject.top, slideObject.right, slideObject.bottom)
+    console.log({ left, top, right, bottom })
+    console.log({
+      left: slideObject.left * resolution.scale,
+      top: slideObject.top * resolution.scale,
+      right: slideObject.right * resolution.scale,
+      bottom: slideObject.bottom * resolution.scale,
+    })
     ctx.strokeRect(left + offsetX + outlineWidth / 2, top + offsetY + outlineWidth / 2, right - left, bottom - top)
   }
 
@@ -94,7 +106,7 @@ export default function renderSelection(
 
   if (highlight && !selection.isInSelection(highlight)) {
     ctx.lineDashOffset = 0
-    renderOutline(ctx, highlight, 0, 0)
+    renderOutline(ctx, highlight, -1, -1)
   }
 
   if (selectionWidth == Number.NEGATIVE_INFINITY || selectionHeight == Number.NEGATIVE_INFINITY) return
@@ -105,7 +117,7 @@ export default function renderSelection(
     ctx.setLineDash([])
     ctx.lineWidth = 1
     for (const item of slideObjects) {
-      if (item instanceof TextSlideObject) renderOutline(ctx, item, 0, 0, 1)
+      if (item instanceof TextSlideObject && !selection.isInSelection(item)) renderOutline(ctx, item, 0, 0, 1)
     }
   }
 
@@ -118,9 +130,9 @@ export default function renderSelection(
     currentContext.strokeStyle = selectionColor
     currentContext.setLineDash([])
     currentContext.lineWidth = 2
-    currentContext.strokeRect(1, 1, selectionWidth - 2, selectionHeight - 2)
+    currentContext.strokeRect(1, 1, selectionWidth, selectionHeight)
 
-    ctx.drawImage(currentSelectionComposite, outerLeft, outerTop)
+    ctx.drawImage(currentSelectionComposite, outerLeft - 1, outerTop - 1)
     prevSelectionComposite = currentSelectionComposite
     prevSelectionIdentity = currentSelectionIdentity
   }
