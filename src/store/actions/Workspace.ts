@@ -109,7 +109,8 @@ export default class WorkspaceActions {
     }
 
     if (
-      stickSides.length == 2 &&
+      stickSides.includes(start) &&
+      stickSides.includes(end) &&
       roughlyEquals(start + delta, closestObject?.[sides[0]] as number) &&
       roughlyEquals(end + delta, closestObject?.[sides[1]] as number)
     )
