@@ -36,10 +36,6 @@ export default function renderBackground(
       }
       break
     case 'gradicolor':
-      {
-        console.error('Rendering gradient background...\nNot implemented')
-      }
-      break
     case 'gradient':
       const gradientValue = parseGradient(background.value)
       const gradientCoords = getGradientCoords(resolution, gradientValue.angle)

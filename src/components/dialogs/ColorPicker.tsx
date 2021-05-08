@@ -28,7 +28,8 @@ interface IColorPickerProps {
   onCancel?: () => void
   onColorPicked?: (color: Color) => void
   onGradientPicked?: (gradient: string) => void
-  mode?: 'color' | 'gradient'
+  onGradicolorPicked?: (gradient: string) => void
+  mode?: 'color' | 'gradient' | 'gradicolor'
   initialColor?: Color
   isHiding?: boolean
 }
@@ -58,6 +59,7 @@ const ColorPicker = ({
   onCancel,
   onColorPicked,
   onGradientPicked,
+  onGradicolorPicked,
   mode = 'color',
   initialColor = Color.fromRgb(255, 0, 0),
   isHiding,
@@ -82,6 +84,10 @@ const ColorPicker = ({
       ] as ColorStop[],
       gradientAngle: 135,
       isAnyStopFocused: false,
+      gradicolorFrom: 'current' as IColor | 'current',
+      gradicolorTo: { r, g, b } as IColor | 'current',
+      gradicolorRedacting: 'from' as 'from' | 'to',
+      gradicolorSteps: 5,
     }
   })
 
@@ -96,21 +102,51 @@ const ColorPicker = ({
 
   const clearColor = hsvToRgb(state.hue, 100, 100)
 
+  const getCssColor = function (color: IColor | 'current') {
+    if (color == 'current') return `rgb(${state.red}, ${state.green}, ${state.blue})`
+    else return `rgb(${Object.values(color).join(',')})`
+  }
+
   const getStopColor = function (stop: ColorStop) {
-    if (stop.value == 'current') return `rgb(${state.red}, ${state.green}, ${state.blue})`
-    else return `rgb(${Object.values(stop.value).join(',')})`
+    return getCssColor(stop.value)
   }
 
   const getGradient = function (ignoreAngle = false, compact = false) {
-    const stops = state.stops
-    const firstStop = stops[0]
-    const lastStop = stops[stops.length - 1]
-    const stopSrings = state.stops.map((item) => `${getStopColor(item)} ${item.position * 100}%`)
+    let compactVariant = ''
     const angle = ignoreAngle ? 'to right' : state.gradientAngle + 'deg'
-    const compactVaraint = `${angle}, ${getStopColor(firstStop)} 0%, ${stopSrings}, ${getStopColor(lastStop)} 100%`
+    if (mode == 'gradient') {
+      const stops = state.stops
+      const firstStop = stops[0]
+      const lastStop = stops[stops.length - 1]
+      const stopSrings = state.stops.map((item) => `${getStopColor(item)} ${item.position * 100}%`)
+      compactVariant = `${angle}, ${getStopColor(firstStop)} 0%, ${stopSrings}, ${getStopColor(lastStop)} 100%`
+    }
+    if (mode == 'gradicolor') {
+      const stepSize = 100 / state.gradicolorSteps
+      const stops: string[] = []
+      let from = state.gradicolorFrom
+      if (from == 'current') from = { r: state.red, g: state.green, b: state.blue }
+      let to = state.gradicolorTo
+      if (to == 'current') to = { r: state.red, g: state.green, b: state.blue }
 
-    if (compact) return compactVaraint
-    else return `linear-gradient(${compactVaraint})`
+      const calculateStop = function (percent: number) {
+        let result = new Color()
+        for (const key in from as IColor) {
+          result[key] = Math.round(from[key] + (to[key] - from[key]) * percent)
+        }
+        return result
+      }
+
+      for (let i = 0; i < state.gradicolorSteps; i++) {
+        const stop = calculateStop(i / (state.gradicolorSteps - 1))
+        stops.push(`${stop.toHex()} ${i * stepSize}%`)
+        stops.push(`${stop.toHex()} ${(i + 1) * stepSize}%`)
+      }
+      compactVariant = `${angle}, ${stops.join(', ')}`
+    }
+
+    if (compact) return compactVariant
+    else return `linear-gradient(${compactVariant})`
   }
 
   const onChange = function (fieldName: keyof typeof state, value: any) {
@@ -291,7 +327,8 @@ const ColorPicker = ({
 
     const onPicked = function () {
       if (mode == 'color') onColorPicked?.(Color.fromRgb(state.red, state.green, state.blue))
-      else onGradientPicked?.(getGradient(false, true))
+      else if (mode == 'gradient') onGradientPicked?.(getGradient(false, true))
+      else onGradicolorPicked?.(getGradient(false, true))
     }
     return (
       <div class="color-picker__bottom-panel">
@@ -448,6 +485,78 @@ const ColorPicker = ({
     )
   }
 
+  const renderGradicolorControls = function () {
+    const fromThumbColor = getCssColor(state.gradicolorFrom)
+    const toThumbColor = getCssColor(state.gradicolorTo)
+
+    const onFromThumbClick = function () {
+      if (state.gradicolorRedacting == 'from') return
+      state.gradicolorTo = {
+        r: state.red,
+        g: state.green,
+        b: state.blue,
+      }
+      const { r, g, b } = state.gradicolorFrom as IColor
+      onChange('red', r)
+      onChange('green', g)
+      onChange('blue', b)
+      state.gradicolorFrom = 'current'
+      state.gradicolorRedacting = 'from'
+    }
+
+    const onToThumbClick = function () {
+      if (state.gradicolorRedacting == 'to') return
+      state.gradicolorFrom = {
+        r: state.red,
+        g: state.green,
+        b: state.blue,
+      }
+      const { r, g, b } = state.gradicolorTo as IColor
+      onChange('red', r)
+      onChange('green', g)
+      onChange('blue', b)
+      state.gradicolorTo = 'current'
+      state.gradicolorRedacting = 'to'
+    }
+
+    return (
+      <div class="color-picker__gradicolor-controls">
+        <div class="color-picker__color-select">
+          <Prepend>From</Prepend>
+          <div
+            class="color-picker__color-thumb"
+            style={{ background: fromThumbColor }}
+            onClick={onFromThumbClick}
+          ></div>
+        </div>
+        <div class="color-picker__color-select">
+          <Prepend>To</Prepend>
+          <div class="color-picker__color-thumb" style={{ background: toThumbColor }} onClick={onToThumbClick}></div>
+        </div>
+        <div class="color-picker__input" style="margin-top:6px">
+          <Prepend>Angle:</Prepend>
+          <NumberInput
+            value={state.gradientAngle}
+            minValue={0}
+            maxValue={360}
+            precision={1}
+            onChange={(value) => (state.gradientAngle = value)}
+          />
+        </div>
+        <div class="color-picker__input" style="margin-top:6px">
+          <Prepend>Steps:</Prepend>
+          <NumberInput
+            value={state.gradicolorSteps}
+            minValue={1}
+            maxValue={10}
+            precision={1}
+            onChange={(value) => (state.gradicolorSteps = value)}
+          />
+        </div>
+      </div>
+    )
+  }
+
   const deleteStop = function () {
     const stops = state.stops
     if (stops.length < 2 || !state.isAnyStopFocused) return
@@ -486,6 +595,7 @@ const ColorPicker = ({
         {renderHueSelector()}
         {renderInputs()}
         {mode == 'gradient' ? renderGradientControls() : null}
+        {mode == 'gradicolor' ? renderGradicolorControls() : null}
         {renderBottomPanel()}
       </div>
     </AnimatedDialogBox>

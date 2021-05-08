@@ -128,6 +128,16 @@ const ColorEditor = () => {
       store.addUserBackground(bg)
     }
 
+    const onGradicolorPicked = function (gradient: string) {
+      togglePopper(false)
+      const bg = new Background()
+      bg.value = gradient
+      bg.displayValue = gradient
+      bg.medianColor = getMedianColorSync('gradicolor', gradient)
+      bg.type = 'gradicolor'
+      store.addUserBackground(bg)
+    }
+
     const onFilesPicked = function (files: Blob[]) {
       togglePopper(false)
       if (tabName == 'image') store.addImages(files)
@@ -138,11 +148,13 @@ const ColorEditor = () => {
     switch (tabName) {
       case 'color':
       case 'gradient':
+      case 'gradicolor':
         popperContent = (
           <ColorPicker
             onCancel={() => togglePopper(false)}
             onColorPicked={onColorPicked}
             onGradientPicked={onGradientPicked}
+            onGradicolorPicked={onGradicolorPicked}
             isHiding={!isPopperShown}
             mode={tabs[currentTabIndex].name as any}
           />
