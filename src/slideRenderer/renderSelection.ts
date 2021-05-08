@@ -91,13 +91,6 @@ export default function renderSelection(
     outlineWidth = 2
   ) {
     const [left, top, right, bottom] = scale(slideObject.left, slideObject.top, slideObject.right, slideObject.bottom)
-    console.log({ left, top, right, bottom })
-    console.log({
-      left: slideObject.left * resolution.scale,
-      top: slideObject.top * resolution.scale,
-      right: slideObject.right * resolution.scale,
-      bottom: slideObject.bottom * resolution.scale,
-    })
     ctx.strokeRect(left + offsetX + outlineWidth / 2, top + offsetY + outlineWidth / 2, right - left, bottom - top)
   }
 
