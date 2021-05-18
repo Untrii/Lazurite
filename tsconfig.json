@@ -11,7 +11,10 @@
     "jsxFragmentFactory": "Fragment",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/renderer/*"],
+      "common/*": ["src/common/*"],
+      "main/*": ["src/main/*"],
+      "template/*": ["src/template/*"]
     }
   },
   "exclude": ["node_modules"]

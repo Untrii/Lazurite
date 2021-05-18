@@ -11,17 +11,17 @@ const devMode = process.env.NODE_ENV != 'production'
 export default {
   context: srcPath,
   entry: {
-    main: ['./renderer/main.tsx'],
+    main: ['./template/main.tsx'],
   },
   devtool: devMode ? 'source-map' : false,
   devServer: {
-    port: 3535,
+    port: 3536,
   },
-  target: 'electron-renderer',
+  target: 'web',
   resolve: {
     extensions: ['.js', '.json', '.ts', '.jsx', '.tsx'],
     alias: {
-      '@': resolve(srcPath, 'renderer'),
+      '@': resolve(srcPath, 'template'),
       common: resolve(srcPath, 'common'),
     },
   },
@@ -58,7 +58,7 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './renderer/index.html',
+      template: './template/index.html',
     }),
   ],
   optimization: {
@@ -72,7 +72,7 @@ export default {
     ],
   },
   output: {
-    path: resolve(__dirname, './webpack-dist'),
-    filename: 'renderer.js',
+    path: resolve(__dirname, './webpack-dist/template'),
+    filename: 'index.js',
   },
 } as Configuration
