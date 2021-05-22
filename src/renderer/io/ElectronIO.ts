@@ -251,4 +251,12 @@ export default class ElectronIO extends IoManager {
     }
     return ''
   }
+
+  async getPresentationTemplate() {
+    try {
+      return (await readFile(path.resolve(process.cwd(), 'data/template.html'))).toString()
+    } catch {
+      return ''
+    }
+  }
 }

@@ -5,6 +5,7 @@ const webpack = require('webpack')
 const webpackDevServer = require('webpack-dev-server')
 const path = require('path')
 const { exec, execSync, spawn, spawnSync } = require('child_process')
+const { default: rebuildTempalte } = require('./build-template')
 
 async function startRenderer() {
   let proc = exec('npm run devserver')
@@ -52,9 +53,11 @@ function restartElectron() {
   await startRenderer()
 
   startElectron()
-  //, path.resolve(__dirname, '../src')
-  const watcher = chokidar.watch([path.resolve(__dirname, '../src-main')], {
-    ignoreInitial: true,
-  })
-  watcher.on('all', debounce(restartElectron, 500))
+  chokidar
+    .watch([path.resolve(__dirname, '../src/main')], {
+      ignoreInitial: true,
+    })
+    .on('all', debounce(restartElectron, 500))
+
+  chokidar.watch([path.resolve(__dirname, '../src/template')]).on('all', debounce(rebuildTempalte, 1500))
 })()

@@ -41,7 +41,7 @@ ipcMain.on('deleteFile', async (event, arg) => {
 export function createSafeFileProtocol(protocolName) {
   protocol.registerFileProtocol(protocolName, (request, callback) => {
     const decodedURL = decodeURIComponent(request.url)
-    let url = decodedURL.replace(`${protocolName}://`, '')
+    let [url, params] = decodedURL.replace(`${protocolName}://`, '').split('?')
     url = applyContext(url)
     try {
       return callback(url)

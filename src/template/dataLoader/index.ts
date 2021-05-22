@@ -1,9 +1,9 @@
 import getFontFamilyName from 'common/util/text/getFontFamilyName'
 import warmupFont from 'common/util/text/warmupFont'
 
-const imageExtensions = ['jpg', 'jpeg', 'png', 'svg', 'gif']
+const imageExtensions = ['jpg', 'jpeg', 'png', 'svg', 'gif', 'anyimg']
 const videoExtensions = ['mp4', 'mkv', 'avi']
-const fontExtensions = ['ttf', 'woff', 'woff2', 'eot']
+const fontExtensions = ['ttf', 'woff', 'woff2', 'eot', 'anyfont']
 
 const loadedResources = new Map<string, LoadedResource>()
 const pendingResources = new Map<string, Promise<void>>()
@@ -55,15 +55,17 @@ export async function requireResourceAsync(source: string, overrideExtension?: s
             | HTMLImageElement
             | HTMLVideoElement
           if (!el) {
-            console.warn('Presentation runtime compiler error')
+            console.warn('Presentation runtime compiler error. Missing file: ' + source)
             el = document.querySelector('img[data-placeholder-img]')
             if (tagName == 'img') {
               const img = el as HTMLImageElement
               if (img.complete) return onLoad(el)
             }
           }
-          if (tagName == 'img') el.addEventListener('load', () => onLoad(el))
-          else el.addEventListener('loadedmetadata', () => onLoad(el))
+          if (tagName == 'img') {
+            if (el['complete']) onLoad(el)
+            else el.addEventListener('load', () => onLoad(el))
+          } else el.addEventListener('loadedmetadata', () => onLoad(el))
         }
 
         const handleFont = async () => {

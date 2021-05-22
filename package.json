@@ -9,7 +9,8 @@
     "buildmain": "webpack --config webpack.electron.config.ts --mode development",
     "devserver": "webpack-dev-server --mode development",
     "serve": "node scripts/serve",
-    "servetpl": "webpack-dev-server --config webpack.template.config.ts --mode development"
+    "servetpl": "webpack-dev-server --config webpack.template.config.ts --mode development",
+    "buildtpl": "webpack --config webpack.template.config.ts --mode development"
   },
   "author": "Azullon",
   "license": "ISC",

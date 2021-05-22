@@ -2,28 +2,27 @@ import './App.scss'
 import Slide from './Slide'
 import RendererResolution from 'common/models/slideRenderer/RendererResolution'
 import { h, Fragment } from 'preact'
-import presentationJSON from './presentationJSON.json'
 import JSONSerializer from 'common/serialization/JsonSerializer'
 import Presentation from 'common/models/presentation/Presentation'
 import { useEffect, useState } from 'preact/hooks'
-import assets from '../assets'
 import useHotkey from 'common/util/hooks/useHotkey'
 
-const presentation = JSONSerializer.fromObject(presentationJSON) as Presentation
+const presentationJSON = document.querySelector<HTMLDivElement>('*[data-res-main]')?.innerText ?? ''
+const presentation = JSONSerializer.fromJSON<Presentation>(presentationJSON)
 
 const App = () => {
+  if (!presentation) return <div class="app">Compiler error</div>
+
   const [windowWidth, updateWindowWidth] = useState(window.innerWidth)
   const [windowHeight, updateWindowHeight] = useState(window.innerHeight)
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
 
   const slideForward = function () {
-    console.log('changing slide')
     if (currentSlideIndex + 1 < presentation.slides.length) setCurrentSlideIndex(currentSlideIndex + 1)
   }
 
   const slideBackward = function () {
-    console.log('changing slide')
     if (currentSlideIndex > 0) setCurrentSlideIndex(currentSlideIndex - 1)
   }
 
@@ -44,19 +43,14 @@ const App = () => {
   })
 
   return (
-    <>
-      <div style="position: fixed;  transform: scale(0)" data-res-col>
-        <img src={assets.error} alt="error" data-placeholder-img />
-      </div>
-      <div class="app">
-        <Slide
-          width={resolution.targetWidth}
-          height={resolution.targetHeight}
-          presentation={presentation}
-          slide={presentation.slides[currentSlideIndex]}
-        ></Slide>
-      </div>
-    </>
+    <div class="app">
+      <Slide
+        width={resolution.targetWidth}
+        height={resolution.targetHeight}
+        presentation={presentation}
+        slide={presentation.slides[currentSlideIndex]}
+      ></Slide>
+    </div>
   )
 }
 export default App
